@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta 
+            name="viewport" 
+            content="
+                width=device-width, 
+                initial-scale=1"
+        >
+        <link rel="stylesheet" href="main.css">
+        
+    </head>
+    <body>
+        <div id="container">
+            <div id="board">
+                <canvas id="board-canvas"></canvas>
+            </div>
+            <div id="controls">
+                <div id="create-matrix-panel" class="panel">
+                    <div>
+                        Столбцов
+                        <input id="create-matrix-panel-columns-amount" type="text" value="10">
+                    </div>
+                    <div>
+                        Строк
+                        <input id="create-matrix-panel-rows-amount" type="text" value="10">
+                    </div>
+                    <div>
+                        <div id="create-matrix-panel-button" class="button"> Создать </div>
+                    </div>
+                </div>
+                <div id="selection-panel" class="panel">
+                    <div>
+                        <div id="select-all" class="button">Выбрать всё</div>
+                    </div>
+                    <div>
+                        <div id="deselect-all" class="button">Снять выделение</div>
+                    </div>
+                </div>
+                <div id="borders-panel" class="panel">
+                    <div class="inline-block align-left">
+                        <div>
+                            <input type="radio" id="border-type-1" checked name="border-type" value="up" />
+                            <label for="border-type-1">Сверху</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="border-type-2" name="border-type" value="down" />
+                            <label for="border-type-2">Снизу</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="border-type-3" name="border-type" value="left" />
+                            <label for="border-type-3">Слева</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="border-type-4" name="border-type" value="right" />
+                            <label for="border-type-4">Справа</label>
+                        </div>
+                    </div>
+                    <div class="inline-block">
+                        <div>
+                            <div id="set-borders-hidden" class="button">Без рамки</div>
+                        </div>
+                        <div>
+                            <div id="set-borders-thin" class="button">Тонкие рамки</div>
+                        </div>
+                        <div>
+                            <div id="set-borders-fat" class="button">Толстые рамки</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
