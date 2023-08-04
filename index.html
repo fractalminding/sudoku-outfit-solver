@@ -19,14 +19,17 @@
                 <div id="create-matrix-panel" class="panel">
                     <div>
                         Столбцов
-                        <input id="create-matrix-panel-columns-amount" type="text" value="10">
+                        <input id="create-matrix-panel-columns-amount" type="text" value="5">
                     </div>
                     <div>
                         Строк
-                        <input id="create-matrix-panel-rows-amount" type="text" value="10">
+                        <input id="create-matrix-panel-rows-amount" type="text" value="5">
                     </div>
                     <div>
                         <div id="create-matrix-panel-button" class="button"> Создать </div>
+                    </div>
+                    <div>
+                        <div id="create-matrix-panel-button-classic" class="button"> 9 X 9 classic </div>
                     </div>
                 </div>
                 <div id="selection-panel" class="panel">
@@ -67,6 +70,39 @@
                             <div id="set-borders-fat" class="button">Толстые рамки</div>
                         </div>
                     </div>
+                </div>
+                <div id="num-panel" class="panel">
+                    <div class="inline-block">
+                        <div>
+                            <input type="radio" id="num-type-1" checked name="num-type" value="usual-number" />
+                            <label for="num-type-1">Число</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="num-type-2" name="num-type" value="pair" />
+                            <label for="num-type-2">Пара</label>
+                        </div>
+                    </div>
+                    <div id="numpad" class="inline-block">
+                        <div>
+                            <div class="button num">1</div>
+                            <div class="button num">2</div>
+                            <div class="button num">3</div>
+                        </div>
+                        <div>
+                            <div class="button num">4</div>
+                            <div class="button num">5</div>
+                            <div class="button num">6</div>
+                        </div>
+                        <div>
+                            <div class="button num">7</div>
+                            <div class="button num">8</div>
+                            <div class="button num">9</div>
+                        </div>
+                        <div>
+                            <div class="button num">0</div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

@@ -11,8 +11,6 @@ let matrix = {
 
         canvas.height = 0
         canvas.width = 0
-
-        this.array = []
     },
     draw() {
         let canvas = this.elem
@@ -23,12 +21,23 @@ let matrix = {
         canvas.width = this.columns * cellSize + padding * 2
         let context = canvas.getContext("2d")
 
+        let getCoordsByIndexes = function(x, y) {
+            let padding = matrix.padding
+            let cellSize = matrix.cellSize
+            let coords = [0, 0]
+            coords[0] = padding + x * cellSize
+            coords[1] = padding + y * cellSize
+
+            return coords
+        }
+
         let drawLines = function () {
             context.lineCap = "round"
-
+            //console.log(this.rows)
             //draw vertical lines
-            for (let y = 0; y < this.rows; y++) {
-                for (let x = 0; x <= this.columns; x++) {
+            for (let y = 0; y < matrix.rows; y++) {
+                
+                for (let x = 0; x <= matrix.columns; x++) {
                     context.beginPath()
                     //console.log (context.lineWidth)
                     let borderValue = matrix.borders.verticalArray[y][x]
@@ -37,7 +46,7 @@ let matrix = {
                         continue
                     } else if (borderValue == 1) {
                         context.lineWidth = 2
-                    } else if(borderValue == 2) {
+                    } else if (borderValue == 2) {
                         context.lineWidth = 4
                     }
                     //console.log ('here')
@@ -54,9 +63,11 @@ let matrix = {
             }
 
             //draw horizontal lines
-            for (let y = 0; y <= this.rows; y++) {
-                for (let x = 0; x < this.columns; x++) {
+            for (let y = 0; y <= matrix.rows; y++) {
+                for (let x = 0; x < matrix.columns; x++) {
                     context.beginPath()
+                    //console.log(matrix.borders.horizontalArray)
+                    //console.log("y = " + y + " x = " + x)
                     let borderValue = matrix.borders.horizontalArray[y][x]
                     if (borderValue == 0) {
                         continue
@@ -81,16 +92,6 @@ let matrix = {
 
         let drawSelection = function() {
 
-            let getCoordsByIndexes = function(x, y) {
-                let padding = matrix.padding
-                let cellSize = matrix.cellSize
-                let coords = [0, 0]
-                coords[0] = padding + x * cellSize
-                coords[1] = padding + y * cellSize
-
-                return coords
-            }
-
             let drawCellSelection = function(x, y) {
                 let canvas = matrix.elem
                 let context = canvas.getContext("2d")
@@ -110,12 +111,66 @@ let matrix = {
             }
         }
 
+        let drawValues = function() {
+            let canvas = matrix.elem
+            let context = canvas.getContext("2d")
+
+            for (let y in matrix.values) {
+                for (let x in matrix.values[y]) {
+                    if (matrix.values[y][x].length == 0 
+                        || matrix.numberTypes[y][x] == 0
+                    ) {
+                        continue
+                    } else {
+                        let value = matrix.values[y][x]
+                        let coords = getCoordsByIndexes(x, y)
+                        let xCoord = coords[0] + 13
+                        let yCoord = coords[1] + 40
+                        context.font = "40px Roboto-Light"
+
+                        if (matrix.numberTypes[y][x] == 2) {
+                            context.font = "18px Roboto-Light"
+                            xCoord = coords[0] + 13
+                            yCoord = coords[1] + 44
+                        }
+                        
+                        context.fillText(value, xCoord, yCoord)
+                    }
+                }
+            }
+        }
+
         drawLines()
+        drawValues()
         drawSelection()
     }
 }
 
-let createMatrixArray = function(rows, columns) {
+/* let createMatrixArray = function(rows, columns) {
+    let array = []
+    for (let y = 0; y < rows; y++) {
+        let rowArray = []
+        for (let x = 0; x < columns; x++) {
+            rowArray.push(0)
+        }
+        array.push(rowArray)
+    }
+    return array
+} */
+
+let createMatrixSelectionArray = function(rows, columns) {
+    let array = []
+    for (let y = 0; y < rows; y++) {
+        let rowArray = []
+        for (let x = 0; x < columns; x++) {
+            rowArray.push(false)
+        }
+        array.push(rowArray)
+    }
+    return array
+}
+
+let createMatrixNumberTypesArray = function(rows, columns) {
     let array = []
     for (let y = 0; y < rows; y++) {
         let rowArray = []
@@ -127,12 +182,12 @@ let createMatrixArray = function(rows, columns) {
     return array
 }
 
-let createMatrixSelectionArray = function(rows, columns) {
+let createMatrixValuesArray = function(rows, columns) {
     let array = []
     for (let y = 0; y < rows; y++) {
         let rowArray = []
         for (let x = 0; x < columns; x++) {
-            rowArray.push(false)
+            rowArray.push('')
         }
         array.push(rowArray)
     }
@@ -181,26 +236,57 @@ let createMatrixBordersObject = function(rows, columns) {
     return {verticalArray, horizontalArray}
 }
 
-let createMatrixPanelActivate = function() {
+let setClassicBorders = function() {
+    for (let x in matrix.borders.horizontalArray[3]) {
+        matrix.borders.horizontalArray[3][x] = 2
+    }
+    for (let x in matrix.borders.horizontalArray[6]) {
+        matrix.borders.horizontalArray[6][x] = 2
+    }
+    for (let y in matrix.borders.verticalArray) {
+        matrix.borders.verticalArray[y][3] = 2
+    }
+    for (let y in matrix.borders.verticalArray) {
+        matrix.borders.verticalArray[y][6] = 2
+    }
+    
+}
+
+let setMatrix = function(columns, rows) {
+    matrix.init()
+    matrix.rows = rows
+    matrix.columns = columns
+    matrix.borders = createMatrixBordersObject(rows, columns)
+    matrix.selection = createMatrixSelectionArray(rows, columns)
+    matrix.values = createMatrixValuesArray(rows, columns)
+    matrix.numberTypes = createMatrixNumberTypesArray(rows, columns)
+}
+
+let createClassicBoard = function() {
     let columnsElem = document.getElementById("create-matrix-panel-columns-amount")
     let rowsElem = document.getElementById("create-matrix-panel-rows-amount")
+    let columns = +(columnsElem.value)
+    let rows = +(rowsElem.value)
+    //console.log(columns, rows)
+    setMatrix(9, 9)
+    setClassicBorders()
+    matrix.draw()
+}
+
+let createMatrixPanelActivate = function() {
     let button = document.getElementById("create-matrix-panel-button")
+    let buttonClassic = document.getElementById("create-matrix-panel-button-classic")
 
     button.onclick = function() {
-        columns = +(columnsElem.value)
-        rows = +(rowsElem.value)
-
-        matrix.init()
-        matrix.rows = rows
-        matrix.columns = columns
-        matrix.array = createMatrixArray(rows, columns)
-        matrix.borders = createMatrixBordersObject(rows, columns)
-        matrix.selection = createMatrixSelectionArray(rows, columns)
-        //console.log(matrix.array)
-        //console.log(matrix.borders)
+        let columnsElem = document.getElementById("create-matrix-panel-columns-amount")
+        let rowsElem = document.getElementById("create-matrix-panel-rows-amount")
+        let columns = +(columnsElem.value)
+        let rows = +(rowsElem.value)
+        setMatrix(columns, rows)
         matrix.draw()
-        canvasActivate()
     }
+
+    buttonClassic.onclick = createClassicBoard
 }
 
 let canvasActivate = function() {
@@ -210,14 +296,14 @@ let canvasActivate = function() {
         let padding = matrix.padding
         let indexes = [0, 0]
 
-        for (let xIndex = 0; xIndex < columns; xIndex++) {
+        for (let xIndex = 0; xIndex < matrix.columns; xIndex++) {
             if (x <= padding + cellSize * (xIndex + 1)) {
                 indexes[0] = xIndex
                 break
             }
         }
 
-        for (let yIndex = 0; yIndex < rows; yIndex++) {
+        for (let yIndex = 0; yIndex < matrix.rows; yIndex++) {
             if (y <= padding + cellSize * (yIndex + 1)) {
                 indexes[1] = yIndex
                 break
@@ -328,6 +414,62 @@ let bordersPanelActivate = function() {
     }
 }
 
-createMatrixPanelActivate()
-selectionPanelActivate()
-bordersPanelActivate()
+let getNumberType = function() {
+    let numType = document.querySelector('*[name="num-type"]:checked').value
+    let numTypeIndex = 0
+    if (numType == 'usual-number') {
+        numTypeIndex = 1
+    } else if (numType == 'pair') {
+        numTypeIndex = 2
+    }
+    return numTypeIndex
+}
+
+let numberClick = function(number) {
+    let numberType = getNumberType()
+    for (let y in matrix.selection) {
+        for (let x in matrix.selection[y]) {
+            if (matrix.selection[y][x] == true) {
+                matrix.numberTypes[y][x] = numberType
+                if (number == 0) {
+                    matrix.values[y][x] = ''
+                    continue
+                }
+                if (numberType == 1) {
+                    matrix.values[y][x] = number
+                } else if (numberType == 2) {
+                    let currentValue = matrix.values[y][x]
+                    let currentValueLenght = String(currentValue).length
+                    if (currentValueLenght == 2) {
+                        matrix.values[y][x] = String(number)
+                    } else {
+                        matrix.values[y][x] = currentValue + '' + String(number)
+                    }
+                }
+            }
+        }
+    }
+}
+
+let numbersPanelActivate = function() {
+    let numButtons = document.querySelectorAll("#numpad .num")
+    
+    for (let numButton of numButtons) {
+        numButton.onclick = function() {
+            let num = +(numButton.innerHTML)
+            numberClick(num)
+            matrix.draw()
+        }
+    }
+}
+
+let oneSecond = setTimeout(function() {
+    
+}, 2200)
+
+createClassicBoard()
+    canvasActivate()
+    createMatrixPanelActivate()
+    selectionPanelActivate()
+    bordersPanelActivate()
+    numbersPanelActivate()
