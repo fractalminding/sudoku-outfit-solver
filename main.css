@@ -133,3 +133,20 @@ body {
 #num-panel .button {
     background-color: #a6aa70;
 }
+
+#down-info-panel {
+    background-color: #e9e623;
+}
+
+#down-info-panel input {
+    margin: 0px 0px 5px;
+}
+
+#down-info-button {
+    background-color: #a84493;
+}
+
+#down-info-canvas {
+    outline: 1px solid rgb(231, 28, 123);
+    width: 300;
+}

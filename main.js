@@ -127,9 +127,11 @@ let matrix = {
                         let xCoord = coords[0] + 13
                         let yCoord = coords[1] + 40
                         context.font = "40px Roboto-Light"
+                        //context.font = "40px Courier New"
 
                         if (matrix.numberTypes[y][x] == 2) {
                             context.font = "18px Roboto-Light"
+                            //context.font = "18px Courier New"
                             xCoord = coords[0] + 13
                             yCoord = coords[1] + 44
                         }
@@ -463,13 +465,64 @@ let numbersPanelActivate = function() {
     }
 }
 
-let oneSecond = setTimeout(function() {
-    
-}, 2200)
+let downInfoActivate = function() {
+    let downInfoCanvas = document.getElementById("down-info-canvas")
+    let DICcontext = downInfoCanvas.getContext("2d")
 
-createClassicBoard()
+    let downInfoPrice = document.getElementById("down-info-price")
+    let downInfoLink = document.getElementById("down-info-link")
+    let downInfoButton = document.getElementById("down-info-button")
+
+    let canvas = matrix.elem
+    let context = canvas.getContext("2d")
+
+    downInfoCanvas.height = 100
+    downInfoCanvas.width = 1000
+
+    downInfoButton.onclick = function() {
+        downInfoCanvas.height = 100
+        downInfoCanvas.width = 1000
+        let price = downInfoPrice.value
+        let link = downInfoLink.value
+
+        let writeToDownInfoCanvas = function() {
+            DICcontext.font = "60px Courier New"
+            DICcontext.fillText(price, 20, 75)
+
+            DICcontext.font = "40px Courier New"
+            DICcontext.fillText(link, 450, 80)
+        }
+        let copyDICtoCanvas = function() {
+            let copyCanvas = canvas.cloneNode(true)
+            copyCanvas.id = "copy-canvas"
+            copyCanvas.width = canvas.width
+            copyCanvas.height = canvas.height
+            let copyCanvasContext = copyCanvas.getContext("2d")
+            copyCanvasContext.drawImage(canvas, 0, 0)
+
+            let newInfoWidth = canvas.width
+            let newInfoHeight = Math.round(newInfoWidth / 10)
+            let canvasHeight = canvas.height
+            canvas.height = canvasHeight + newInfoHeight
+
+            context.drawImage(copyCanvas, 0, 0)
+            context.drawImage(downInfoCanvas, 0, canvasHeight, newInfoWidth, newInfoHeight)
+            
+            copyCanvas.remove()
+        }
+
+        writeToDownInfoCanvas()
+        copyDICtoCanvas()
+    }
+}
+
+let oneSecond = setTimeout(function() {
+    createClassicBoard()
     canvasActivate()
     createMatrixPanelActivate()
     selectionPanelActivate()
     bordersPanelActivate()
     numbersPanelActivate()
+    downInfoActivate()
+}, 300)
+
