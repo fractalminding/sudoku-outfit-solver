@@ -4,9 +4,10 @@ let matrix = {
         this.rows = 0
         this.columns = 0
         this.elem = document.getElementById("board-canvas")
+        this.color = "#000000"
 
         let canvas = this.elem
-        this.cellSize = 50
+        this.cellSize = 100
         this.padding = 5
 
         canvas.height = 0
@@ -58,6 +59,7 @@ let matrix = {
     
                     context.moveTo(startX, startY)
                     context.lineTo(finishX, finishY)
+                    context.strokeStyle = matrix.color
                     context.stroke()
                 }
             }
@@ -84,6 +86,7 @@ let matrix = {
 
                     context.moveTo(startX, startY)
                     context.lineTo(finishX, finishY)
+                    context.strokeStyle = matrix.color
                     context.stroke()
                 }
             }
@@ -124,18 +127,18 @@ let matrix = {
                     } else {
                         let value = matrix.values[y][x]
                         let coords = getCoordsByIndexes(x, y)
-                        let xCoord = coords[0] + 13
-                        let yCoord = coords[1] + 40
-                        context.font = "40px Roboto-Light"
+                        let xCoord = coords[0] + 28
+                        let yCoord = coords[1] + 80
+                        context.font = "80px Roboto-Light"
                         //context.font = "40px Courier New"
 
                         if (matrix.numberTypes[y][x] == 2) {
-                            context.font = "18px Roboto-Light"
+                            context.font = "36px Roboto-Light"
                             //context.font = "18px Courier New"
-                            xCoord = coords[0] + 13
-                            yCoord = coords[1] + 44
+                            xCoord = coords[0] + 28
+                            yCoord = coords[1] + 88
                         }
-                        
+                        context.fillStyle = matrix.color;
                         context.fillText(value, xCoord, yCoord)
                     }
                 }
@@ -335,8 +338,21 @@ let canvasActivate = function() {
     canvas.style.display = "block"
 
     canvas.onclick = function(event) {
-        let x = event.offsetX
-        let y = event.offsetY
+        let xClient = event.offsetX
+        let yClient = event.offsetY
+        let clientWidth = canvas.clientWidth
+        let clientHeight = canvas.clientHeight
+        let x = 0, y = 0
+        if (xClient != 0) {
+            x = Math.round(canvas.width * xClient / clientWidth)
+        }
+        if (yClient != 0) {
+            
+            y = Math.round(canvas.height * yClient / clientHeight)
+            console.log(x)
+        }
+        
+
         if (isCanvasEdge(x, y)) {
             return false
         }
@@ -487,6 +503,7 @@ let downInfoActivate = function() {
 
         let writeToDownInfoCanvas = function() {
             DICcontext.font = "60px Courier New"
+            DICcontext.fillStyle = matrix.color
             DICcontext.fillText(price, 20, 75)
 
             DICcontext.font = "40px Courier New"
@@ -516,6 +533,15 @@ let downInfoActivate = function() {
     }
 }
 
+let designPanelActivate = function() {
+    let randomDesignButton = document.getElementById("random-design-button")
+    randomDesignButton.onclick = function() {
+        let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
+        matrix.color = randomColor
+        matrix.draw()
+    }
+}
+
 let oneSecond = setTimeout(function() {
     createClassicBoard()
     canvasActivate()
@@ -524,5 +550,6 @@ let oneSecond = setTimeout(function() {
     bordersPanelActivate()
     numbersPanelActivate()
     downInfoActivate()
+    designPanelActivate()
 }, 300)
 
