@@ -145,8 +145,69 @@ let matrix = {
             }
         }
 
+        let drawTwins = function() {
+            let canvas = matrix.elem
+            let context = canvas.getContext("2d")
+            //let startX, startY, finishX, finishY
+
+            let drawTwin = function(startX, startY, finishX, finishY) {
+                context.moveTo(startX, startY)
+                context.lineTo(finishX, finishY)
+                context.strokeStyle = matrix.color
+                context.stroke()
+            }
+            for (let y in matrix.twins) {
+                for (let x in matrix.twins[y]) {
+                    x = +x, y = +y
+                    let type = matrix.twins[y][x]
+                    context.lineWidth = 2
+                    let coords = getCoordsByIndexes(x + 1, y + 1)
+                    let delta = matrix.cellSize / 5
+
+                    if (type == 0) {
+                        continue
+                    } else if (type == 1) {
+                        let startX = coords[0] - delta
+                        let startY = coords[1] + delta
+                        let finishX = coords[0] + delta
+                        let finishY = coords[1] - delta
+
+                        drawTwin(startX, startY, finishX, finishY)
+                    } else if (type == 2) {
+                        let startX = coords[0] - delta
+                        let startY = coords[1] - delta
+                        let finishX = coords[0] + delta
+                        let finishY = coords[1] + delta
+
+                        drawTwin(startX, startY, finishX, finishY)
+                    } else if (type == 3) {
+                        {
+                            let startX = coords[0] - delta
+                            let startY = coords[1] + delta
+                            let finishX = coords[0] + delta
+                            let finishY = coords[1] - delta
+
+                            drawTwin(startX, startY, finishX, finishY)
+                        }
+                        {
+                            let startX = coords[0] - delta
+                            let startY = coords[1] - delta
+                            let finishX = coords[0] + delta
+                            let finishY = coords[1] + delta
+
+                            drawTwin(startX, startY, finishX, finishY)
+                        }
+                        
+                    }
+
+                    
+                }
+            }
+        }
+
         drawLines()
         drawValues()
+        drawTwins()
         drawSelection()
     }
 }
@@ -257,6 +318,18 @@ let setClassicBorders = function() {
     
 }
 
+let createMatrixTwinsArray = function(rows, columns) {
+    let array = []
+    for (let y = 0; y < rows - 1; y++) {
+        let rowArray = []
+        for (let x = 0; x < columns - 1; x++) {
+            rowArray.push(0)
+        }
+        array.push(rowArray)
+    }
+    return array
+}
+
 let setMatrix = function(columns, rows) {
     matrix.init()
     matrix.rows = rows
@@ -265,6 +338,7 @@ let setMatrix = function(columns, rows) {
     matrix.selection = createMatrixSelectionArray(rows, columns)
     matrix.values = createMatrixValuesArray(rows, columns)
     matrix.numberTypes = createMatrixNumberTypesArray(rows, columns)
+    matrix.twins = createMatrixTwinsArray(rows, columns)
 }
 
 let createClassicBoard = function() {
@@ -349,7 +423,7 @@ let canvasActivate = function() {
         if (yClient != 0) {
             
             y = Math.round(canvas.height * yClient / clientHeight)
-            console.log(x)
+            //console.log(x)
         }
         
 
@@ -542,14 +616,81 @@ let designPanelActivate = function() {
     }
 }
 
-let oneSecond = setTimeout(function() {
-    createClassicBoard()
-    canvasActivate()
-    createMatrixPanelActivate()
-    selectionPanelActivate()
-    bordersPanelActivate()
-    numbersPanelActivate()
-    downInfoActivate()
-    designPanelActivate()
-}, 300)
+let twinsPanelActivate = function() {
+    let twinsHidden = document.getElementById("twins-hidden")
+    let twinsSlash = document.getElementById("twins-slash")
+    let twinsUnderslash = document.getElementById("twins-underslash")
+    let twinsX = document.getElementById("twins-x")
+
+    let setTwins = function(type) {
+        let getDirection = function() {
+            let direction = document.querySelector('*[name="twins-position"]:checked').value
+            return direction
+        }
+        let direction = getDirection()
+
+        let applyTwins = function(x, y) {
+            
+            if (direction == 'up-left') {
+                if (x == 0 || y == 0) {
+                    return
+                } else {
+                    matrix.twins[y - 1][x - 1] = type
+                }
+            } else if (direction == 'up-right') {
+                if (x == matrix.columns - 1 || y == 0) {
+                    return
+                } else {
+                    matrix.twins[y - 1][x] = type
+                }
+            } else if (direction == 'down-left') {
+                if (x == 0 || y == matrix.rows - 1) {
+                    return
+                } else {
+                    matrix.twins[y][x - 1] = type
+                }
+            } else if (direction == 'down-right') {
+                if (x == matrix.columns - 1 || y == matrix.rows - 1) {
+                    return
+                } else {
+                    matrix.twins[y][x] = type
+                }
+            }
+        }
+
+        for (let y in matrix.selection) {
+            for (let x in matrix.selection[y]) {
+                if (matrix.selection[y][x] == true) {
+                    applyTwins(+x, +y)
+                }
+            }
+        }
+        matrix.draw()
+        //console.log(matrix.twins)
+    }
+
+    twinsHidden.onclick = function() {
+        setTwins(0)
+    }
+    twinsSlash.onclick = function() {
+        setTwins(1)
+    }
+    twinsUnderslash.onclick = function() {
+        setTwins(2)
+    }
+    twinsX.onclick = function() {
+        setTwins(3)
+    }
+}
+
+createClassicBoard()
+canvasActivate()
+createMatrixPanelActivate()
+selectionPanelActivate()
+bordersPanelActivate()
+numbersPanelActivate()
+downInfoActivate()
+designPanelActivate()
+twinsPanelActivate()
+
 
