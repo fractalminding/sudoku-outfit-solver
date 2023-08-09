@@ -124,14 +124,14 @@ let matrix = {
 
             for (let y in matrix.values) {
                 for (let x in matrix.values[y]) {
-                    console.log(matrix.values[y][x], matrix.numberTypes[y][x])
+                    //console.log(matrix.values[y][x], matrix.numberTypes[y][x])
                     if (matrix.values[y][x].length == 0 
                         || matrix.numberTypes[y][x] == 0
                     ) {
                         continue
                     } else {
                         let value = matrix.values[y][x]
-                        console.log("here")
+                        //console.log("here")
                         let coords = getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + 28
                         let yCoord = coords[1] + 80
@@ -809,6 +809,14 @@ let generationPanelActivate = function() {
     }
 }
 
+let keyboardEventsActivate = function() {
+    document.body.onkeyup = function(event) {
+        let key = event.key
+        let elem = document.querySelector(`#numpad *[key="${key}"]`)
+        elem.click()
+    }
+}
+
 createClassicBoard()
 canvasActivate()
 createMatrixPanelActivate()
@@ -820,3 +828,4 @@ designPanelActivate()
 twinsPanelActivate()
 crossPanelActivate()
 generationPanelActivate()
+keyboardEventsActivate()
