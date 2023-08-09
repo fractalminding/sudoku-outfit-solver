@@ -46,9 +46,11 @@ let matrix = {
                     if (borderValue == 0) {
                         continue
                     } else if (borderValue == 1) {
-                        context.lineWidth = 2
+                        let lineThickness = matrix.thinLineThickness
+                        context.lineWidth = lineThickness
                     } else if (borderValue == 2) {
-                        context.lineWidth = 4
+                        let lineThickness = matrix.fatLineThickness
+                        context.lineWidth = lineThickness
                     }
                     //console.log ('here')
                     let startX = 0 + padding + x * cellSize
@@ -74,9 +76,11 @@ let matrix = {
                     if (borderValue == 0) {
                         continue
                     } else if (borderValue == 1) {
-                        context.lineWidth = 2
+                        let lineThickness = matrix.thinLineThickness
+                        context.lineWidth = lineThickness
                     } else if(borderValue == 2) {
-                        context.lineWidth = 4
+                        let lineThickness = matrix.fatLineThickness
+                        context.lineWidth = lineThickness
                     }
 
                     let startX = 0 + padding + x * cellSize
@@ -120,12 +124,14 @@ let matrix = {
 
             for (let y in matrix.values) {
                 for (let x in matrix.values[y]) {
+                    console.log(matrix.values[y][x], matrix.numberTypes[y][x])
                     if (matrix.values[y][x].length == 0 
                         || matrix.numberTypes[y][x] == 0
                     ) {
                         continue
                     } else {
                         let value = matrix.values[y][x]
+                        console.log("here")
                         let coords = getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + 28
                         let yCoord = coords[1] + 80
@@ -145,12 +151,24 @@ let matrix = {
             }
         }
 
+        let drawFakeText = function() {
+            let canvas = matrix.elem
+            let context = canvas.getContext("2d")
+            context.font = "80px Roboto-Light"
+            context.fillStyle = matrix.color;
+            context.fillText("123jh1j2h31k2j3h", 10, 10)
+            canvas.width = canvas.width
+        }
+
         let drawTwins = function() {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
             //let startX, startY, finishX, finishY
 
             let drawTwin = function(startX, startY, finishX, finishY) {
+                context.beginPath()
+                context.setLineDash([])
+                context.lineWidth = matrix.fatLineThickness
                 context.moveTo(startX, startY)
                 context.lineTo(finishX, finishY)
                 context.strokeStyle = matrix.color
@@ -160,7 +178,6 @@ let matrix = {
                 for (let x in matrix.twins[y]) {
                     x = +x, y = +y
                     let type = matrix.twins[y][x]
-                    context.lineWidth = 2
                     let coords = getCoordsByIndexes(x + 1, y + 1)
                     let delta = matrix.cellSize / 5
 
@@ -205,7 +222,61 @@ let matrix = {
             }
         }
 
+        let drawCross = function() {
+            let canvas = matrix.elem
+            let context = canvas.getContext("2d")
+            let padding = matrix.padding
+
+            let drawCrossLine = function(startX, startY, finishX, finishY) {
+                context.beginPath()
+                context.setLineDash([2, 5])
+                context.moveTo(startX, startY)
+                context.lineTo(finishX, finishY)
+                context.strokeStyle = matrix.color
+                context.lineWidth = matrix.thinLineThickness
+                context.stroke()
+            }
+
+            let type = matrix.cross
+            if (type == 0) {
+                return
+            } else if (type == 1) {
+                let startX = 0 + padding
+                let startY = canvas.height - padding
+                let finishX = canvas.width - padding
+                let finishY = 0 + padding
+
+                drawCrossLine(startX, startY, finishX, finishY)
+            } else if (type == 2) {
+                let startX = 0 + padding
+                let startY = 0 + padding
+                let finishX = canvas.width - padding
+                let finishY = canvas.height - padding
+
+                drawCrossLine(startX, startY, finishX, finishY)
+            } else if (type == 3) {
+                {
+                    let startX = 0 + padding
+                    let startY = canvas.height - padding
+                    let finishX = canvas.width - padding
+                    let finishY = 0 + padding
+
+                    drawCrossLine(startX, startY, finishX, finishY)
+                }
+                {
+                    let startX = 0 + padding
+                    let startY = 0 + padding
+                    let finishX = canvas.width - padding
+                    let finishY = canvas.height - padding
+
+                    drawCrossLine(startX, startY, finishX, finishY)
+                }
+            }
+        }
+
+        drawFakeText()
         drawLines()
+        drawCross()
         drawValues()
         drawTwins()
         drawSelection()
@@ -339,6 +410,9 @@ let setMatrix = function(columns, rows) {
     matrix.values = createMatrixValuesArray(rows, columns)
     matrix.numberTypes = createMatrixNumberTypesArray(rows, columns)
     matrix.twins = createMatrixTwinsArray(rows, columns)
+    matrix.cross = 0
+    matrix.thinLineThickness = 2
+    matrix.fatLineThickness = 4
 }
 
 let createClassicBoard = function() {
@@ -609,11 +683,22 @@ let downInfoActivate = function() {
 
 let designPanelActivate = function() {
     let randomDesignButton = document.getElementById("random-design-button")
+    let applyButton = document.getElementById("apply-thickness-settings")
+
     randomDesignButton.onclick = function() {
         let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
         matrix.color = randomColor
         matrix.draw()
     }
+
+    applyButton.onclick = function() {
+        let thinLineThickness = +(document.getElementById("thin-line-thickness").value)
+        let fatLineThickness = +(document.getElementById("fat-line-thickness").value)
+        matrix.thinLineThickness = thinLineThickness
+        matrix.fatLineThickness = fatLineThickness
+        matrix.draw()
+    }
+
 }
 
 let twinsPanelActivate = function() {
@@ -683,6 +768,47 @@ let twinsPanelActivate = function() {
     }
 }
 
+let crossPanelActivate = function() {
+    
+    let buttons = document.querySelectorAll("#cross-panel .button")
+    for (let button of buttons) {
+        button.onclick = function() {
+            let type = 0
+            if (button.id == "cross-slash") {
+                type = 1
+            } else if (button.id == "cross-backslash") {
+                type = 2
+            } else if(button.id == "cross-double") {
+                type = 3
+            }
+            matrix.cross = type
+            matrix.draw()
+            
+        }
+    }
+}
+
+let generationPanelActivate = function() {
+    let button = document.getElementById("generation-button")
+    button.onclick = function() {
+        let genType = document.querySelector('*[name="generation-type"]:checked').value
+        if (genType == 'from-zero') {
+            if (matrix.rows == matrix.columns) {
+                let newValues = ultraGen.get(matrix.rows)
+                matrix.values = newValues
+                for (let y in matrix.numberTypes) {
+                    for (let x in matrix.numberTypes[y]) {
+                        matrix.numberTypes[y][x] = 1
+                    }
+                }
+                matrix.draw()
+            }
+        } else if (genType == 'from-pattern') {
+            
+        }
+    }
+}
+
 createClassicBoard()
 canvasActivate()
 createMatrixPanelActivate()
@@ -692,5 +818,5 @@ numbersPanelActivate()
 downInfoActivate()
 designPanelActivate()
 twinsPanelActivate()
-
-
+crossPanelActivate()
+generationPanelActivate()

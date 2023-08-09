@@ -49,7 +49,7 @@ body {
 #board {
     display: inline-block;
     //outline: 2px dotted #23cb1b;
-    width: 50%;
+    width: 500px;
     //height: 70%;
 }
 
@@ -156,6 +156,14 @@ body {
     background-color: #34fafa;
 }
 
+#design-panel input {
+    width: 60px;
+}
+
+#apply-thickness-settings {
+    background-color: #949e70;
+}
+
 #random-design-button {
     background-color: #b13535;
 }
@@ -166,4 +174,20 @@ body {
 
 #twins-panel .button {
     background-color: #6dc1cc;
+}
+
+#cross-panel {
+    background-color: #57a125;
+}
+
+#cross-panel .button {
+    background-color: #5680cc;
+}
+
+#generation-panel {
+    background-color: #6e7007;
+}
+
+#generation-panel .button {
+    background-color: #0b2c68;
 }

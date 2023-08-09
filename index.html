@@ -8,6 +8,7 @@
                 initial-scale=1"
         >
         <link rel="stylesheet" href="main.css">
+        <script src="ultra-gen.js"></script>
         
     </head>
     <body>
@@ -117,7 +118,22 @@
                     </div>
                 </div>
                 <div id="design-panel" class="panel">
-                    <div id="random-design-button" class="button">Случайный дизайн</div>
+                    <div>
+                        <div>
+                            Толщина тонкой линии
+                            <input id="thin-line-thickness" type="number" value="2">
+                        </div>
+                        <div>
+                            Толщина толстой линии
+                            <input id="fat-line-thickness" type="number" value="4">
+                        </div>
+                        <div>
+                            <div id="apply-thickness-settings" class="button">ok</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div id="random-design-button" class="button">Случайный цвет</div>
+                    </div>
                 </div>
             </div>
             <div id="controls-2">
@@ -152,6 +168,27 @@
                         </div>
                         <div>
                             <div id="twins-x" class="button">X</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="cross-panel" class="panel">
+                    <div id="cross-hidden" class="button">O</div>
+                    <div id="cross-slash" class="button">/</div>
+                    <div id="cross-backslash" class="button">\</div>
+                    <div id="cross-double" class="button">X</div>
+                </div>
+                <div id="generation-panel" class="panel">
+                    <div class="inline-block">
+                        <div>
+                            <input type="radio" id="generation-type-1" checked name="generation-type" value="from-zero" />
+                            <label for="generation-type-1">С нуля</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="generation-type-2" name="generation-type" value="from-pattern" />
+                            <label for="generation-type-2">С образца</label>
+                        </div>
+                        <div>
+                            <div id="generation-button" class="button">Генерировать</div>
                         </div>
                     </div>
                 </div>
