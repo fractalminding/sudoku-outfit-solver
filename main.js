@@ -125,7 +125,7 @@ let matrix = {
             for (let y in matrix.values) {
                 for (let x in matrix.values[y]) {
                     //console.log(matrix.values[y][x], matrix.numberTypes[y][x])
-                    if (matrix.values[y][x].length == 0 
+                    if (matrix.values[y][x] == 0 
                         || matrix.numberTypes[y][x] == 0
                     ) {
                         continue
@@ -324,7 +324,7 @@ let createMatrixValuesArray = function(rows, columns) {
     for (let y = 0; y < rows; y++) {
         let rowArray = []
         for (let x = 0; x < columns; x++) {
-            rowArray.push('')
+            rowArray.push(0)
         }
         array.push(rowArray)
     }
@@ -413,6 +413,8 @@ let setMatrix = function(columns, rows) {
     matrix.cross = 0
     matrix.thinLineThickness = 2
     matrix.fatLineThickness = 4
+    matrix.genArray = []
+    matrix.isCtrlPressed = false
 }
 
 let createClassicBoard = function() {
@@ -443,7 +445,7 @@ let createMatrixPanelActivate = function() {
 }
 
 let canvasActivate = function() {
-    
+
     let getIndexesByCoords = function(x, y) {
         let cellSize = matrix.cellSize
         let padding = matrix.padding
@@ -506,6 +508,15 @@ let canvasActivate = function() {
         }
         let indexes = getIndexesByCoords(x, y)
         let value = matrix.selection[indexes[1]][indexes[0]]
+        //console.log(matrix.isCtrlPressed)
+        if (matrix.isCtrlPressed == false) {
+            for (let y in matrix.selection) {
+                for (let x in matrix.selection[y]) {
+                    matrix.selection[y][x] = false
+                }
+            }
+            //console.log(matrix.selection)
+        }
         matrix.selection[indexes[1]][indexes[0]] = !value
         matrix.draw()
     }
@@ -795,16 +806,44 @@ let generationPanelActivate = function() {
         if (genType == 'from-zero') {
             if (matrix.rows == matrix.columns) {
                 let newValues = ultraGen.get(matrix.rows)
+                for (;;) {
+                    if (newValues == undefined) {
+                        newValues = ultraGen.get(matrix.rows)
+                    } else {
+                        break
+                    }
+                }
                 matrix.values = newValues
                 for (let y in matrix.numberTypes) {
                     for (let x in matrix.numberTypes[y]) {
                         matrix.numberTypes[y][x] = 1
                     }
                 }
+                //console.log(matrix.values)
                 matrix.draw()
             }
         } else if (genType == 'from-pattern') {
+            let valuesCopy = JSON.parse(JSON.stringify(matrix.values))
             
+            values = ultraGen.fillCandidates(valuesCopy, matrix.rows, true)
+            matrix.genArray = []
+            ultraGen.getFromPattern(values, matrix.rows, matrix.genArray, 1)
+            //console.log(ultraGen.toNormalArray(array))
+            //console.log(matrix.genArray)
+            if (matrix.genArray.length == 0) {
+                console.log('0 решений')
+            }
+            // let max = matrix.genArray.length - 1
+            // let randomIndex = Math.floor(Math.random() * max) + 0
+            matrix.values = matrix.genArray[0]
+
+            for (let y in matrix.numberTypes) {
+                for (let x in matrix.numberTypes[y]) {
+                    matrix.numberTypes[y][x] = 1
+                }
+            }
+
+            matrix.draw()
         }
     }
 }
@@ -812,8 +851,22 @@ let generationPanelActivate = function() {
 let keyboardEventsActivate = function() {
     document.body.onkeyup = function(event) {
         let key = event.key
+        
+        if(key == "Control") {
+            matrix.isCtrlPressed = false
+        }
+        
         let elem = document.querySelector(`#numpad *[key="${key}"]`)
-        elem.click()
+        if (elem) {
+            elem.click()
+        }
+    }
+
+    document.body.onkeydown = function(event) {
+        let key = event.key
+        if(key == "Control") {
+            matrix.isCtrlPressed = true
+        }
     }
 }
 
