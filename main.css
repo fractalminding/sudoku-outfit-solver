@@ -192,3 +192,23 @@ body {
 #generation-panel .button {
     background-color: #0b2c68;
 }
+
+#solvings-panel {
+    background-color: #f3a8a8;
+}
+
+.solvings-info-gray {
+    background-color: #515253;
+}
+
+.solvings-info-red {
+    background-color: #e03c65;
+}
+
+.solvings-info-green {
+    background-color: #44d14b;
+}
+
+#check-solvings-amount {
+    background-color: #af0ca2;
+}

@@ -850,48 +850,35 @@ let generationPanelActivate = function() {
     let button = document.getElementById("generation-button")
     button.onclick = function() {
         let genType = document.querySelector('*[name="generation-type"]:checked').value
-        if (genType == 'from-zero') {
-            if (matrix.rows == matrix.columns) {
-                let newValues = ultraGen.get(matrix.rows)
-                for (;;) {
-                    if (newValues == undefined) {
-                        newValues = ultraGen.get(matrix.rows)
-                    } else {
-                        break
-                    }
-                }
-                matrix.values = newValues
-                for (let y in matrix.numberTypes) {
-                    for (let x in matrix.numberTypes[y]) {
-                        matrix.numberTypes[y][x] = 1
-                    }
-                }
-                //console.log(matrix.values)
-                matrix.draw()
-            }
-        } else if (genType == 'from-pattern') {
-            let valuesCopy = JSON.parse(JSON.stringify(matrix.values))
-            
-            values = ultraGen.fillCandidates(valuesCopy, matrix.rows, true)
-            matrix.genArray = []
-            ultraGen.getFromPattern(values, matrix.rows, matrix.genArray, 1)
-            //console.log(ultraGen.toNormalArray(array))
-            //console.log(matrix.genArray)
-            if (matrix.genArray.length == 0) {
-                console.log('0 решений')
-            }
-            // let max = matrix.genArray.length - 1
-            // let randomIndex = Math.floor(Math.random() * max) + 0
-            matrix.values = matrix.genArray[0]
-
-            for (let y in matrix.numberTypes) {
-                for (let x in matrix.numberTypes[y]) {
-                    matrix.numberTypes[y][x] = 1
+        if (genType == "from-zero") {
+            for (let y in matrix.values) {
+                for (let x in matrix.values[y]) {
+                    matrix.values[y][x] = 0
                 }
             }
-
-            matrix.draw()
         }
+
+        let valuesCopy = JSON.parse(JSON.stringify(matrix.values))
+        
+        values = ultraGen.fillCandidates(valuesCopy, matrix.rows, true)
+        matrix.genArray = []
+        ultraGen.getFromPattern(values, matrix.rows, matrix.genArray, 1)
+        //console.log(ultraGen.toNormalArray(array))
+        //console.log(matrix.genArray)
+        if (matrix.genArray.length == 0) {
+            console.log('0 решений')
+        }
+        // let max = matrix.genArray.length - 1
+        // let randomIndex = Math.floor(Math.random() * max) + 0
+        matrix.values = matrix.genArray[0]
+
+        for (let y in matrix.numberTypes) {
+            for (let x in matrix.numberTypes[y]) {
+                matrix.numberTypes[y][x] = 1
+            }
+        }
+
+        matrix.draw()
     }
 }
 
@@ -959,6 +946,42 @@ let mouseEventsActivate = function() {
     }
 }
 
+let solvingsPanelActivate = function() {
+    let button = document.getElementById("check-solvings-amount")
+    let info = document.getElementById("solvings-info")
+
+    button.onclick = function() {
+        let valuesCopy = JSON.parse(JSON.stringify(matrix.values))
+            
+        values = ultraGen.fillCandidates(valuesCopy, matrix.rows, false)
+        matrix.genArray = []
+        ultraGen.getFromPattern(values, matrix.rows, matrix.genArray, 2)
+
+        if (matrix.genArray.length == 0) {
+            info.classList.remove("solvings-info-gray")
+            info.classList.remove("solvings-info-green")
+            info.classList.remove("solvings-info-red")
+
+            info.classList.add("solvings-info-red")
+            info.innerHTML = "0"
+        } else if (matrix.genArray.length == 1) {
+            info.classList.remove("solvings-info-gray")
+            info.classList.remove("solvings-info-green")
+            info.classList.remove("solvings-info-red")
+
+            info.classList.add("solvings-info-green")
+            info.innerHTML = "1"
+        } else if (matrix.genArray.length > 1) {
+            info.classList.remove("solvings-info-gray")
+            info.classList.remove("solvings-info-green")
+            info.classList.remove("solvings-info-red")
+
+            info.classList.add("solvings-info-red")
+            info.innerHTML = ">1"
+        }
+    }
+}
+
 createClassicBoard()
 canvasActivate()
 createMatrixPanelActivate()
@@ -972,3 +995,4 @@ crossPanelActivate()
 generationPanelActivate()
 keyboardEventsActivate()
 mouseEventsActivate()
+solvingsPanelActivate()
