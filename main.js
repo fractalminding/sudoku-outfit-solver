@@ -912,8 +912,20 @@ let keyboardEventsActivate = function() {
 
     document.body.onkeydown = function(event) {
         let key = event.key
-        if(key == "Control") {
+        if (key == "Control") {
             matrix.isCtrlPressed = true
+        }
+
+        if (key == "Delete" || key == "Backspace") {
+            numberClick(0)
+            matrix.draw()
+        }
+
+        if (key == "a") {
+            if (matrix.isCtrlPressed == true) {
+                let selectAll = document.getElementById("select-all")
+                selectAll.click()
+            }
         }
 
         if (key == "ArrowRight" || key == "ArrowLeft" || key == "ArrowUp" || key == "ArrowDown") {

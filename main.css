@@ -12,6 +12,7 @@ body {
     font-family: Roboto-Light;
     margin: 0px;
     width: 100%;
+    user-select: none;
 }
 
 .button {
