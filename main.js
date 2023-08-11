@@ -934,6 +934,19 @@ let keyboardEventsActivate = function() {
     }
 }
 
+let mouseEventsActivate = function() {
+    document.body.onclick = function(event) {
+        if (event.target.id == "container") {
+            for (let y in matrix.selection) {
+                for (let x in matrix.selection[y]) {
+                    matrix.selection[y][x] = false
+                    matrix.draw()
+                }
+            }
+        }
+    }
+}
+
 createClassicBoard()
 canvasActivate()
 createMatrixPanelActivate()
@@ -946,3 +959,4 @@ twinsPanelActivate()
 crossPanelActivate()
 generationPanelActivate()
 keyboardEventsActivate()
+mouseEventsActivate()
