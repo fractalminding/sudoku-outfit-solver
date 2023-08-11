@@ -13,6 +13,53 @@ let matrix = {
         canvas.height = 0
         canvas.width = 0
     },
+    moveSelection(key) {
+        let x = 0, y = 0
+        let targetX = 0, targetY = 0
+        loop: for (y in matrix.selection) {
+            for (x in matrix.selection[y]) {
+                if (matrix.selection[y][x] == true) {
+                    x = +x
+                    y = +y
+                    break loop
+                }
+            }
+        }
+        if (key == "ArrowUp") {
+            if (y != 0) {
+                targetX = x
+                targetY = y - 1
+            } else {
+                return
+            }
+        } else if (key == "ArrowDown") {
+            if (y != matrix.rows - 1) {
+                targetX = x
+                targetY = y + 1
+            } else {
+                return
+            }
+        } else if (key == "ArrowLeft") {
+            //console.log(x, y)
+            if (x != 0) {
+                targetX = x - 1 
+                targetY = y
+            } else {
+                return
+            }
+        } else if (key == "ArrowRight") {
+            if (x != matrix.columns - 1) {
+                targetX = x + 1 
+                targetY = y
+            } else {
+                return
+            }
+        }
+
+        matrix.selection[y][x] = false
+        matrix.selection[targetY][targetX] = true
+        matrix.draw()
+    },
     draw() {
         let canvas = this.elem
         let cellSize = matrix.cellSize
@@ -850,8 +897,9 @@ let generationPanelActivate = function() {
 
 let keyboardEventsActivate = function() {
     document.body.onkeyup = function(event) {
-        let key = event.key
         
+        let key = event.key
+
         if(key == "Control") {
             matrix.isCtrlPressed = false
         }
@@ -866,6 +914,22 @@ let keyboardEventsActivate = function() {
         let key = event.key
         if(key == "Control") {
             matrix.isCtrlPressed = true
+        }
+
+        if (key == "ArrowRight" || key == "ArrowLeft" || key == "ArrowUp" || key == "ArrowDown") {
+            let amountOfSelectionCells = 0
+            for (let y in matrix.selection) {
+                for (let x in matrix.selection[y]) {
+                    if (matrix.selection[y][x] == true) {
+                        amountOfSelectionCells++
+                    }
+                }
+            }
+            if (amountOfSelectionCells == 1) {
+                matrix.moveSelection(key)
+                event.preventDefault();
+                //return false
+            }
         }
     }
 }
