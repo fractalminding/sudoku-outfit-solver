@@ -60,6 +60,13 @@ let matrix = {
         matrix.selection[targetY][targetX] = true
         matrix.draw()
     },
+    deSelectAll() {
+        for (let y in this.selection) {
+            for (let x in this.selection[y]) {
+                this.selection[y][x] = false
+            }
+        }
+    },
     draw() {
         let canvas = this.elem
         let cellSize = matrix.cellSize
@@ -557,11 +564,7 @@ let canvasActivate = function() {
         let value = matrix.selection[indexes[1]][indexes[0]]
         //console.log(matrix.isCtrlPressed)
         if (matrix.isCtrlPressed == false) {
-            for (let y in matrix.selection) {
-                for (let x in matrix.selection[y]) {
-                    matrix.selection[y][x] = false
-                }
-            }
+            matrix.deSelectAll()
             //console.log(matrix.selection)
         }
         matrix.selection[indexes[1]][indexes[0]] = !value
@@ -583,11 +586,7 @@ let selectionPanelActivate = function() {
     }
 
     deSelectAll.onclick = function() {
-        for (let y in matrix.selection) {
-            for (let x in matrix.selection[y]) {
-                matrix.selection[y][x] = false
-            }
-        }
+        matrix.deSelectAll()
         matrix.draw()
     }
 }
@@ -887,10 +886,10 @@ let keyboardEventsActivate = function() {
         
         let key = event.key
 
-        if(key == "Control") {
+        if (key == "Control") {
             matrix.isCtrlPressed = false
         }
-        
+
         let elem = document.querySelector(`#numpad *[key="${key}"]`)
         if (elem) {
             elem.click()
@@ -899,6 +898,14 @@ let keyboardEventsActivate = function() {
 
     document.body.onkeydown = function(event) {
         let key = event.key
+
+        //console.log(key)
+
+        if (key == "Escape") {
+            matrix.deSelectAll()
+            matrix.draw()
+        }
+
         if (key == "Control") {
             matrix.isCtrlPressed = true
         }
@@ -936,12 +943,8 @@ let keyboardEventsActivate = function() {
 let mouseEventsActivate = function() {
     document.body.onclick = function(event) {
         if (event.target.id == "container") {
-            for (let y in matrix.selection) {
-                for (let x in matrix.selection[y]) {
-                    matrix.selection[y][x] = false
-                    matrix.draw()
-                }
-            }
+            matrix.deSelectAll()
+            matrix.draw()
         }
     }
 }
