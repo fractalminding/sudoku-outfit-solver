@@ -67,6 +67,13 @@ let matrix = {
             }
         }
     },
+    selectAll() {
+        for (let y in this.selection) {
+            for (let x in this.selection[y]) {
+                this.selection[y][x] = true
+            }
+        }
+    },
     draw() {
         let canvas = this.elem
         let cellSize = matrix.cellSize
@@ -179,25 +186,23 @@ let matrix = {
             for (let y in matrix.values) {
                 for (let x in matrix.values[y]) {
                     //console.log(matrix.values[y][x], matrix.numberTypes[y][x])
-                    if (matrix.values[y][x] == 0 
-                        || matrix.numberTypes[y][x] == 0
-                    ) {
+                    if (matrix.values[y][x] == 0) {
                         continue
                     } else {
-                        let value = matrix.values[y][x]
-                        //console.log("here")
                         let coords = getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + 28
                         let yCoord = coords[1] + 80
-                        context.font = "80px Roboto-Light"
-                        //context.font = "40px Courier New"
-
-                        if (matrix.numberTypes[y][x] == 2) {
-                            context.font = "36px Roboto-Light"
-                            //context.font = "18px Courier New"
+                        let value = matrix.values[y][x]
+                        if (String(value).length == 1) {
+                            xCoord = coords[0] + 28
+                            yCoord = coords[1] + 80
+                            context.font = "80px Roboto-Light"
+                        } else if (String(value).length == 2) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 88
+                            context.font = "36px Roboto-Light"
                         }
+
                         context.fillStyle = matrix.color;
                         context.fillText(value, xCoord, yCoord)
                     }
@@ -337,6 +342,24 @@ let matrix = {
     }
 }
 
+let controls = {
+    writing: {
+        mode: "insert",
+        insertMode: "number",
+        solvingMode: "number"
+    }
+}
+
+let solving = {
+    visible: true,
+    showHide() {
+        this.visible = !this.visible
+        matrix.draw()
+    },
+    remove() {},
+    apply() {}
+}
+
 /* let createMatrixArray = function(rows, columns) {
     let array = []
     for (let y = 0; y < rows; y++) {
@@ -361,7 +384,19 @@ let createMatrixSelectionArray = function(rows, columns) {
     return array
 }
 
-let createMatrixNumberTypesArray = function(rows, columns) {
+/* let createMatrixNumberTypesArray = function(rows, columns) {
+    let array = []
+    for (let y = 0; y < rows; y++) {
+        let rowArray = []
+        for (let x = 0; x < columns; x++) {
+            rowArray.push(0)
+        }
+        array.push(rowArray)
+    }
+    return array
+} */
+
+let createMatrixValuesArray = function(rows, columns) {
     let array = []
     for (let y = 0; y < rows; y++) {
         let rowArray = []
@@ -373,12 +408,12 @@ let createMatrixNumberTypesArray = function(rows, columns) {
     return array
 }
 
-let createMatrixValuesArray = function(rows, columns) {
+let createMatrixSolvingArray = function(rows, columns) {
     let array = []
     for (let y = 0; y < rows; y++) {
         let rowArray = []
         for (let x = 0; x < columns; x++) {
-            rowArray.push(0)
+            rowArray.push([0,[],[]])
         }
         array.push(rowArray)
     }
@@ -462,7 +497,8 @@ let setMatrix = function(columns, rows) {
     matrix.borders = createMatrixBordersObject(rows, columns)
     matrix.selection = createMatrixSelectionArray(rows, columns)
     matrix.values = createMatrixValuesArray(rows, columns)
-    matrix.numberTypes = createMatrixNumberTypesArray(rows, columns)
+    matrix.solving = createMatrixSolvingArray(rows, columns)
+    //matrix.numberTypes = createMatrixNumberTypesArray(rows, columns)
     matrix.twins = createMatrixTwinsArray(rows, columns)
     matrix.cross = 0
     matrix.thinLineThickness = 2
@@ -577,11 +613,7 @@ let selectionPanelActivate = function() {
     let deSelectAll = document.getElementById("deselect-all")
 
     selectAll.onclick = function() {
-        for (let y in matrix.selection) {
-            for (let x in matrix.selection[y]) {
-                matrix.selection[y][x] = true
-            }
-        }
+        matrix.selectAll()
         matrix.draw()
     }
 
@@ -637,53 +669,142 @@ let bordersPanelActivate = function() {
     }
 }
 
-let getNumberType = function() {
-    let numType = document.querySelector('*[name="num-type"]:checked').value
-    let numTypeIndex = 0
-    if (numType == 'usual-number') {
-        numTypeIndex = 1
-    } else if (numType == 'pair') {
-        numTypeIndex = 2
-    }
-    return numTypeIndex
-}
-
 let numberClick = function(number) {
-    let numberType = getNumberType()
+
+    let press = function(number, x, y) {
+
+        let writeType = controls.writing.mode
+        let insertType = controls.writing.insertMode
+        let solvingType = controls.writing.solvingMode
+
+        if (number == 0) {
+            matrix.values[y][x] = 0
+            matrix.solving[y][x] = [0, [], []]
+        }
+
+        if (writeType == "insert") {
+            if (insertType == "number") {
+                matrix.values[y][x] = number
+                matrix.solving[y][x] = [0, 0, []]
+            } else if (insertType == "pair") {
+                let currentValue = matrix.values[y][x]
+                let currentValueLenght = String(currentValue).length
+                if (currentValueLenght == 0) {
+                    matrix.values[y][x] = String(number)
+                } else if (currentValueLenght == 1){
+                    matrix.values[y][x] = currentValue + '' + String(number)
+                } else if (currentValueLenght == 2) {
+                    matrix.values[y][x] = String(currentValue)[1] + String(number)
+                }
+            }
+        } else if (writeType == "solving") {
+
+        }
+    }
+    
     for (let y in matrix.selection) {
         for (let x in matrix.selection[y]) {
             if (matrix.selection[y][x] == true) {
-                matrix.numberTypes[y][x] = numberType
-                if (number == 0) {
-                    matrix.values[y][x] = ''
-                    continue
-                }
-                if (numberType == 1) {
-                    matrix.values[y][x] = number
-                } else if (numberType == 2) {
-                    let currentValue = matrix.values[y][x]
-                    let currentValueLenght = String(currentValue).length
-                    if (currentValueLenght == 2) {
-                        matrix.values[y][x] = String(number)
-                    } else {
-                        matrix.values[y][x] = currentValue + '' + String(number)
-                    }
-                }
+                press(number, x, y)
             }
         }
     }
 }
 
 let numbersPanelActivate = function() {
-    let numButtons = document.querySelectorAll("#numpad .num")
     
-    for (let numButton of numButtons) {
-        numButton.onclick = function() {
-            let num = +(numButton.innerHTML)
-            numberClick(num)
-            matrix.draw()
+    let numbersActivate = function() {
+        let numButtons = document.querySelectorAll("#numpad .num")
+    
+        for (let numButton of numButtons) {
+            numButton.onclick = function() {
+                let num = +(numButton.innerHTML)
+                numberClick(num)
+                matrix.draw()
+            }
         }
     }
+
+    let controlsActivate = function() {
+        let insertButton = document.getElementById("insert-writing-mode")
+        let solvingButton = document.getElementById("solving-writing-mode")
+        let insertPanel = document.getElementById("insert-mode-types")
+        let solvingPanel = document.getElementById("solving-mode-types")
+
+        insertButton.onclick = function() {
+            solvingPanel.style.display = "none"
+            insertPanel.style.display = "inline-block"
+            solvingButton.classList.remove("writing-mode-active")
+            insertButton.classList.add("writing-mode-active")
+
+            controls.writing.mode = "insert"
+        }
+
+        solvingButton.onclick = function() {
+            insertPanel.style.display = "none"
+            solvingPanel.style.display = "inline-block"
+            insertButton.classList.remove("writing-mode-active")
+            solvingButton.classList.add("writing-mode-active")
+
+            controls.writing.mode = "solving"
+        }
+
+        let insertModeNumber = document.getElementById("insert-mode-number")
+        let insertModePair = document.getElementById("insert-mode-pair")
+
+        insertModeNumber.onclick = function() {
+            insertModePair.classList.remove("writing-mode-elem-active")
+            insertModeNumber.classList.add("writing-mode-elem-active")
+
+            controls.writing.insertMode = "number"
+        }
+
+        insertModePair.onclick = function() {
+            insertModeNumber.classList.remove("writing-mode-elem-active")
+            insertModePair.classList.add("writing-mode-elem-active")
+
+            controls.writing.insertMode = "pair"
+        }
+
+        let solvingModeNumber = document.getElementById("solving-mode-number")
+        let solvingModeCentral = document.getElementById("solving-mode-central")
+        let solvingModeCorner = document.getElementById("solving-mode-corner")
+
+        solvingModeNumber.onclick = function() {
+            solvingModeCentral.classList.remove("writing-mode-elem-active")
+            solvingModeCorner.classList.remove("writing-mode-elem-active")
+            solvingModeNumber.classList.add("writing-mode-elem-active")
+
+            controls.writing.solvingMode = "number"
+        }
+
+        solvingModeCentral.onclick = function() {
+            solvingModeCentral.classList.add("writing-mode-elem-active")
+            solvingModeCorner.classList.remove("writing-mode-elem-active")
+            solvingModeNumber.classList.remove("writing-mode-elem-active")
+
+            controls.writing.solvingMode = "central"
+        }
+
+        solvingModeCorner.onclick = function() {
+            solvingModeCentral.classList.remove("writing-mode-elem-active")
+            solvingModeCorner.classList.add("writing-mode-elem-active")
+            solvingModeNumber.classList.remove("writing-mode-elem-active")
+
+            controls.writing.solvingMode = "corner"
+        }
+
+        let showHideSolving = document.getElementById("show-hide-solving")
+        let removeSolving = document.getElementById("remove-solving")
+        let applySolving = document.getElementById("apply-solving")
+
+        showHideSolving.onclick = solving.showHide
+        removeSolving.onclick = solving.remove
+        applySolving.onclick = solving.apply
+    }
+    
+    numbersActivate()
+    controlsActivate()
 }
 
 let downInfoActivate = function() {
@@ -871,11 +992,11 @@ let generationPanelActivate = function() {
         // let randomIndex = Math.floor(Math.random() * max) + 0
         matrix.values = matrix.genArray[0]
 
-        for (let y in matrix.numberTypes) {
+        /* for (let y in matrix.numberTypes) {
             for (let x in matrix.numberTypes[y]) {
                 matrix.numberTypes[y][x] = 1
             }
-        }
+        } */
 
         matrix.draw()
     }
@@ -890,9 +1011,10 @@ let keyboardEventsActivate = function() {
             matrix.isCtrlPressed = false
         }
 
-        let elem = document.querySelector(`#numpad *[key="${key}"]`)
-        if (elem) {
-            elem.click()
+        let numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+        if (numbers.indexOf(key) != -1) {
+            numberClick(key)
+            matrix.draw()
         }
     }
 
@@ -917,8 +1039,8 @@ let keyboardEventsActivate = function() {
 
         if (key == "a") {
             if (matrix.isCtrlPressed == true) {
-                let selectAll = document.getElementById("select-all")
-                selectAll.click()
+                matrix.selectAll()
+                matrix.draw()
             }
         }
 

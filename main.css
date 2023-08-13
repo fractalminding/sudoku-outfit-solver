@@ -128,12 +128,113 @@ body {
 }
 
 #num-panel {
-    background-color: #ee8a2c;
+    background-color: #fff259;
+    text-align: left;
 }
 
-#num-panel .button {
-    background-color: #a6aa70;
+#num-container {
+    //outline: 1px solid red;
+    vertical-align: top;
 }
+
+#writing-mode {
+    margin-right: 2px;
+    text-align: center;
+    width: 120px;
+}
+
+#insert-writing-mode {
+    color: white;
+    background-color: #25ac55;
+    padding: 5px 0px;
+    border-radius: 10px 10px 0px 0px;
+}
+
+#solving-writing-mode {
+    color: white;
+    background-color: #de2b6d;
+    padding: 5px 0px;
+    border-radius: 0px 0px 10px 10px;
+}
+
+.writing-mode-active, .writing-mode-elem-active {
+    outline: 3px solid #00ffd0;
+}
+
+#insert-mode-types {
+    margin: 10px 0px;
+    display: inline-block;
+    border-spacing: 2px 0px;
+}
+#insert-mode-number {
+    background: url("images/type-of-insert-number.jpg");
+    border-radius: 10px 0px 0px 10px;
+}
+#insert-mode-pair {
+    background: url("images/type-of-insert-pair.jpg");
+    border-radius: 0px 10px 10px 0px;
+}
+
+#solving-mode-types {
+    margin: 10px 0px;
+    //display: inline-block;
+    display: none;
+    border-spacing: 2px 0px;
+}
+#solving-mode-number {
+    background: url("images/type-of-solving-number.jpg");
+    border-radius: 10px 0px 0px 10px;
+}
+#solving-mode-central {
+    background: url("images/type-of-solving-central.jpg");
+}
+#solving-mode-corner {
+    background: url("images/type-of-solving-coner.jpg");
+    border-radius: 0px 10px 10px 0px;
+}
+
+.writing-mode-elem {
+    width: 30px;
+    height: 30px;
+    //outline: 1px solid #ff006a;
+    background-size:contain !important;
+    //margin: -3px;
+    display: table-cell;
+}
+
+#show-hide-solving {
+    background-color: #5cb8f5;
+}
+
+#remove-solving {
+    background-color: #de2b6d;
+}
+
+#apply-solving {
+    background-color: #2acc5b;
+}
+
+#numpad {
+    border-spacing: 4px 2px;
+    //outline: 1px solid red;
+}
+
+#num-panel .num {
+    display: table-cell;
+    background-color: #5f613f;
+    //margin: 10px;
+    width: 30px;
+    height: 30px;
+    vertical-align:middle;
+    text-align: center;
+    //padding: 10px 5px;
+    color: white;
+}
+
+#num-panel div:nth-child(4) .num:last-child {
+    width: 98px;
+}
+
 
 #down-info-panel {
     background-color: #e9e623;

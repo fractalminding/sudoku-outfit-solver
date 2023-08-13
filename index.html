@@ -18,6 +18,86 @@
                 <canvas id="down-info-canvas"></canvas>
             </div>
             <div id="controls">
+                <div id="num-panel" class="panel">
+                    <!-- <div class="inline-block">
+                        <div>
+                            <input type="radio" id="input-type-1" checked name="input-type" value="usual-input" />
+                            <label for="input-type-1">Ввод</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="input-type-2" name="input-type" value="solving-input" />
+                            <label for="input-type-2">Решение</label>
+                        </div>
+                    </div>
+                    <div id="usual-input-panel">
+                        <div>
+                            <input type="radio" id="num-type-1" checked name="num-type" value="usual-number" />
+                            <label for="num-type-1">Число</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="num-type-2" name="num-type" value="pair" />
+                            <label for="num-type-2">Пара</label>
+                        </div>
+                    </div>
+                    <div id="solving-input-panel">
+                        <div>
+                            <input type="radio" id="solving-type-1" checked name="solving-type" value="one-number" />
+                            <label for="solving-type-1">Число</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="solving-type-2" name="solving-type" value="central-candidates" />
+                            <label for="solving-type-2">Центральные кандидаты</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="solving-type-3" name="solving-type" value="coner-candidates" />
+                            <label for="solving-type-3">Угловые кандидаты</label>
+                        </div>
+                    </div> -->
+                    <div id="num-container" class="inline-block">
+                        <div id="writing-mode">
+                            <div id="insert-writing-mode" class="writing-mode-active">Ввод</div>
+                            <div id="solving-writing-mode">Решение</div>
+                        </div>
+                        <div id="insert-mode-types">
+                            <div id="insert-mode-number" class="writing-mode-elem writing-mode-elem-active"></div>
+                            <div id="insert-mode-pair" class="writing-mode-elem"></div>
+                        </div>
+                        <div id="solving-mode-types">
+                            <div id="solving-mode-number" class="writing-mode-elem writing-mode-elem-active"></div>
+                            <div id="solving-mode-central" class="writing-mode-elem"></div>
+                            <div id="solving-mode-corner" class="writing-mode-elem"></div>
+                            <div id="solving-mode-buttons">
+                                <div>
+                                    <div id="show-hide-solving" class="button show-hide-solving-active">Видимость</div>
+                                </div>
+                                <div>
+                                    <div id="remove-solving" class="button">X</div>
+                                    <div id="apply-solving" class="button">V</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="numpad" class="inline-block">
+                        <div>
+                            <div class="num" key="1">1</div>
+                            <div class="num" key="2">2</div>
+                            <div class="num" key="3">3</div>
+                        </div>
+                        <div>
+                            <div class="num" key="4">4</div>
+                            <div class="num" key="5">5</div>
+                            <div class="num" key="6">6</div>
+                        </div>
+                        <div>
+                            <div class="num" key="7">7</div>
+                            <div class="num" key="8">8</div>
+                            <div class="num" key="9">9</div>
+                        </div>
+                        <div>
+                            <div class="num" key="0">0</div>
+                        </div>
+                    </div>
+                </div>
                 <div id="create-matrix-panel" class="panel">
                     <div>
                         Столбцов
@@ -72,39 +152,6 @@
                             <div id="set-borders-fat" class="button">Толстые рамки</div>
                         </div>
                     </div>
-                </div>
-                <div id="num-panel" class="panel">
-                    <div class="inline-block">
-                        <div>
-                            <input type="radio" id="num-type-1" checked name="num-type" value="usual-number" />
-                            <label for="num-type-1">Число</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="num-type-2" name="num-type" value="pair" />
-                            <label for="num-type-2">Пара</label>
-                        </div>
-                    </div>
-                    <div id="numpad" class="inline-block">
-                        <div>
-                            <div class="button num" key="1">1</div>
-                            <div class="button num" key="2">2</div>
-                            <div class="button num" key="3">3</div>
-                        </div>
-                        <div>
-                            <div class="button num" key="4">4</div>
-                            <div class="button num" key="5">5</div>
-                            <div class="button num" key="6">6</div>
-                        </div>
-                        <div>
-                            <div class="button num" key="7">7</div>
-                            <div class="button num" key="8">8</div>
-                            <div class="button num" key="9">9</div>
-                        </div>
-                        <div>
-                            <div class="button num" key="0">0</div>
-                        </div>
-                    </div>
-                    
                 </div>
                 <div id="down-info-panel" class="panel">
                     <div>
