@@ -212,6 +212,9 @@ let matrix = {
         }
 
         let drawSolving = function() {
+            if (solving.visible == false) {
+                return
+            }
             for (let y in matrix.solving) {
                 for (let x in matrix.solving[y]) {
                     if (matrix.values[y][x] != 0) {
@@ -443,8 +446,22 @@ let solving = {
         matrix.draw()
         return this.visible
     },
-    remove() {},
-    apply() {}
+    remove() {
+        matrix.solving = createMatrixSolvingArray(matrix.rows, matrix.columns)
+        matrix.draw()
+    },
+    apply() {
+        for (let y in matrix.solving) {
+            for (let x in matrix.solving[y]) {
+                let number = matrix.solving[y][x][0]
+                if (number != 0) {
+                    matrix.solving[y][x] = [0, [], []]
+                    matrix.values[y][x] = number
+                }
+            }
+        }
+        matrix.draw()
+    }
 }
 
 /* let createMatrixArray = function(rows, columns) {
