@@ -203,7 +203,17 @@ body {
 }
 
 #show-hide-solving {
-    background-color: #5cb8f5;
+    background-color: #b7bcbf;
+}
+
+#solving-mode-buttons .button {
+    height: 20px;
+    width: 10px;
+    vertical-align: top;
+}
+
+.show-hide-solving-active {
+    background-color: #5ab1e4 !important;
 }
 
 #remove-solving {

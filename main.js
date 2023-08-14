@@ -5,6 +5,7 @@ let matrix = {
         this.columns = 0
         this.elem = document.getElementById("board-canvas")
         this.color = "#000000"
+        this.solvingColor = "#eb213c"
 
         let canvas = this.elem
         this.cellSize = 100
@@ -210,6 +211,88 @@ let matrix = {
             }
         }
 
+        let drawSolving = function() {
+            for (let y in matrix.solving) {
+                for (let x in matrix.solving[y]) {
+                    if (matrix.values[y][x] != 0) {
+                        continue
+                    }
+                    
+                    if (matrix.solving[y][x][0] != 0) {
+                        // solving-type = number
+                        let value = matrix.solving[y][x][0]
+                        let coords = getCoordsByIndexes(x, y)
+                        let xCoord = coords[0] + matrix.cellSize / 2
+                        let yCoord = coords[1] + 80
+                        context.font = "80px Roboto-Light"
+                        context.textAlign = 'center'
+                        context.fillStyle = matrix.solvingColor
+                        context.fillText(value, xCoord, yCoord)
+                    } else {
+                        { 
+                            // solving-type = central
+                            let value = matrix.solving[y][x][1].join('')
+                            if (value.length != 0) {
+                                let fontSize = 20, yDelta = 30
+                                if (value.length == 1) {fontSize = 80; yDelta = 80}
+                                if (value.length == 2) {fontSize = 70; yDelta = 75}
+                                if (value.length == 3) {fontSize = 57; yDelta = 70}
+                                if (value.length == 4) {fontSize = 42; yDelta = 67}
+                                if (value.length == 5) {fontSize = 32; yDelta = 62}
+                                if (value.length == 6) {fontSize = 27; yDelta = 60}
+                                if (value.length == 7) {fontSize = 23; yDelta = 59}
+                                if (value.length == 8) {fontSize = 21; yDelta = 57}
+                                if (value.length == 9) {fontSize = 20; yDelta = 56}
+                                let coords = getCoordsByIndexes(x, y)
+                                let xCoord = coords[0] + matrix.cellSize / 2
+                                let yCoord = coords[1] + yDelta
+                                context.font = `${fontSize}px Roboto-Light`
+                                context.textAlign = 'center'
+                                context.fillStyle = matrix.solvingColor
+                                context.fillText(value, xCoord, yCoord)
+                            }
+                        }
+                        {
+                            // solving-type = corner
+                            let cornerArray = matrix.solving[y][x][2]
+                            let xDelta = 0, yDelta = 0
+
+                            for (let i in cornerArray) {
+                                let value = cornerArray[i]
+                                if (i == 0) {xDelta = -35; yDelta = -25}
+                                if (i == 1) {xDelta = +35; yDelta = -25}
+                                if (i == 2) {xDelta = -35; yDelta = 45}
+                                if (i == 3) {xDelta = 35; yDelta = 45}
+                                if (i == 4) {break}
+
+                                let coords = getCoordsByIndexes(x, y)
+                                let xCoord = coords[0] + matrix.cellSize / 2 + xDelta
+                                let yCoord = coords[1] + matrix.cellSize / 2 + yDelta
+                                context.font = '30px Roboto-Light'
+                                context.textAlign = 'center'
+                                context.fillStyle = matrix.solvingColor
+                                context.fillText(value, xCoord, yCoord)
+                            }
+                        }
+                    }
+                    
+                    /* let value = matrix.values[y][x]
+                    if (String(value).length == 1) {
+                        xCoord = coords[0] + 28
+                        yCoord = coords[1] + 80
+                        
+                    } else if (String(value).length == 2) {
+                        xCoord = coords[0] + 28
+                        yCoord = coords[1] + 88
+                        context.font = "36px Roboto-Light"
+                    } */
+
+                    
+                    
+                }
+            }
+        }
+
         let drawFakeText = function() {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
@@ -336,8 +419,9 @@ let matrix = {
         drawFakeText()
         drawLines()
         drawCross()
-        drawValues()
         drawTwins()
+        drawValues()
+        drawSolving()
         drawSelection()
     }
 }
@@ -353,8 +437,11 @@ let controls = {
 let solving = {
     visible: true,
     showHide() {
-        this.visible = !this.visible
+        let turnedValue = !this.visible
+        //console.log (turnedValue)
+        this.visible = turnedValue
         matrix.draw()
+        return this.visible
     },
     remove() {},
     apply() {}
@@ -680,12 +767,13 @@ let numberClick = function(number) {
         if (number == 0) {
             matrix.values[y][x] = 0
             matrix.solving[y][x] = [0, [], []]
+            return
         }
 
         if (writeType == "insert") {
             if (insertType == "number") {
                 matrix.values[y][x] = number
-                matrix.solving[y][x] = [0, 0, []]
+                matrix.solving[y][x] = [0, [], []]
             } else if (insertType == "pair") {
                 let currentValue = matrix.values[y][x]
                 let currentValueLenght = String(currentValue).length
@@ -698,7 +786,46 @@ let numberClick = function(number) {
                 }
             }
         } else if (writeType == "solving") {
-
+            if (matrix.values[y][x] != 0) {
+                return
+            }
+            if (solvingType == "number") {
+                matrix.solving[y][x] = [number, [], []]
+            } else if (solvingType == "central") {
+                let currentCentralValue = matrix.solving[y][x][1]
+                if (matrix.solving[y][x][0] != 0) {
+                    return
+                }
+                if (currentCentralValue.length == 0) {
+                    matrix.solving[y][x][1].push(number)
+                } else {
+                    let indexOfNumber = matrix.solving[y][x][1].indexOf(number)
+                    if (indexOfNumber == -1) {
+                        matrix.solving[y][x][1].push(number)
+                        let sortedArray = matrix.solving[y][x][1].sort((a, b) => a - b);
+                        matrix.solving[y][x][1] = sortedArray
+                    } else {
+                        matrix.solving[y][x][1].splice(indexOfNumber, 1)
+                    }
+                }
+            } else if (solvingType == "corner") {
+                let currentCentralValue = matrix.solving[y][x][2]
+                if (matrix.solving[y][x][0] != 0) {
+                    return
+                }
+                if (currentCentralValue.length == 0) {
+                    matrix.solving[y][x][2].push(number)
+                } else {
+                    let indexOfNumber = matrix.solving[y][x][2].indexOf(number)
+                    if (indexOfNumber == -1) {
+                        matrix.solving[y][x][2].push(number)
+                        /* let sortedArray = matrix.solving[y][x][1].sort((a, b) => a - b);
+                        matrix.solving[y][x][1] = sortedArray */
+                    } else {
+                        matrix.solving[y][x][2].splice(indexOfNumber, 1)
+                    }
+                }
+            }
         }
     }
     
@@ -718,7 +845,7 @@ let numbersPanelActivate = function() {
     
         for (let numButton of numButtons) {
             numButton.onclick = function() {
-                let num = +(numButton.innerHTML)
+                let num = +(numButton.getAttribute("key"))
                 numberClick(num)
                 matrix.draw()
             }
@@ -798,7 +925,15 @@ let numbersPanelActivate = function() {
         let removeSolving = document.getElementById("remove-solving")
         let applySolving = document.getElementById("apply-solving")
 
-        showHideSolving.onclick = solving.showHide
+        showHideSolving.onclick = function() {
+            if (solving.showHide()) {
+                //console.log("active")
+                showHideSolving.classList.add("show-hide-solving-active")
+            } else {
+                //console.log("not active")
+                showHideSolving.classList.remove("show-hide-solving-active")
+            }
+        }
         removeSolving.onclick = solving.remove
         applySolving.onclick = solving.apply
     }
@@ -1013,7 +1148,7 @@ let keyboardEventsActivate = function() {
 
         let numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
         if (numbers.indexOf(key) != -1) {
-            numberClick(key)
+            numberClick(+key)
             matrix.draw()
         }
     }
