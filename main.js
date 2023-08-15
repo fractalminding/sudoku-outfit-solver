@@ -454,9 +454,13 @@ let solving = {
         for (let y in matrix.solving) {
             for (let x in matrix.solving[y]) {
                 let number = matrix.solving[y][x][0]
+                let centralArray = matrix.solving[y][x][1]
                 if (number != 0) {
                     matrix.solving[y][x] = [0, [], []]
                     matrix.values[y][x] = number
+                } else if (centralArray.length == 1) {
+                    matrix.solving[y][x] = [0, [], []]
+                    matrix.values[y][x] = centralArray[0]
                 }
             }
         }
