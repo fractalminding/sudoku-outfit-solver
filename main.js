@@ -804,6 +804,10 @@ let bordersPanelActivate = function() {
 }
 
 let numberClick = function(number) {
+    let focusElem = document.querySelector("*:focus")
+    if (focusElem != undefined && focusElem.tagName == "INPUT") {
+        return
+    }
 
     let press = function(number, x, y) {
 
