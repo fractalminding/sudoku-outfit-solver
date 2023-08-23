@@ -367,20 +367,22 @@ let matrix = {
             }
         }
 
+        let drawCrossLine = function(startX, startY, finishX, finishY) {
+            context.beginPath()
+            context.setLineDash([2, 5])
+            context.moveTo(startX, startY)
+            context.lineTo(finishX, finishY)
+            context.strokeStyle = matrix.color
+            context.lineWidth = matrix.thinLineThickness
+            context.stroke()
+        }
+
         let drawCross = function() {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
             let padding = matrix.padding
 
-            let drawCrossLine = function(startX, startY, finishX, finishY) {
-                context.beginPath()
-                context.setLineDash([2, 5])
-                context.moveTo(startX, startY)
-                context.lineTo(finishX, finishY)
-                context.strokeStyle = matrix.color
-                context.lineWidth = matrix.thinLineThickness
-                context.stroke()
-            }
+            
 
             let type = matrix.cross
             if (type == 0) {
@@ -419,9 +421,32 @@ let matrix = {
             }
         }
 
+        let drawChains = function() {
+            for (let chain of matrix.chains) {
+                let chainArray = chain.split('-')
+                for (let i = 0; i < chainArray.length - 1; i++) {
+                    let startX = chainArray[i][0]
+                    let startY = chainArray[i][1]
+                    let finishX = chainArray[i + 1][0]
+                    let finishY = chainArray[i + 1][1]
+
+                    let coords1 = getCoordsByIndexes(startX, startY)
+                    let coords2 = getCoordsByIndexes(finishX, finishY)
+
+                    coords1[0] = coords1[0] + Math.round(matrix.cellSize / 2)
+                    coords1[1] = coords1[1] + Math.round(matrix.cellSize / 2)
+                    coords2[0] = coords2[0] + Math.round(matrix.cellSize / 2)
+                    coords2[1] = coords2[1] + Math.round(matrix.cellSize / 2)
+
+                    drawCrossLine(coords1[0], coords1[1], coords2[0], coords2[1])
+                }
+            }
+        }
+
         drawFakeText()
         drawLines()
         drawCross()
+        drawChains()
         drawTwins()
         drawValues()
         drawSolving()
@@ -613,6 +638,7 @@ let setMatrix = function(columns, rows) {
     matrix.fatLineThickness = 4
     matrix.genArray = []
     matrix.isCtrlPressed = false
+    matrix.chains = []
 }
 
 let createClassicBoard = function() {
@@ -1314,6 +1340,17 @@ let solvingsPanelActivate = function() {
     }
 }
 
+let chainPanelActivate = function() {
+    let chainInput = document.getElementById('chain-text')
+    let chainButton = document.getElementById('chain-button')
+
+    chainButton.onclick = function() {
+        let value = chainInput.value
+        matrix.chains.push(value)
+        matrix.draw()
+    }
+}
+
 createClassicBoard()
 canvasActivate()
 createMatrixPanelActivate()
@@ -1329,3 +1366,4 @@ generationPanelActivate()
 keyboardEventsActivate()
 mouseEventsActivate()
 solvingsPanelActivate()
+chainPanelActivate()

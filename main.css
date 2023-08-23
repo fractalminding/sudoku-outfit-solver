@@ -336,3 +336,11 @@ body {
 #check-solvings-amount {
     background-color: #af0ca2;
 }
+
+#chain-panel {
+    background-color: #3fe94d;
+}
+
+#chain-button {
+    background-color: #e93fcd;
+}
