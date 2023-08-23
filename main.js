@@ -217,7 +217,7 @@ let matrix = {
             }
             for (let y in matrix.solving) {
                 for (let x in matrix.solving[y]) {
-                    if (matrix.values[y][x] != 0) {
+                    if (matrix.values[y][x] != 0 && matrix.values[y][x].toString().length == 1) {
                         continue
                     }
                     
@@ -807,9 +807,11 @@ let numberClick = function(number) {
                 }
             }
         } else if (writeType == "solving") {
-            if (matrix.values[y][x] != 0) {
+            let value = matrix.values[y][x]
+            if (value != 0 && value.toString().length == 1) {
                 return
             }
+            //console.log('123')
             if (solvingType == "number") {
                 matrix.solving[y][x] = [number, [], []]
             } else if (solvingType == "central") {
