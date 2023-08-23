@@ -963,6 +963,55 @@ let numbersPanelActivate = function() {
     controlsActivate()
 }
 
+let upInfoActivate = function() {
+    let upInfoCanvas = document.getElementById("up-info-canvas")
+    let UICcontext = upInfoCanvas.getContext("2d")
+
+    let upInfoNumber = document.getElementById("up-info-number")
+    let upInfoButton = document.getElementById("up-info-button")
+
+    let canvas = matrix.elem
+    let context = canvas.getContext("2d")
+
+    upInfoCanvas.height = 100
+    upInfoCanvas.width = 1000
+
+    upInfoButton.onclick = function() {
+        upInfoCanvas.height = 100
+        upInfoCanvas.width = 1000
+        let infoNumber = upInfoNumber.value
+
+        let writeToUpInfoCanvas = function() {
+            UICcontext.font = "60px Courier New"
+            UICcontext.fillStyle = matrix.color
+            UICcontext.fillText(infoNumber, 20, 75)
+
+        }
+        let copyUICtoCanvas = function() {
+            let copyCanvas = canvas.cloneNode(true)
+            copyCanvas.id = "copy-canvas"
+            copyCanvas.width = canvas.width
+            copyCanvas.height = canvas.height
+            let copyCanvasContext = copyCanvas.getContext("2d")
+            copyCanvasContext.drawImage(canvas, 0, 0)
+
+            let newInfoWidth = canvas.width
+            let newPanelHeight = Math.round(newInfoWidth / 10)
+            let newInfoHeight = newPanelHeight
+            let canvasHeight = canvas.height
+            canvas.height = canvasHeight + newInfoHeight
+
+            context.drawImage(copyCanvas, 0, newPanelHeight)
+            context.drawImage(upInfoCanvas, 0, 0, newInfoWidth, newInfoHeight)
+            
+            copyCanvas.remove()
+        }
+
+        writeToUpInfoCanvas()
+        copyUICtoCanvas()
+    }
+}
+
 let downInfoActivate = function() {
     let downInfoCanvas = document.getElementById("down-info-canvas")
     let DICcontext = downInfoCanvas.getContext("2d")
@@ -1269,6 +1318,7 @@ createMatrixPanelActivate()
 selectionPanelActivate()
 bordersPanelActivate()
 numbersPanelActivate()
+upInfoActivate()
 downInfoActivate()
 designPanelActivate()
 twinsPanelActivate()

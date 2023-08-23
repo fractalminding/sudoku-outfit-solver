@@ -250,6 +250,19 @@ body {
     background-color: #e9e623;
 }
 
+#up-info-panel {
+    background-color: #e9e623;
+}
+
+#up-info-number {
+    margin: 0px 0px 5px;
+    width: 100px;
+}
+
+#up-info-button {
+    background-color: #a84493;
+}
+
 #down-info-panel input {
     margin: 0px 0px 5px;
 }
@@ -258,8 +271,8 @@ body {
     background-color: #a84493;
 }
 
-#down-info-canvas {
-    outline: 1px solid rgb(231, 28, 123);
+#down-info-canvas, #up-info-canvas {
+    //outline: 1px solid rgb(231, 28, 123);
     width: 300;
     display: none;
 }
