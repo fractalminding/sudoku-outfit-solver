@@ -344,3 +344,19 @@ body {
 #chain-button {
     background-color: #e93fcd;
 }
+
+#block-outline-panel {
+    background-color: #3fe94d;
+}
+
+#block-outline-text {
+    width: 60px;
+}
+
+#block-outline-cells {
+
+}
+
+#block-outline-button {
+    background-color: #e93fcd;
+}

@@ -422,8 +422,8 @@ let matrix = {
         }
 
         let drawChains = function() {
-            for (let chain of matrix.chains) {
-                let chainArray = chain.split('-')
+            for (let chainArray of matrix.chains) {
+                //let chainArray = chain.split('-')
                 for (let i = 0; i < chainArray.length - 1; i++) {
                     let startX = chainArray[i][0]
                     let startY = chainArray[i][1]
@@ -443,10 +443,70 @@ let matrix = {
             }
         }
 
+        let drawBlockOutlines = function() {
+            for (let obj of matrix.blockOutlines) {
+                let text = obj.text
+                let array = obj.array
+                let upLeft = array[0], 
+                    upRight = array[0], 
+                    downLeft = array[0], 
+                    downRight = array[0]
+                
+                for (let cell of array) {
+                    if (cell[0] <= upLeft[0] && cell[1] <= upLeft[1]) {
+                        upLeft = cell
+                    }
+                    if (cell[0] >= upRight[0] && cell[1] <= upRight[1]) {
+                        upRight = cell
+                    }
+                    if (cell[0] <= downLeft[0] && cell[1] >= downLeft[1]) {
+                        downLeft = cell
+                    }
+                    if (cell[0] >= downRight[0] && cell[1] >= downRight[1]) {
+                        downRight = cell
+                    }
+                }
+                let cellSize = matrix.cellSize
+                let margin = 90
+
+                let upLeftCoords = getCoordsByIndexes(upLeft[0], upLeft[1])
+                let upLeftTrueCoords = [
+                    upLeftCoords[0] + cellSize - margin,
+                    upLeftCoords[1] + cellSize - margin
+                ]
+
+                let upRightCoords = getCoordsByIndexes(upRight[0], upRight[1])
+                let upRigthTrueCoords = [
+                    upRightCoords[0] + margin,
+                    upRightCoords[1] + cellSize - margin
+                ]
+
+                let downLeftCoords = getCoordsByIndexes(downLeft[0], downLeft[1])
+                let downLeftTrueCoords = [
+                    downLeftCoords[0] + cellSize - margin,
+                    downLeftCoords[1] + margin
+                ]
+
+                let downRightCoords = getCoordsByIndexes(downRight[0], downRight[1])
+                let downRightTrueCoords = [
+                    downRightCoords[0] + margin,
+                    downRightCoords[1] + margin
+                ]
+
+                //console.log()
+
+                drawCrossLine(upLeftTrueCoords[0], upLeftTrueCoords[1], upRigthTrueCoords[0], upRigthTrueCoords[1])
+                drawCrossLine(upRigthTrueCoords[0], upRigthTrueCoords[1], downRightTrueCoords[0], downRightTrueCoords[1])
+                drawCrossLine(downRightTrueCoords[0], downRightTrueCoords[1], downLeftTrueCoords[0], downLeftTrueCoords[1])
+                drawCrossLine(downLeftTrueCoords[0], downLeftTrueCoords[1], upLeftTrueCoords[0], upLeftTrueCoords[1])
+            }
+        }
+
         drawFakeText()
         drawLines()
         drawCross()
         drawChains()
+        drawBlockOutlines()
         drawTwins()
         drawValues()
         drawSolving()
@@ -639,6 +699,7 @@ let setMatrix = function(columns, rows) {
     matrix.genArray = []
     matrix.isCtrlPressed = false
     matrix.chains = []
+    matrix.blockOutlines = []
 }
 
 let createClassicBoard = function() {
@@ -1350,7 +1411,20 @@ let chainPanelActivate = function() {
 
     chainButton.onclick = function() {
         let value = chainInput.value
-        matrix.chains.push(value)
+        matrix.chains.push(value.split('-'))
+        matrix.draw()
+    }
+}
+
+let blockOutlinePanelActivate = function() {
+    let textElem = document.getElementById('block-outline-text')
+    let arrayElem = document.getElementById('block-outline-cells')
+    let button = document.getElementById('block-outline-button')
+
+    button.onclick = function() {
+        let text = textElem.value
+        let array = arrayElem.value.split('-')
+        matrix.blockOutlines.push({text, array})
         matrix.draw()
     }
 }
@@ -1371,3 +1445,4 @@ keyboardEventsActivate()
 mouseEventsActivate()
 solvingsPanelActivate()
 chainPanelActivate()
+blockOutlinePanelActivate()
