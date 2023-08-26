@@ -368,6 +368,9 @@ let matrix = {
         }
 
         let drawCrossLine = function(startX, startY, finishX, finishY) {
+
+            let canvas = matrix.elem
+            let context = canvas.getContext("2d")
             context.beginPath()
             context.setLineDash([2, 5])
             context.moveTo(startX, startY)
@@ -443,6 +446,20 @@ let matrix = {
             }
         }
 
+        let drawBlockLable = function(x, y, text) {
+            let canvas = matrix.elem
+            let context = canvas.getContext("2d")
+            //context.fillStyle = "#af0ca2"
+            context.fillStyle = "#ffffff"
+            context.rect(x + 20, y + 10, 60, 20)
+            context.fill()
+            let fontSize = 20
+            context.font = `${fontSize}px Roboto-Light`
+            context.textAlign = 'center'
+            context.fillStyle = matrix.color
+            context.fillText(text, x + 50, y + 25)
+        }
+
         let drawBlockOutlines = function() {
             for (let obj of matrix.blockOutlines) {
                 let text = obj.text
@@ -499,6 +516,8 @@ let matrix = {
                 drawCrossLine(upRigthTrueCoords[0], upRigthTrueCoords[1], downRightTrueCoords[0], downRightTrueCoords[1])
                 drawCrossLine(downRightTrueCoords[0], downRightTrueCoords[1], downLeftTrueCoords[0], downLeftTrueCoords[1])
                 drawCrossLine(downLeftTrueCoords[0], downLeftTrueCoords[1], upLeftTrueCoords[0], upLeftTrueCoords[1])
+
+                drawBlockLable(upLeft[0], upLeft[1], text)
             }
         }
 
