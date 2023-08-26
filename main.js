@@ -450,6 +450,7 @@ let matrix = {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
             //context.fillStyle = "#af0ca2"
+            context.beginPath()
             context.fillStyle = "#ffffff"
             context.rect(x + 20, y + 10, 60, 20)
             context.fill()
@@ -458,6 +459,7 @@ let matrix = {
             context.textAlign = 'center'
             context.fillStyle = matrix.color
             context.fillText(text, x + 50, y + 25)
+            context.textAlign = 'left'
         }
 
         let drawBlockOutlines = function() {
@@ -517,7 +519,9 @@ let matrix = {
                 drawCrossLine(downRightTrueCoords[0], downRightTrueCoords[1], downLeftTrueCoords[0], downLeftTrueCoords[1])
                 drawCrossLine(downLeftTrueCoords[0], downLeftTrueCoords[1], upLeftTrueCoords[0], upLeftTrueCoords[1])
 
-                drawBlockLable(upLeft[0], upLeft[1], text)
+                if (text != "") {
+                    drawBlockLable(upLeft[0], upLeft[1], text)
+                }
             }
         }
 
