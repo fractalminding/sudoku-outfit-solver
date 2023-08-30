@@ -1,5 +1,7 @@
 let getBlockStepsArray = function(array) {
+    
     let getLeftArray = function(array) {
+        
         let leftArray = []
         let leftIndex = array[0][0]
         for (let cell of array) {
@@ -108,6 +110,7 @@ let getBlockStepsArray = function(array) {
         }
         let nextStep = getNextStep(currentStep, directions)
         stepsArray.push(nextStep)
+        //console.log(nextStep)
         currentStep = nextStep
         if (nextStep[0] == firstStep[0] && nextStep[1] == firstStep[1] && nextStep[2] == 3) {
             stepsArray.push(firstStep)

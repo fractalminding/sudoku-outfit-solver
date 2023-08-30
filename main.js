@@ -566,8 +566,11 @@ let matrix = {
         let drawBlockOutlines = function() {
             for (let obj of matrix.blockOutlines) {
                 let text = obj.text
-                let array = obj.array
-                let stepsArray = getBlockStepsArray(array)
+                let stepsArray = obj.stepsArray
+
+                
+                //let stepsArray = getBlockStepsArray(array)
+                //console.log(stepsArray)
                 for (let i = 0; i < stepsArray.length - 1; i++) {
                     let startPoint = stepsArray[i][2]
                     let finishPoint = stepsArray[i + 1][2]
@@ -1510,7 +1513,8 @@ let blockOutlinePanelActivate = function() {
     button.onclick = function() {
         let text = textElem.value
         let array = matrix.getSelected()
-        matrix.blockOutlines.push({text, array})
+        let stepsArray = getBlockStepsArray(array)
+        matrix.blockOutlines.push({text, stepsArray})
         matrix.draw()
     }
 }
