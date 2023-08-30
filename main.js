@@ -75,6 +75,18 @@ let matrix = {
             }
         }
     },
+    getSelected() {
+        let array = matrix.selection
+        selectedArray = []
+        for (let y = 0; y < array.length; y++) {
+            for (let x = 0; x < array[y].length; x++) {
+                if (array[y][x] == true) {
+                    selectedArray.push([x, y])
+                }
+            }
+        }
+        return selectedArray
+    },
     draw() {
         let canvas = this.elem
         let cellSize = matrix.cellSize
@@ -368,7 +380,7 @@ let matrix = {
         }
 
         let drawCrossLine = function(startX, startY, finishX, finishY) {
-
+            //console.log(startX, startY, finishX, finishY)
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
             context.beginPath()
@@ -449,23 +461,25 @@ let matrix = {
         let drawBlockLable = function(x, y, text) {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
-            //context.fillStyle = "#af0ca2"
+            
             context.beginPath()
             context.fillStyle = "#ffffff"
-            context.rect(x + 20, y + 10, 60, 20)
+            //context.fillStyle = "#af0ca2"
+            context.rect(x + 20, y + 5, 60, 20)
             context.fill()
             let fontSize = 20
             context.font = `${fontSize}px Roboto-Light`
             context.textAlign = 'center'
             context.fillStyle = matrix.color
-            context.fillText(text, x + 50, y + 25)
+            context.fillText(text, x + 50, y + 20)
             context.textAlign = 'left'
         }
 
-        let drawBlockOutlines = function() {
+        let drawBlockOutlines2 = function() {
             for (let obj of matrix.blockOutlines) {
                 let text = obj.text
                 let array = obj.array
+                //console.log(array)
                 let upLeft = array[0], 
                     upRight = array[0], 
                     downLeft = array[0], 
@@ -520,7 +534,57 @@ let matrix = {
                 drawCrossLine(downLeftTrueCoords[0], downLeftTrueCoords[1], upLeftTrueCoords[0], upLeftTrueCoords[1])
 
                 if (text != "") {
-                    drawBlockLable(upLeft[0], upLeft[1], text)
+                    drawBlockLable(upLeftCoords[0], upLeftCoords[1], text)
+                }
+            }
+        }
+
+        let correctByPoint = function(step, point) {
+            //console.log(point)
+            let margin = 90
+            let size = matrix.cellSize
+            let x = step[0]
+            let y = step[1]
+            let newX, newY
+            if (point == 1) {
+                newX = x + size - margin
+                newY = y + size - margin
+            } else if (point == 2) {
+                newX = x + margin
+                newY = y + size - margin
+            } else if (point == 3) {
+                newX = x + size - margin
+                newY = y + margin
+            } else if (point == 4) {
+                newX = x + margin
+                newY = y + margin
+            }
+            //console.log([newX, newY])
+            return [newX, newY]
+        }
+
+        let drawBlockOutlines = function() {
+            for (let obj of matrix.blockOutlines) {
+                let text = obj.text
+                let array = obj.array
+                let stepsArray = getBlockStepsArray(array)
+                for (let i = 0; i < stepsArray.length - 1; i++) {
+                    let startPoint = stepsArray[i][2]
+                    let finishPoint = stepsArray[i + 1][2]
+
+                    let startX = stepsArray[i][0]
+                    let startY = stepsArray[i][1]
+                    let finishX = stepsArray[i + 1][0]
+                    let finishY = stepsArray[i + 1][1]
+
+                    let coords1 = correctByPoint(getCoordsByIndexes(startX, startY), startPoint)
+                    let coords2 = correctByPoint(getCoordsByIndexes(finishX, finishY), finishPoint)
+
+                    drawCrossLine(coords1[0], coords1[1], coords2[0], coords2[1])
+                }
+                if (text != "") {
+                    let coords = getCoordsByIndexes(stepsArray[0][0], stepsArray[0][1])
+                    drawBlockLable(coords[0], coords[1], text)
                 }
             }
         }
@@ -1441,18 +1505,20 @@ let chainPanelActivate = function() {
 
 let blockOutlinePanelActivate = function() {
     let textElem = document.getElementById('block-outline-text')
-    let arrayElem = document.getElementById('block-outline-cells')
     let button = document.getElementById('block-outline-button')
 
     button.onclick = function() {
         let text = textElem.value
-        let array = arrayElem.value.split('-')
+        let array = matrix.getSelected()
         matrix.blockOutlines.push({text, array})
         matrix.draw()
     }
 }
 
-createClassicBoard()
+//createClassicBoard()
+setMatrix(6, 6)
+matrix.draw()
+
 canvasActivate()
 createMatrixPanelActivate()
 selectionPanelActivate()
