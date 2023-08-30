@@ -570,6 +570,7 @@ let matrix = {
             if (Object.keys(matrix.blockOutlines).length == 0) {
                 return
             }
+            //console.log(matrix.blockOutlines)
             for (let obj of matrix.blockOutlines) {
                 let text = obj.text
                 let stepsArray = obj.stepsArray
@@ -1522,7 +1523,7 @@ let printOutlineList = function() {
         row.innerHTML = `Блок ${index} X`
 
         row.onclick = function() {
-            delete matrix.blockOutlines[index]
+            matrix.blockOutlines.splice(index, 1)
             printOutlineList()
             matrix.draw()
         }
