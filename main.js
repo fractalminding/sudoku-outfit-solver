@@ -379,7 +379,7 @@ let matrix = {
             }
         }
 
-        let drawCrossLine = function(startX, startY, finishX, finishY) {
+        let drawCrossLine = function(startX, startY, finishX, finishY, isSelected) {
             //console.log(startX, startY, finishX, finishY)
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
@@ -388,6 +388,9 @@ let matrix = {
             context.moveTo(startX, startY)
             context.lineTo(finishX, finishY)
             context.strokeStyle = matrix.color
+            if (isSelected) {
+                context.strokeStyle = "#3fe94d"
+            }
             context.lineWidth = matrix.thinLineThickness
             context.stroke()
         }
@@ -408,14 +411,14 @@ let matrix = {
                 let finishX = canvas.width - padding
                 let finishY = 0 + padding
 
-                drawCrossLine(startX, startY, finishX, finishY)
+                drawCrossLine(startX, startY, finishX, finishY, false)
             } else if (type == 2) {
                 let startX = 0 + padding
                 let startY = 0 + padding
                 let finishX = canvas.width - padding
                 let finishY = canvas.height - padding
 
-                drawCrossLine(startX, startY, finishX, finishY)
+                drawCrossLine(startX, startY, finishX, finishY, false)
             } else if (type == 3) {
                 {
                     let startX = 0 + padding
@@ -423,7 +426,7 @@ let matrix = {
                     let finishX = canvas.width - padding
                     let finishY = 0 + padding
 
-                    drawCrossLine(startX, startY, finishX, finishY)
+                    drawCrossLine(startX, startY, finishX, finishY, false)
                 }
                 {
                     let startX = 0 + padding
@@ -431,7 +434,7 @@ let matrix = {
                     let finishX = canvas.width - padding
                     let finishY = canvas.height - padding
 
-                    drawCrossLine(startX, startY, finishX, finishY)
+                    drawCrossLine(startX, startY, finishX, finishY, false)
                 }
             }
         }
@@ -453,7 +456,7 @@ let matrix = {
                     coords2[0] = coords2[0] + Math.round(matrix.cellSize / 2)
                     coords2[1] = coords2[1] + Math.round(matrix.cellSize / 2)
 
-                    drawCrossLine(coords1[0], coords1[1], coords2[0], coords2[1])
+                    drawCrossLine(coords1[0], coords1[1], coords2[0], coords2[1], false)
                 }
             }
         }
@@ -528,10 +531,10 @@ let matrix = {
 
                 //console.log()
 
-                drawCrossLine(upLeftTrueCoords[0], upLeftTrueCoords[1], upRigthTrueCoords[0], upRigthTrueCoords[1])
-                drawCrossLine(upRigthTrueCoords[0], upRigthTrueCoords[1], downRightTrueCoords[0], downRightTrueCoords[1])
-                drawCrossLine(downRightTrueCoords[0], downRightTrueCoords[1], downLeftTrueCoords[0], downLeftTrueCoords[1])
-                drawCrossLine(downLeftTrueCoords[0], downLeftTrueCoords[1], upLeftTrueCoords[0], upLeftTrueCoords[1])
+                drawCrossLine(upLeftTrueCoords[0], upLeftTrueCoords[1], upRigthTrueCoords[0], upRigthTrueCoords[1], false)
+                drawCrossLine(upRigthTrueCoords[0], upRigthTrueCoords[1], downRightTrueCoords[0], downRightTrueCoords[1], false)
+                drawCrossLine(downRightTrueCoords[0], downRightTrueCoords[1], downLeftTrueCoords[0], downLeftTrueCoords[1], false)
+                drawCrossLine(downLeftTrueCoords[0], downLeftTrueCoords[1], upLeftTrueCoords[0], upLeftTrueCoords[1], false)
 
                 if (text != "") {
                     drawBlockLable(upLeftCoords[0], upLeftCoords[1], text)
@@ -564,10 +567,13 @@ let matrix = {
         }
 
         let drawBlockOutlines = function() {
+            if (Object.keys(matrix.blockOutlines).length == 0) {
+                return
+            }
             for (let obj of matrix.blockOutlines) {
                 let text = obj.text
                 let stepsArray = obj.stepsArray
-
+                let isSelected = obj.isSelected
                 
                 //let stepsArray = getBlockStepsArray(array)
                 //console.log(stepsArray)
@@ -583,7 +589,7 @@ let matrix = {
                     let coords1 = correctByPoint(getCoordsByIndexes(startX, startY), startPoint)
                     let coords2 = correctByPoint(getCoordsByIndexes(finishX, finishY), finishPoint)
 
-                    drawCrossLine(coords1[0], coords1[1], coords2[0], coords2[1])
+                    drawCrossLine(coords1[0], coords1[1], coords2[0], coords2[1], isSelected)
                 }
                 if (text != "") {
                     let coords = getCoordsByIndexes(stepsArray[0][0], stepsArray[0][1])
@@ -1506,6 +1512,35 @@ let chainPanelActivate = function() {
     }
 }
 
+let printOutlineList = function() {
+    let elem = document.getElementById("block-outline-list")
+    elem.innerHTML = ''
+
+    for (let index in matrix.blockOutlines) {
+        let row = document.createElement('div')
+        row.classList.add('block-outline-row')
+        row.innerHTML = `Блок ${index} X`
+
+        row.onclick = function() {
+            delete matrix.blockOutlines[index]
+            printOutlineList()
+            matrix.draw()
+        }
+
+        row.onmouseover = function() {
+            matrix.blockOutlines[index].isSelected = true
+            matrix.draw()
+        }
+        
+        row.onmouseout = function() {
+            matrix.blockOutlines[index].isSelected = false
+            matrix.draw()
+        }
+
+        elem.appendChild(row)
+    }
+}
+
 let blockOutlinePanelActivate = function() {
     let textElem = document.getElementById('block-outline-text')
     let button = document.getElementById('block-outline-button')
@@ -1514,8 +1549,10 @@ let blockOutlinePanelActivate = function() {
         let text = textElem.value
         let array = matrix.getSelected()
         let stepsArray = getBlockStepsArray(array)
-        matrix.blockOutlines.push({text, stepsArray})
+        let isSelected = false
+        matrix.blockOutlines.push({text, stepsArray, isSelected})
         matrix.draw()
+        printOutlineList()
     }
 }
 
