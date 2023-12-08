@@ -370,3 +370,11 @@ body {
     border-radius: 5px;
     margin-bottom: 5px;
 }
+
+#inequality-panel {
+    background-color: #bfe48e;
+}
+
+#inequality-panel .button {
+    background-color: #8610b4;
+}

@@ -379,6 +379,111 @@ let matrix = {
             }
         }
 
+        let drawInequals = function() {
+            let canvas = matrix.elem
+            let context = canvas.getContext("2d")
+            //let startX, startY, finishX, finishY
+
+            let drawLine = function(startX, startY, finishX, finishY) {
+                context.beginPath()
+                context.setLineDash([])
+                context.lineWidth = matrix.fatLineThickness
+                context.moveTo(startX, startY)
+                context.lineTo(finishX, finishY)
+                context.strokeStyle = matrix.color
+                context.stroke()
+            }
+            for (let y in matrix.inequals.horizontal) {
+                for (let x in matrix.inequals.horizontal[y]) {
+                    x = +x, y = +y
+                    let type = matrix.inequals.horizontal[y][x]
+                    let coords = getCoordsByIndexes(x + 1, y)
+                    coords[1] = coords[1] + matrix.cellSize / 2
+                    let deltaX = matrix.cellSize / 5
+                    let deltaY = matrix.cellSize / 5
+
+                    if (type == 0) {
+                        continue
+                    } else if (type == 1) {
+                        //меньше
+                        let startX = coords[0] - deltaX
+                        let startY = coords[1]
+                        let finishX = coords[0] + deltaX
+                        let finishY = coords[1] + deltaY
+
+                        drawLine(startX, startY, finishX, finishY)
+
+                        startX = coords[0] - deltaX
+                        startY = coords[1]
+                        finishX = coords[0] + deltaX
+                        finishY = coords[1] - deltaY
+
+                        drawLine(startX, startY, finishX, finishY)
+                    } else if (type == 2) {
+                        //больше
+                        let startX = coords[0] + deltaX
+                        let startY = coords[1]
+                        let finishX = coords[0] - deltaX
+                        let finishY = coords[1] + deltaY
+
+                        drawLine(startX, startY, finishX, finishY)
+
+                        startX = coords[0] + deltaX
+                        startY = coords[1]
+                        finishX = coords[0] - deltaX
+                        finishY = coords[1] - deltaY
+
+                        drawLine(startX, startY, finishX, finishY)
+                    }
+                }
+            }
+
+            for (let y in matrix.inequals.vertical) {
+                for (let x in matrix.inequals.vertical[y]) {
+                    x = +x, y = +y
+                    let type = matrix.inequals.vertical[y][x]
+                    let coords = getCoordsByIndexes(x, y + 1)
+                    coords[0] = coords[0] + matrix.cellSize / 2
+                    let deltaX = matrix.cellSize / 6
+                    let deltaY = matrix.cellSize / 6
+
+                    if (type == 0) {
+                        continue
+                    } else if (type == 3) {
+                        //меньше сверху
+                        let startX = coords[0]
+                        let startY = coords[1] - deltaY
+                        let finishX = coords[0] + deltaX
+                        let finishY = coords[1] + deltaY
+
+                        drawLine(startX, startY, finishX, finishY)
+
+                        startX = coords[0]
+                        startY = coords[1] - deltaY
+                        finishX = coords[0] - deltaX
+                        finishY = coords[1] + deltaY
+
+                        drawLine(startX, startY, finishX, finishY)
+                    } else if (type == 4) {
+                        //больше сверху
+                        let startX = coords[0]
+                        let startY = coords[1] + deltaY
+                        let finishX = coords[0] + deltaX
+                        let finishY = coords[1] - deltaY
+
+                        drawLine(startX, startY, finishX, finishY)
+
+                        startX = coords[0]
+                        startY = coords[1] + deltaY
+                        finishX = coords[0] - deltaX
+                        finishY = coords[1] - deltaY
+
+                        drawLine(startX, startY, finishX, finishY)
+                    }
+                }
+            }
+        }
+
         let drawCrossLine = function(startX, startY, finishX, finishY, isSelected) {
             //console.log(startX, startY, finishX, finishY)
             let canvas = matrix.elem
@@ -605,9 +710,39 @@ let matrix = {
         drawChains()
         drawBlockOutlines()
         drawTwins()
+        drawInequals()
         drawValues()
         drawSolving()
         drawSelection()
+    }
+}
+
+let printOutlineList = function() {
+    let elem = document.getElementById("block-outline-list")
+    elem.innerHTML = ''
+
+    for (let index in matrix.blockOutlines) {
+        let row = document.createElement('div')
+        row.classList.add('block-outline-row')
+        row.innerHTML = `Блок ${index} X`
+
+        row.onclick = function() {
+            matrix.blockOutlines.splice(index, 1)
+            printOutlineList()
+            matrix.draw()
+        }
+
+        row.onmouseover = function() {
+            matrix.blockOutlines[index].isSelected = true
+            matrix.draw()
+        }
+        
+        row.onmouseout = function() {
+            matrix.blockOutlines[index].isSelected = false
+            matrix.draw()
+        }
+
+        elem.appendChild(row)
     }
 }
 
@@ -780,6 +915,18 @@ let createMatrixTwinsArray = function(rows, columns) {
     return array
 }
 
+let createMatrixInequalsArray = function(rows, columns) {
+    let array = []
+    for (let y = 0; y < rows; y++) {
+        let rowArray = []
+        for (let x = 0; x < columns; x++) {
+            rowArray.push(0)
+        }
+        array.push(rowArray)
+    }
+    return array
+}
+
 let setMatrix = function(columns, rows) {
     matrix.init()
     matrix.rows = rows
@@ -790,6 +937,9 @@ let setMatrix = function(columns, rows) {
     matrix.solving = createMatrixSolvingArray(rows, columns)
     //matrix.numberTypes = createMatrixNumberTypesArray(rows, columns)
     matrix.twins = createMatrixTwinsArray(rows, columns)
+    matrix.inequals = {}
+    matrix.inequals.horizontal = createMatrixInequalsArray(rows, columns)
+    matrix.inequals.vertical = createMatrixInequalsArray(rows, columns)
     matrix.cross = 0
     matrix.thinLineThickness = 2
     matrix.fatLineThickness = 4
@@ -797,6 +947,8 @@ let setMatrix = function(columns, rows) {
     matrix.isCtrlPressed = false
     matrix.chains = []
     matrix.blockOutlines = []
+
+    printOutlineList()
 }
 
 let createClassicBoard = function() {
@@ -1513,34 +1665,7 @@ let chainPanelActivate = function() {
     }
 }
 
-let printOutlineList = function() {
-    let elem = document.getElementById("block-outline-list")
-    elem.innerHTML = ''
 
-    for (let index in matrix.blockOutlines) {
-        let row = document.createElement('div')
-        row.classList.add('block-outline-row')
-        row.innerHTML = `Блок ${index} X`
-
-        row.onclick = function() {
-            matrix.blockOutlines.splice(index, 1)
-            printOutlineList()
-            matrix.draw()
-        }
-
-        row.onmouseover = function() {
-            matrix.blockOutlines[index].isSelected = true
-            matrix.draw()
-        }
-        
-        row.onmouseout = function() {
-            matrix.blockOutlines[index].isSelected = false
-            matrix.draw()
-        }
-
-        elem.appendChild(row)
-    }
-}
 
 let blockOutlinePanelActivate = function() {
     let textElem = document.getElementById('block-outline-text')
@@ -1554,6 +1679,77 @@ let blockOutlinePanelActivate = function() {
         matrix.blockOutlines.push({text, stepsArray, isSelected})
         matrix.draw()
         printOutlineList()
+    }
+}
+
+let inequalityPanelActivate = function() {
+    let inequalityHidden = document.getElementById("set-inequality-hidden")
+    let inequalityLeft = document.getElementById("set-inequality-left")
+    let inequalityRight = document.getElementById("set-inequality-right")
+    let inequalityUp = document.getElementById("set-inequality-up")
+    let inequalityDown = document.getElementById("set-inequality-down")
+
+    let setInequality = function(type) {
+        let getDirection = function() {
+            let direction = document.querySelector('*[name="inequality-position"]:checked').value
+            return direction
+        }
+        let direction = getDirection()
+        //console.log(direction)
+        let applyInequality = function(x, y) {
+            //console.log("x = " + x + " y = " + y + " direction = " + direction + " type = " + type)
+            if (direction == 'left') {
+                if (x == 0 || type == 3 || type == 4) {
+                    return
+                } else {
+                    matrix.inequals.horizontal[y][x - 1] = type
+                }
+            } else if (direction == 'right') {
+                if (x == matrix.columns - 1 || type == 3 || type == 4) {
+                    return
+                } else {
+                    matrix.inequals.horizontal[y][x] = type
+                }
+            } else if (direction == 'up') {
+                if (y == 0 || type == 1 || type == 2) {
+                    return
+                } else {
+                    matrix.inequals.vertical[y - 1][x] = type
+                }
+            } else if (direction == 'down') {
+                if (y == matrix.rows - 1 || type == 1 || type == 2) {
+                    return
+                } else {
+                    matrix.inequals.vertical[y][x] = type
+                }
+            }
+        }
+
+        for (let y in matrix.selection) {
+            for (let x in matrix.selection[y]) {
+                if (matrix.selection[y][x] == true) {
+                    applyInequality(+x, +y)
+                }
+            }
+        }
+        matrix.draw()
+        //console.log(matrix.twins)
+    }
+
+    inequalityHidden.onclick = function() {
+        setInequality(0)
+    }
+    inequalityLeft.onclick = function() {
+        setInequality(1)
+    }
+    inequalityRight.onclick = function() {
+        setInequality(2)
+    }
+    inequalityUp.onclick = function() {
+        setInequality(3)
+    }
+    inequalityDown.onclick = function() {
+        setInequality(4)
     }
 }
 
@@ -1577,3 +1773,4 @@ mouseEventsActivate()
 solvingsPanelActivate()
 chainPanelActivate()
 blockOutlinePanelActivate()
+inequalityPanelActivate()
