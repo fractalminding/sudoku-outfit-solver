@@ -12,9 +12,12 @@ let matrix = {
         canvas.height = 0
         canvas.width = 0
 
-        this.data = {}
-        this.data.rows = 0
-        this.data.columns = 0
+        matrix.thinLineThickness = 2
+        matrix.fatLineThickness = 4
+        matrix.isCtrlPressed = false
+
+        this.data = data
+        //matrix.draw()
     },
     moveSelection(key) {
         let x = 0, y = 0
@@ -942,10 +945,9 @@ let setMatrix = function(columns, rows) {
     matrix.data.inequals.horizontal = createMatrixInequalsArray(rows, columns)
     matrix.data.inequals.vertical = createMatrixInequalsArray(rows, columns)
     matrix.data.cross = 0
-    matrix.thinLineThickness = 2
-    matrix.fatLineThickness = 4
+    
     matrix.genArray = []
-    matrix.isCtrlPressed = false
+    
     matrix.data.chains = []
     matrix.data.blockOutlines = []
 
@@ -1767,29 +1769,30 @@ let metaPanelActivate = function () {
     }
     
     downloadJSONbutton.onclick = function() {
-        writeFile("data.js", "let data = " + JSON.stringify(matrix.data));
+        writeFile("data.json", JSON.stringify(matrix.data));
     }
 }
 
 //createClassicBoard()
-setMatrix(6, 6)
+//setMatrix(6, 6)
+matrix.init()
 matrix.draw()
 
 canvasActivate()
-createMatrixPanelActivate()
-selectionPanelActivate()
-bordersPanelActivate()
+// createMatrixPanelActivate()
+// selectionPanelActivate()
+// bordersPanelActivate()
 numbersPanelActivate()
-upInfoActivate()
-downInfoActivate()
-designPanelActivate()
-twinsPanelActivate()
-crossPanelActivate()
-generationPanelActivate()
+// upInfoActivate()
+// downInfoActivate()
+// designPanelActivate()
+// twinsPanelActivate()
+// crossPanelActivate()
+// generationPanelActivate()
 keyboardEventsActivate()
 mouseEventsActivate()
-solvingsPanelActivate()
-chainPanelActivate()
-blockOutlinePanelActivate()
-inequalityPanelActivate()
-metaPanelActivate()
+//solvingsPanelActivate()
+// chainPanelActivate()
+// blockOutlinePanelActivate()
+// inequalityPanelActivate()
+// metaPanelActivate()
