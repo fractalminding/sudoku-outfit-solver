@@ -1,25 +1,27 @@
 
 let matrix = {
     init() {
-        this.rows = 0
-        this.columns = 0
+        
+        
         this.elem = document.getElementById("board-canvas")
         this.color = "#000000"
         this.solvingColor = "#eb213c"
-
         let canvas = this.elem
         this.cellSize = 100
         this.padding = 5
-
         canvas.height = 0
         canvas.width = 0
+
+        this.data = {}
+        this.data.rows = 0
+        this.data.columns = 0
     },
     moveSelection(key) {
         let x = 0, y = 0
         let targetX = 0, targetY = 0
-        loop: for (y in matrix.selection) {
-            for (x in matrix.selection[y]) {
-                if (matrix.selection[y][x] == true) {
+        loop: for (y in matrix.data.selection) {
+            for (x in matrix.data.selection[y]) {
+                if (matrix.data.selection[y][x] == true) {
                     x = +x
                     y = +y
                     break loop
@@ -34,7 +36,7 @@ let matrix = {
                 return
             }
         } else if (key == "ArrowDown") {
-            if (y != matrix.rows - 1) {
+            if (y != matrix.data.rows - 1) {
                 targetX = x
                 targetY = y + 1
             } else {
@@ -49,7 +51,7 @@ let matrix = {
                 return
             }
         } else if (key == "ArrowRight") {
-            if (x != matrix.columns - 1) {
+            if (x != matrix.data.columns - 1) {
                 targetX = x + 1 
                 targetY = y
             } else {
@@ -57,26 +59,26 @@ let matrix = {
             }
         }
 
-        matrix.selection[y][x] = false
-        matrix.selection[targetY][targetX] = true
+        matrix.data.selection[y][x] = false
+        matrix.data.selection[targetY][targetX] = true
         matrix.draw()
     },
     deSelectAll() {
-        for (let y in this.selection) {
-            for (let x in this.selection[y]) {
-                this.selection[y][x] = false
+        for (let y in this.data.selection) {
+            for (let x in this.data.selection[y]) {
+                this.data.selection[y][x] = false
             }
         }
     },
     selectAll() {
-        for (let y in this.selection) {
-            for (let x in this.selection[y]) {
-                this.selection[y][x] = true
+        for (let y in this.data.selection) {
+            for (let x in this.data.selection[y]) {
+                this.data.selection[y][x] = true
             }
         }
     },
     getSelected() {
-        let array = matrix.selection
+        let array = matrix.data.selection
         selectedArray = []
         for (let y = 0; y < array.length; y++) {
             for (let x = 0; x < array[y].length; x++) {
@@ -92,8 +94,8 @@ let matrix = {
         let cellSize = matrix.cellSize
         let padding = matrix.padding
         //let lineWidth = matrix.lineWidth
-        canvas.height = this.rows * cellSize + padding * 2
-        canvas.width = this.columns * cellSize + padding * 2
+        canvas.height = this.data.rows * cellSize + padding * 2
+        canvas.width = this.data.columns * cellSize + padding * 2
         let context = canvas.getContext("2d")
 
         let getCoordsByIndexes = function(x, y) {
@@ -108,14 +110,13 @@ let matrix = {
 
         let drawLines = function () {
             context.lineCap = "round"
-            //console.log(this.rows)
             //draw vertical lines
-            for (let y = 0; y < matrix.rows; y++) {
+            for (let y = 0; y < matrix.data.rows; y++) {
                 
-                for (let x = 0; x <= matrix.columns; x++) {
+                for (let x = 0; x <= matrix.data.columns; x++) {
                     context.beginPath()
                     //console.log (context.lineWidth)
-                    let borderValue = matrix.borders.verticalArray[y][x]
+                    let borderValue = matrix.data.borders.verticalArray[y][x]
                     //console.log(borderValue)
                     if (borderValue == 0) {
                         continue
@@ -141,12 +142,12 @@ let matrix = {
             }
 
             //draw horizontal lines
-            for (let y = 0; y <= matrix.rows; y++) {
-                for (let x = 0; x < matrix.columns; x++) {
+            for (let y = 0; y <= matrix.data.rows; y++) {
+                for (let x = 0; x < matrix.data.columns; x++) {
                     context.beginPath()
-                    //console.log(matrix.borders.horizontalArray)
+                    //console.log(matrix.data.borders.horizontalArray)
                     //console.log("y = " + y + " x = " + x)
-                    let borderValue = matrix.borders.horizontalArray[y][x]
+                    let borderValue = matrix.data.borders.horizontalArray[y][x]
                     if (borderValue == 0) {
                         continue
                     } else if (borderValue == 1) {
@@ -182,7 +183,7 @@ let matrix = {
                 context.fillRect (coords[0], coords[1], matrix.cellSize, matrix.cellSize);
             }
 
-            let selection = matrix.selection
+            let selection = matrix.data.selection
             for (let y in selection) {
                 for (let x in selection[y]) {
                     if (selection[y][x] == true) {
@@ -196,16 +197,16 @@ let matrix = {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
 
-            for (let y in matrix.values) {
-                for (let x in matrix.values[y]) {
-                    //console.log(matrix.values[y][x], matrix.numberTypes[y][x])
-                    if (matrix.values[y][x] == 0) {
+            for (let y in matrix.data.values) {
+                for (let x in matrix.data.values[y]) {
+                    //console.log(matrix.data.values[y][x], matrix.numberTypes[y][x])
+                    if (matrix.data.values[y][x] == 0) {
                         continue
                     } else {
                         let coords = getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + 28
                         let yCoord = coords[1] + 80
-                        let value = matrix.values[y][x]
+                        let value = matrix.data.values[y][x]
                         if (String(value).length == 1) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 80
@@ -227,15 +228,15 @@ let matrix = {
             if (solving.visible == false) {
                 return
             }
-            for (let y in matrix.solving) {
-                for (let x in matrix.solving[y]) {
-                    if (matrix.values[y][x] != 0 && matrix.values[y][x].toString().length == 1) {
+            for (let y in matrix.data.solving) {
+                for (let x in matrix.data.solving[y]) {
+                    if (matrix.data.values[y][x] != 0 && matrix.data.values[y][x].toString().length == 1) {
                         continue
                     }
                     
-                    if (matrix.solving[y][x][0] != 0) {
+                    if (matrix.data.solving[y][x][0] != 0) {
                         // solving-type = number
-                        let value = matrix.solving[y][x][0]
+                        let value = matrix.data.solving[y][x][0]
                         let coords = getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + matrix.cellSize / 2
                         let yCoord = coords[1] + 80
@@ -246,7 +247,7 @@ let matrix = {
                     } else {
                         { 
                             // solving-type = central
-                            let value = matrix.solving[y][x][1].join('')
+                            let value = matrix.data.solving[y][x][1].join('')
                             if (value.length != 0) {
                                 let fontSize = 20, yDelta = 30
                                 if (value.length == 1) {fontSize = 80; yDelta = 80}
@@ -269,7 +270,7 @@ let matrix = {
                         }
                         {
                             // solving-type = corner
-                            let cornerArray = matrix.solving[y][x][2]
+                            let cornerArray = matrix.data.solving[y][x][2]
                             let xDelta = 0, yDelta = 0
 
                             for (let i in cornerArray) {
@@ -291,7 +292,7 @@ let matrix = {
                         }
                     }
                     
-                    /* let value = matrix.values[y][x]
+                    /* let value = matrix.data.values[y][x]
                     if (String(value).length == 1) {
                         xCoord = coords[0] + 28
                         yCoord = coords[1] + 80
@@ -331,10 +332,10 @@ let matrix = {
                 context.strokeStyle = matrix.color
                 context.stroke()
             }
-            for (let y in matrix.twins) {
-                for (let x in matrix.twins[y]) {
+            for (let y in matrix.data.twins) {
+                for (let x in matrix.data.twins[y]) {
                     x = +x, y = +y
-                    let type = matrix.twins[y][x]
+                    let type = matrix.data.twins[y][x]
                     let coords = getCoordsByIndexes(x + 1, y + 1)
                     let delta = matrix.cellSize / 5
 
@@ -393,14 +394,14 @@ let matrix = {
                 context.strokeStyle = matrix.color
                 context.stroke()
             }
-            for (let y in matrix.inequals.horizontal) {
-                for (let x in matrix.inequals.horizontal[y]) {
+            for (let y in matrix.data.inequals.horizontal) {
+                for (let x in matrix.data.inequals.horizontal[y]) {
                     x = +x, y = +y
-                    let type = matrix.inequals.horizontal[y][x]
+                    let type = matrix.data.inequals.horizontal[y][x]
                     let coords = getCoordsByIndexes(x + 1, y)
                     coords[1] = coords[1] + matrix.cellSize / 2
-                    let deltaX = matrix.cellSize / 5
-                    let deltaY = matrix.cellSize / 5
+                    let deltaX = matrix.cellSize / 6
+                    let deltaY = matrix.cellSize / 6
 
                     if (type == 0) {
                         continue
@@ -438,10 +439,10 @@ let matrix = {
                 }
             }
 
-            for (let y in matrix.inequals.vertical) {
-                for (let x in matrix.inequals.vertical[y]) {
+            for (let y in matrix.data.inequals.vertical) {
+                for (let x in matrix.data.inequals.vertical[y]) {
                     x = +x, y = +y
-                    let type = matrix.inequals.vertical[y][x]
+                    let type = matrix.data.inequals.vertical[y][x]
                     let coords = getCoordsByIndexes(x, y + 1)
                     coords[0] = coords[0] + matrix.cellSize / 2
                     let deltaX = matrix.cellSize / 6
@@ -507,7 +508,7 @@ let matrix = {
 
             
 
-            let type = matrix.cross
+            let type = matrix.data.cross
             if (type == 0) {
                 return
             } else if (type == 1) {
@@ -545,7 +546,7 @@ let matrix = {
         }
 
         let drawChains = function() {
-            for (let chainArray of matrix.chains) {
+            for (let chainArray of matrix.data.chains) {
                 //let chainArray = chain.split('-')
                 for (let i = 0; i < chainArray.length - 1; i++) {
                     let startX = chainArray[i][0]
@@ -584,7 +585,7 @@ let matrix = {
         }
 
         let drawBlockOutlines2 = function() {
-            for (let obj of matrix.blockOutlines) {
+            for (let obj of matrix.data.blockOutlines) {
                 let text = obj.text
                 let array = obj.array
                 //console.log(array)
@@ -672,11 +673,11 @@ let matrix = {
         }
 
         let drawBlockOutlines = function() {
-            if (Object.keys(matrix.blockOutlines).length == 0) {
+            if (Object.keys(matrix.data.blockOutlines).length == 0) {
                 return
             }
-            //console.log(matrix.blockOutlines)
-            for (let obj of matrix.blockOutlines) {
+            //console.log(matrix.data.blockOutlines)
+            for (let obj of matrix.data.blockOutlines) {
                 let text = obj.text
                 let stepsArray = obj.stepsArray
                 let isSelected = obj.isSelected
@@ -721,24 +722,24 @@ let printOutlineList = function() {
     let elem = document.getElementById("block-outline-list")
     elem.innerHTML = ''
 
-    for (let index in matrix.blockOutlines) {
+    for (let index in matrix.data.blockOutlines) {
         let row = document.createElement('div')
         row.classList.add('block-outline-row')
         row.innerHTML = `Блок ${index} X`
 
         row.onclick = function() {
-            matrix.blockOutlines.splice(index, 1)
+            matrix.data.blockOutlines.splice(index, 1)
             printOutlineList()
             matrix.draw()
         }
 
         row.onmouseover = function() {
-            matrix.blockOutlines[index].isSelected = true
+            matrix.data.blockOutlines[index].isSelected = true
             matrix.draw()
         }
         
         row.onmouseout = function() {
-            matrix.blockOutlines[index].isSelected = false
+            matrix.data.blockOutlines[index].isSelected = false
             matrix.draw()
         }
 
@@ -764,20 +765,20 @@ let solving = {
         return this.visible
     },
     remove() {
-        matrix.solving = createMatrixSolvingArray(matrix.rows, matrix.columns)
+        matrix.data.solving = createMatrixSolvingArray(matrix.data.rows, matrix.data.columns)
         matrix.draw()
     },
     apply() {
-        for (let y in matrix.solving) {
-            for (let x in matrix.solving[y]) {
-                let number = matrix.solving[y][x][0]
-                let centralArray = matrix.solving[y][x][1]
+        for (let y in matrix.data.solving) {
+            for (let x in matrix.data.solving[y]) {
+                let number = matrix.data.solving[y][x][0]
+                let centralArray = matrix.data.solving[y][x][1]
                 if (number != 0) {
-                    matrix.solving[y][x] = [0, [], []]
-                    matrix.values[y][x] = number
+                    matrix.data.solving[y][x] = [0, [], []]
+                    matrix.data.values[y][x] = number
                 } else if (centralArray.length == 1) {
-                    matrix.solving[y][x] = [0, [], []]
-                    matrix.values[y][x] = centralArray[0]
+                    matrix.data.solving[y][x] = [0, [], []]
+                    matrix.data.values[y][x] = centralArray[0]
                 }
             }
         }
@@ -888,17 +889,17 @@ let createMatrixBordersObject = function(rows, columns) {
 }
 
 let setClassicBorders = function() {
-    for (let x in matrix.borders.horizontalArray[3]) {
-        matrix.borders.horizontalArray[3][x] = 2
+    for (let x in matrix.data.borders.horizontalArray[3]) {
+        matrix.data.borders.horizontalArray[3][x] = 2
     }
-    for (let x in matrix.borders.horizontalArray[6]) {
-        matrix.borders.horizontalArray[6][x] = 2
+    for (let x in matrix.data.borders.horizontalArray[6]) {
+        matrix.data.borders.horizontalArray[6][x] = 2
     }
-    for (let y in matrix.borders.verticalArray) {
-        matrix.borders.verticalArray[y][3] = 2
+    for (let y in matrix.data.borders.verticalArray) {
+        matrix.data.borders.verticalArray[y][3] = 2
     }
-    for (let y in matrix.borders.verticalArray) {
-        matrix.borders.verticalArray[y][6] = 2
+    for (let y in matrix.data.borders.verticalArray) {
+        matrix.data.borders.verticalArray[y][6] = 2
     }
     
 }
@@ -929,24 +930,24 @@ let createMatrixInequalsArray = function(rows, columns) {
 
 let setMatrix = function(columns, rows) {
     matrix.init()
-    matrix.rows = rows
-    matrix.columns = columns
-    matrix.borders = createMatrixBordersObject(rows, columns)
-    matrix.selection = createMatrixSelectionArray(rows, columns)
-    matrix.values = createMatrixValuesArray(rows, columns)
-    matrix.solving = createMatrixSolvingArray(rows, columns)
+    matrix.data.rows = rows
+    matrix.data.columns = columns
+    matrix.data.borders = createMatrixBordersObject(rows, columns)
+    matrix.data.selection = createMatrixSelectionArray(rows, columns)
+    matrix.data.values = createMatrixValuesArray(rows, columns)
+    matrix.data.solving = createMatrixSolvingArray(rows, columns)
     //matrix.numberTypes = createMatrixNumberTypesArray(rows, columns)
-    matrix.twins = createMatrixTwinsArray(rows, columns)
-    matrix.inequals = {}
-    matrix.inequals.horizontal = createMatrixInequalsArray(rows, columns)
-    matrix.inequals.vertical = createMatrixInequalsArray(rows, columns)
-    matrix.cross = 0
+    matrix.data.twins = createMatrixTwinsArray(rows, columns)
+    matrix.data.inequals = {}
+    matrix.data.inequals.horizontal = createMatrixInequalsArray(rows, columns)
+    matrix.data.inequals.vertical = createMatrixInequalsArray(rows, columns)
+    matrix.data.cross = 0
     matrix.thinLineThickness = 2
     matrix.fatLineThickness = 4
     matrix.genArray = []
     matrix.isCtrlPressed = false
-    matrix.chains = []
-    matrix.blockOutlines = []
+    matrix.data.chains = []
+    matrix.data.blockOutlines = []
 
     printOutlineList()
 }
@@ -985,14 +986,14 @@ let canvasActivate = function() {
         let padding = matrix.padding
         let indexes = [0, 0]
 
-        for (let xIndex = 0; xIndex < matrix.columns; xIndex++) {
+        for (let xIndex = 0; xIndex < matrix.data.columns; xIndex++) {
             if (x <= padding + cellSize * (xIndex + 1)) {
                 indexes[0] = xIndex
                 break
             }
         }
 
-        for (let yIndex = 0; yIndex < matrix.rows; yIndex++) {
+        for (let yIndex = 0; yIndex < matrix.data.rows; yIndex++) {
             if (y <= padding + cellSize * (yIndex + 1)) {
                 indexes[1] = yIndex
                 break
@@ -1041,13 +1042,13 @@ let canvasActivate = function() {
             return false
         }
         let indexes = getIndexesByCoords(x, y)
-        let value = matrix.selection[indexes[1]][indexes[0]]
+        let value = matrix.data.selection[indexes[1]][indexes[0]]
         //console.log(matrix.isCtrlPressed)
         if (matrix.isCtrlPressed == false) {
             matrix.deSelectAll()
-            //console.log(matrix.selection)
+            //console.log(matrix.data.selection)
         }
-        matrix.selection[indexes[1]][indexes[0]] = !value
+        matrix.data.selection[indexes[1]][indexes[0]] = !value
         matrix.draw()
     }
 }
@@ -1082,19 +1083,19 @@ let bordersPanelActivate = function() {
         let applyBorderWeight = function(x, y) {
             
             if (direction == 'left') {
-                matrix.borders.verticalArray[y][x] = weight
+                matrix.data.borders.verticalArray[y][x] = weight
             } else if (direction == 'right') {
-                matrix.borders.verticalArray[y][x + 1] = weight
+                matrix.data.borders.verticalArray[y][x + 1] = weight
             } else if (direction == 'up') {
-                matrix.borders.horizontalArray[y][x] = weight
+                matrix.data.borders.horizontalArray[y][x] = weight
             } else if (direction == 'down') {
-                matrix.borders.horizontalArray[y + 1][x] = weight
+                matrix.data.borders.horizontalArray[y + 1][x] = weight
             }
         }
 
-        for (let y in matrix.selection) {
-            for (let x in matrix.selection[y]) {
-                if (matrix.selection[y][x] == true) {
+        for (let y in matrix.data.selection) {
+            for (let x in matrix.data.selection[y]) {
+                if (matrix.data.selection[y][x] == true) {
                     applyBorderWeight(+x, +y)
                 }
             }
@@ -1126,75 +1127,75 @@ let numberClick = function(number) {
         let solvingType = controls.writing.solvingMode
 
         if (number == 0) {
-            matrix.values[y][x] = 0
-            matrix.solving[y][x] = [0, [], []]
+            matrix.data.values[y][x] = 0
+            matrix.data.solving[y][x] = [0, [], []]
             return
         }
 
         if (writeType == "insert") {
             if (insertType == "number") {
-                matrix.values[y][x] = number
-                matrix.solving[y][x] = [0, [], []]
+                matrix.data.values[y][x] = number
+                matrix.data.solving[y][x] = [0, [], []]
             } else if (insertType == "pair") {
-                let currentValue = matrix.values[y][x]
+                let currentValue = matrix.data.values[y][x]
                 let currentValueLenght = String(currentValue).length
                 if (currentValueLenght == 0) {
-                    matrix.values[y][x] = String(number)
+                    matrix.data.values[y][x] = String(number)
                 } else if (currentValueLenght == 1){
-                    matrix.values[y][x] = currentValue + '' + String(number)
+                    matrix.data.values[y][x] = currentValue + '' + String(number)
                 } else if (currentValueLenght == 2) {
-                    matrix.values[y][x] = String(currentValue)[1] + String(number)
+                    matrix.data.values[y][x] = String(currentValue)[1] + String(number)
                 }
             }
         } else if (writeType == "solving") {
-            let value = matrix.values[y][x]
+            let value = matrix.data.values[y][x]
             if (value != 0 && value.toString().length == 1) {
                 return
             }
             //console.log('123')
             if (solvingType == "number") {
-                matrix.solving[y][x] = [number, [], []]
+                matrix.data.solving[y][x] = [number, [], []]
             } else if (solvingType == "central") {
-                let currentCentralValue = matrix.solving[y][x][1]
-                if (matrix.solving[y][x][0] != 0) {
+                let currentCentralValue = matrix.data.solving[y][x][1]
+                if (matrix.data.solving[y][x][0] != 0) {
                     return
                 }
                 if (currentCentralValue.length == 0) {
-                    matrix.solving[y][x][1].push(number)
+                    matrix.data.solving[y][x][1].push(number)
                 } else {
-                    let indexOfNumber = matrix.solving[y][x][1].indexOf(number)
+                    let indexOfNumber = matrix.data.solving[y][x][1].indexOf(number)
                     if (indexOfNumber == -1) {
-                        matrix.solving[y][x][1].push(number)
-                        let sortedArray = matrix.solving[y][x][1].sort((a, b) => a - b);
-                        matrix.solving[y][x][1] = sortedArray
+                        matrix.data.solving[y][x][1].push(number)
+                        let sortedArray = matrix.data.solving[y][x][1].sort((a, b) => a - b);
+                        matrix.data.solving[y][x][1] = sortedArray
                     } else {
-                        matrix.solving[y][x][1].splice(indexOfNumber, 1)
+                        matrix.data.solving[y][x][1].splice(indexOfNumber, 1)
                     }
                 }
             } else if (solvingType == "corner") {
-                let currentCentralValue = matrix.solving[y][x][2]
-                if (matrix.solving[y][x][0] != 0) {
+                let currentCentralValue = matrix.data.solving[y][x][2]
+                if (matrix.data.solving[y][x][0] != 0) {
                     return
                 }
                 if (currentCentralValue.length == 0) {
-                    matrix.solving[y][x][2].push(number)
+                    matrix.data.solving[y][x][2].push(number)
                 } else {
-                    let indexOfNumber = matrix.solving[y][x][2].indexOf(number)
+                    let indexOfNumber = matrix.data.solving[y][x][2].indexOf(number)
                     if (indexOfNumber == -1) {
-                        matrix.solving[y][x][2].push(number)
-                        /* let sortedArray = matrix.solving[y][x][1].sort((a, b) => a - b);
-                        matrix.solving[y][x][1] = sortedArray */
+                        matrix.data.solving[y][x][2].push(number)
+                        /* let sortedArray = matrix.data.solving[y][x][1].sort((a, b) => a - b);
+                        matrix.data.solving[y][x][1] = sortedArray */
                     } else {
-                        matrix.solving[y][x][2].splice(indexOfNumber, 1)
+                        matrix.data.solving[y][x][2].splice(indexOfNumber, 1)
                     }
                 }
             }
         }
     }
     
-    for (let y in matrix.selection) {
-        for (let x in matrix.selection[y]) {
-            if (matrix.selection[y][x] == true) {
+    for (let y in matrix.data.selection) {
+        for (let x in matrix.data.selection[y]) {
+            if (matrix.data.selection[y][x] == true) {
                 press(number, x, y)
             }
         }
@@ -1445,38 +1446,38 @@ let twinsPanelActivate = function() {
                 if (x == 0 || y == 0) {
                     return
                 } else {
-                    matrix.twins[y - 1][x - 1] = type
+                    matrix.data.twins[y - 1][x - 1] = type
                 }
             } else if (direction == 'up-right') {
-                if (x == matrix.columns - 1 || y == 0) {
+                if (x == matrix.data.columns - 1 || y == 0) {
                     return
                 } else {
-                    matrix.twins[y - 1][x] = type
+                    matrix.data.twins[y - 1][x] = type
                 }
             } else if (direction == 'down-left') {
-                if (x == 0 || y == matrix.rows - 1) {
+                if (x == 0 || y == matrix.data.rows - 1) {
                     return
                 } else {
-                    matrix.twins[y][x - 1] = type
+                    matrix.data.twins[y][x - 1] = type
                 }
             } else if (direction == 'down-right') {
-                if (x == matrix.columns - 1 || y == matrix.rows - 1) {
+                if (x == matrix.data.columns - 1 || y == matrix.data.rows - 1) {
                     return
                 } else {
-                    matrix.twins[y][x] = type
+                    matrix.data.twins[y][x] = type
                 }
             }
         }
 
-        for (let y in matrix.selection) {
-            for (let x in matrix.selection[y]) {
-                if (matrix.selection[y][x] == true) {
+        for (let y in matrix.data.selection) {
+            for (let x in matrix.data.selection[y]) {
+                if (matrix.data.selection[y][x] == true) {
                     applyTwins(+x, +y)
                 }
             }
         }
         matrix.draw()
-        //console.log(matrix.twins)
+        //console.log(matrix.data.twins)
     }
 
     twinsHidden.onclick = function() {
@@ -1506,7 +1507,7 @@ let crossPanelActivate = function() {
             } else if(button.id == "cross-double") {
                 type = 3
             }
-            matrix.cross = type
+            matrix.data.cross = type
             matrix.draw()
             
         }
@@ -1518,18 +1519,18 @@ let generationPanelActivate = function() {
     button.onclick = function() {
         let genType = document.querySelector('*[name="generation-type"]:checked').value
         if (genType == "from-zero") {
-            for (let y in matrix.values) {
-                for (let x in matrix.values[y]) {
-                    matrix.values[y][x] = 0
+            for (let y in matrix.data.values) {
+                for (let x in matrix.data.values[y]) {
+                    matrix.data.values[y][x] = 0
                 }
             }
         }
 
-        let valuesCopy = JSON.parse(JSON.stringify(matrix.values))
+        let valuesCopy = JSON.parse(JSON.stringify(matrix.data.values))
         
-        values = ultraGen.fillCandidates(valuesCopy, matrix.rows, true)
+        values = ultraGen.fillCandidates(valuesCopy, matrix.data.rows, true)
         matrix.genArray = []
-        ultraGen.getFromPattern(values, matrix.rows, matrix.genArray, 1)
+        ultraGen.getFromPattern(values, matrix.data.rows, matrix.genArray, 1)
         //console.log(ultraGen.toNormalArray(array))
         //console.log(matrix.genArray)
         if (matrix.genArray.length == 0) {
@@ -1537,7 +1538,7 @@ let generationPanelActivate = function() {
         }
         // let max = matrix.genArray.length - 1
         // let randomIndex = Math.floor(Math.random() * max) + 0
-        matrix.values = matrix.genArray[0]
+        matrix.data.values = matrix.genArray[0]
 
         /* for (let y in matrix.numberTypes) {
             for (let x in matrix.numberTypes[y]) {
@@ -1593,9 +1594,9 @@ let keyboardEventsActivate = function() {
 
         if (key == "ArrowRight" || key == "ArrowLeft" || key == "ArrowUp" || key == "ArrowDown") {
             let amountOfSelectionCells = 0
-            for (let y in matrix.selection) {
-                for (let x in matrix.selection[y]) {
-                    if (matrix.selection[y][x] == true) {
+            for (let y in matrix.data.selection) {
+                for (let x in matrix.data.selection[y]) {
+                    if (matrix.data.selection[y][x] == true) {
                         amountOfSelectionCells++
                     }
                 }
@@ -1623,11 +1624,11 @@ let solvingsPanelActivate = function() {
     let info = document.getElementById("solvings-info")
 
     button.onclick = function() {
-        let valuesCopy = JSON.parse(JSON.stringify(matrix.values))
+        let valuesCopy = JSON.parse(JSON.stringify(matrix.data.values))
             
-        values = ultraGen.fillCandidates(valuesCopy, matrix.rows, false)
+        values = ultraGen.fillCandidates(valuesCopy, matrix.data.rows, false)
         matrix.genArray = []
-        ultraGen.getFromPattern(values, matrix.rows, matrix.genArray, 2)
+        ultraGen.getFromPattern(values, matrix.data.rows, matrix.genArray, 2)
 
         if (matrix.genArray.length == 0) {
             info.classList.remove("solvings-info-gray")
@@ -1660,7 +1661,7 @@ let chainPanelActivate = function() {
 
     chainButton.onclick = function() {
         let value = chainInput.value
-        matrix.chains.push(value.split('-'))
+        matrix.data.chains.push(value.split('-'))
         matrix.draw()
     }
 }
@@ -1676,7 +1677,7 @@ let blockOutlinePanelActivate = function() {
         let array = matrix.getSelected()
         let stepsArray = getBlockStepsArray(array)
         let isSelected = false
-        matrix.blockOutlines.push({text, stepsArray, isSelected})
+        matrix.data.blockOutlines.push({text, stepsArray, isSelected})
         matrix.draw()
         printOutlineList()
     }
@@ -1702,38 +1703,38 @@ let inequalityPanelActivate = function() {
                 if (x == 0 || type == 3 || type == 4) {
                     return
                 } else {
-                    matrix.inequals.horizontal[y][x - 1] = type
+                    matrix.data.inequals.horizontal[y][x - 1] = type
                 }
             } else if (direction == 'right') {
-                if (x == matrix.columns - 1 || type == 3 || type == 4) {
+                if (x == matrix.data.columns - 1 || type == 3 || type == 4) {
                     return
                 } else {
-                    matrix.inequals.horizontal[y][x] = type
+                    matrix.data.inequals.horizontal[y][x] = type
                 }
             } else if (direction == 'up') {
                 if (y == 0 || type == 1 || type == 2) {
                     return
                 } else {
-                    matrix.inequals.vertical[y - 1][x] = type
+                    matrix.data.inequals.vertical[y - 1][x] = type
                 }
             } else if (direction == 'down') {
-                if (y == matrix.rows - 1 || type == 1 || type == 2) {
+                if (y == matrix.data.rows - 1 || type == 1 || type == 2) {
                     return
                 } else {
-                    matrix.inequals.vertical[y][x] = type
+                    matrix.data.inequals.vertical[y][x] = type
                 }
             }
         }
 
-        for (let y in matrix.selection) {
-            for (let x in matrix.selection[y]) {
-                if (matrix.selection[y][x] == true) {
+        for (let y in matrix.data.selection) {
+            for (let x in matrix.data.selection[y]) {
+                if (matrix.data.selection[y][x] == true) {
                     applyInequality(+x, +y)
                 }
             }
         }
         matrix.draw()
-        //console.log(matrix.twins)
+        //console.log(matrix.data.twins)
     }
 
     inequalityHidden.onclick = function() {
