@@ -21,19 +21,19 @@
                 <canvas id="down-info-canvas"></canvas>
             </div>
             <div id="controls">
-                <div id="num-panel" class="panel">
+                <div id="num-panel">
                     <div id="num-container" class="inline-block">
                         <div id="writing-mode">
-                            <div id="insert-writing-mode" class="writing-mode-active">Ввод</div>
-                            <div id="solving-writing-mode">Решение</div>
+                            <div id="insert-writing-mode">Ввод</div>
+                            <div id="solving-writing-mode" class="writing-mode-active">Решение</div>
                         </div>
                         <div id="insert-mode-types">
                             <div id="insert-mode-number" class="writing-mode-elem writing-mode-elem-active"></div>
                             <div id="insert-mode-pair" class="writing-mode-elem"></div>
                         </div>
                         <div id="solving-mode-types">
-                            <div id="solving-mode-number" class="writing-mode-elem writing-mode-elem-active"></div>
-                            <div id="solving-mode-central" class="writing-mode-elem"></div>
+                            <div id="solving-mode-number" class="writing-mode-elem" style="display:none"></div>
+                            <div id="solving-mode-central" class="writing-mode-elem writing-mode-elem-active"></div>
                             <div id="solving-mode-corner" class="writing-mode-elem"></div>
                             <div id="solving-mode-buttons">
                                 <div>
@@ -45,22 +45,18 @@
                         </div>
                     </div>
                     <div id="numpad" class="inline-block">
-                        <div>
+                        
                             <div class="num" key="1">1</div>
                             <div class="num" key="2">2</div>
                             <div class="num" key="3">3</div>
-                        </div>
-                        <div>
                             <div class="num" key="4">4</div>
                             <div class="num" key="5">5</div>
                             <div class="num" key="6">6</div>
-                        </div>
-                        <div>
                             <div class="num" key="7">7</div>
                             <div class="num" key="8">8</div>
                             <div class="num" key="9">9</div>
-                        </div>
-                        <div>
+                        
+                        <div style="display:none">
                             <div class="num" key="0">0</div>
                         </div>
                     </div>

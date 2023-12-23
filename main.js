@@ -1534,7 +1534,7 @@ let generationPanelActivate = function() {
         //console.log(ultraGen.toNormalArray(array))
         //console.log(matrix.genArray)
         if (matrix.genArray.length == 0) {
-            console.log('0 решений')
+            //console.log('0 решений')
         }
         // let max = matrix.genArray.length - 1
         // let randomIndex = Math.floor(Math.random() * max) + 0
@@ -1793,3 +1793,10 @@ chainPanelActivate()
 blockOutlinePanelActivate()
 inequalityPanelActivate()
 metaPanelActivate()
+
+/* let bbutton = document.getElementById("generation-button")
+// Это позволяет отобразить цифры на поле корректным шрифтом
+setTimeout( function() {
+    bbutton.click()
+    //matrix.elem.click()
+}, 500) */

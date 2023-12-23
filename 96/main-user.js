@@ -213,10 +213,12 @@ let matrix = {
                         if (String(value).length == 1) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 80
+                            //context.font = "80px Roboto-Light"
                             context.font = "80px Roboto-Light"
                         } else if (String(value).length == 2) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 88
+                            //context.font = "36px Roboto-Light"
                             context.font = "36px Roboto-Light"
                         }
 
@@ -752,9 +754,9 @@ let printOutlineList = function() {
 
 let controls = {
     writing: {
-        mode: "insert",
+        mode: "solving",
         insertMode: "number",
-        solvingMode: "number"
+        solvingMode: "central"
     }
 }
 
@@ -1327,7 +1329,7 @@ let upInfoActivate = function() {
         let infoNumber = upInfoNumber.value
 
         let writeToUpInfoCanvas = function() {
-            UICcontext.font = "60px Courier New"
+            UICcontext.font = "60px Roboto-Light"
             UICcontext.fillStyle = matrix.color
             UICcontext.fillText(infoNumber, 20, 75)
 
@@ -1378,11 +1380,11 @@ let downInfoActivate = function() {
         let link = downInfoLink.value
 
         let writeToDownInfoCanvas = function() {
-            DICcontext.font = "60px Courier New"
+            DICcontext.font = "60px Roboto-Light"
             DICcontext.fillStyle = matrix.color
             DICcontext.fillText(price, 20, 75)
 
-            DICcontext.font = "40px Courier New"
+            DICcontext.font = "40px Roboto-Light"
             DICcontext.fillText(link, 450, 80)
         }
         let copyDICtoCanvas = function() {
@@ -1773,26 +1775,19 @@ let metaPanelActivate = function () {
     }
 }
 
-//createClassicBoard()
-//setMatrix(6, 6)
+
+
 matrix.init()
 matrix.draw()
 
 canvasActivate()
-// createMatrixPanelActivate()
-// selectionPanelActivate()
-// bordersPanelActivate()
 numbersPanelActivate()
-// upInfoActivate()
-// downInfoActivate()
-// designPanelActivate()
-// twinsPanelActivate()
-// crossPanelActivate()
-// generationPanelActivate()
 keyboardEventsActivate()
 mouseEventsActivate()
-//solvingsPanelActivate()
-// chainPanelActivate()
-// blockOutlinePanelActivate()
-// inequalityPanelActivate()
-// metaPanelActivate()
+
+setTimeout(function() {
+    matrix.draw()
+}, 200)
+
+
+
