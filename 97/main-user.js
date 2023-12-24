@@ -1079,7 +1079,7 @@ let keyboardEventsActivate = function() {
 
 let mouseEventsActivate = function() {
     document.body.onclick = function(event) {
-        if (event.target.id == "container") {
+        if (event.target == document.body) {
             matrix.deSelectAll()
             matrix.draw()
         }
