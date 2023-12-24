@@ -1676,6 +1676,7 @@ let blockOutlinePanelActivate = function() {
         let text = textElem.value
         let array = matrix.getSelected()
         let stepsArray = getBlockStepsArray(array)
+        console.log(stepsArray)
         let isSelected = false
         matrix.data.blockOutlines.push({text, stepsArray, isSelected})
         matrix.draw()

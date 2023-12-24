@@ -187,8 +187,8 @@ body {
     //display: none;
     border-spacing: 2px 0px;
     //border-radius: 10px 10px 10px 10px;
-    background-color: #c3c3c3;
-    padding: 3px;
+    //background-color: #c3c3c3;
+    //padding: 3px;
 
 }
 #solving-mode-number {
@@ -256,148 +256,11 @@ body {
     color: white;
 }
 
+#num-zero {
+    background: url("images/trash.jpg");
+    background-size: contain;
+}
+
 #num-panel div:nth-child(4) .num:last-child {
     width: 98px;
-}
-
-
-#down-info-panel {
-    background-color: #e9e623;
-}
-
-#up-info-panel {
-    background-color: #e9e623;
-}
-
-#up-info-number {
-    margin: 0px 0px 5px;
-    width: 100px;
-}
-
-#up-info-button {
-    background-color: #a84493;
-}
-
-#down-info-panel input {
-    margin: 0px 0px 5px;
-}
-
-#down-info-button {
-    background-color: #a84493;
-}
-
-#down-info-canvas, #up-info-canvas {
-    //outline: 1px solid rgb(231, 28, 123);
-    width: 300;
-    display: none;
-}
-
-#design-panel {
-    background-color: #34fafa;
-}
-
-#design-panel input {
-    width: 60px;
-}
-
-#apply-thickness-settings {
-    background-color: #949e70;
-}
-
-#random-design-button {
-    background-color: #b13535;
-}
-
-#twins-panel {
-    background-color: #3735b1;
-}
-
-#twins-panel .button {
-    background-color: #6dc1cc;
-}
-
-#cross-panel {
-    background-color: #57a125;
-}
-
-#cross-panel .button {
-    background-color: #5680cc;
-}
-
-#generation-panel {
-    background-color: #6e7007;
-}
-
-#generation-panel .button {
-    background-color: #0b2c68;
-}
-
-#solvings-panel {
-    background-color: #f3a8a8;
-}
-
-.solvings-info-gray {
-    background-color: #515253;
-}
-
-.solvings-info-red {
-    background-color: #e03c65;
-}
-
-.solvings-info-green {
-    background-color: #44d14b;
-}
-
-#check-solvings-amount {
-    background-color: #af0ca2;
-}
-
-#chain-panel {
-    background-color: #3fe94d;
-}
-
-#chain-button {
-    background-color: #e93fcd;
-}
-
-#block-outline-panel {
-    background-color: #3fe94d;
-}
-
-#block-outline-text {
-    width: 60px;
-}
-
-
-#block-outline-button {
-    background-color: #e93fcd;
-}
-
-#block-outline-list {
-    //background-color: #e9d83f;
-}
-
-.block-outline-row {
-    background-color: #982ea1;
-    color: white;
-    width: 100px;
-    padding: 3px;
-    border-radius: 5px;
-    margin-bottom: 5px;
-}
-
-#inequality-panel {
-    background-color: #bfe48e;
-}
-
-#inequality-panel .button {
-    background-color: #8610b4;
-}
-
-#meta-panel {
-    background-color: #b7f8df;
-}
-
-#download-json {
-    background-color: #7a2365;
 }
