@@ -210,11 +210,11 @@ let matrix = {
                         if (String(value).length == 1) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 80
-                            context.font = "80px Roboto-Light"
+                            context.font = "80px Roboto-Medium"
                         } else if (String(value).length == 2) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 88
-                            context.font = "36px Roboto-Light"
+                            context.font = "36px Roboto-Medium"
                         }
 
                         context.fillStyle = matrix.color;
@@ -240,7 +240,7 @@ let matrix = {
                         let coords = getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + matrix.cellSize / 2
                         let yCoord = coords[1] + 80
-                        context.font = "80px Roboto-Light"
+                        context.font = "80px Roboto-Medium"
                         context.textAlign = 'center'
                         context.fillStyle = matrix.solvingColor
                         context.fillText(value, xCoord, yCoord)
@@ -262,7 +262,7 @@ let matrix = {
                                 let coords = getCoordsByIndexes(x, y)
                                 let xCoord = coords[0] + matrix.cellSize / 2
                                 let yCoord = coords[1] + yDelta
-                                context.font = `${fontSize}px Roboto-Light`
+                                context.font = `${fontSize}px Roboto-Medium`
                                 context.textAlign = 'center'
                                 context.fillStyle = matrix.solvingColor
                                 context.fillText(value, xCoord, yCoord)
@@ -284,7 +284,7 @@ let matrix = {
                                 let coords = getCoordsByIndexes(x, y)
                                 let xCoord = coords[0] + matrix.cellSize / 2 + xDelta
                                 let yCoord = coords[1] + matrix.cellSize / 2 + yDelta
-                                context.font = '30px Roboto-Light'
+                                context.font = '30px Roboto-Medium'
                                 context.textAlign = 'center'
                                 context.fillStyle = matrix.solvingColor
                                 context.fillText(value, xCoord, yCoord)
@@ -300,7 +300,7 @@ let matrix = {
                     } else if (String(value).length == 2) {
                         xCoord = coords[0] + 28
                         yCoord = coords[1] + 88
-                        context.font = "36px Roboto-Light"
+                        context.font = "36px Roboto-Medium"
                     } */
 
                     
@@ -312,7 +312,7 @@ let matrix = {
         let drawFakeText = function() {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
-            context.font = "80px Roboto-Light"
+            context.font = "80px Roboto-Medium"
             context.fillStyle = matrix.color;
             context.fillText("123jh1j2h31k2j3h", 10, 10)
             canvas.width = canvas.width
@@ -577,7 +577,7 @@ let matrix = {
             context.rect(x + 20, y + 5, 60, 20)
             context.fill()
             let fontSize = 20
-            context.font = `${fontSize}px Roboto-Light`
+            context.font = `${fontSize}px Roboto-Medium`
             context.textAlign = 'center'
             context.fillStyle = matrix.color
             context.fillText(text, x + 50, y + 20)
@@ -1768,6 +1768,10 @@ let metaPanelActivate = function () {
     }
     
     downloadJSONbutton.onclick = function() {
+        let upInfoNumber = document.getElementById("up-info-number")
+        let dataName = upInfoNumber.value.split('')
+        dataName.shift()
+        matrix.data.name = dataName.join('')
         writeFile("data.js", "let data = " + JSON.stringify(matrix.data));
     }
 }

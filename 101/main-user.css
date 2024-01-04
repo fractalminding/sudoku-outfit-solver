@@ -2,11 +2,15 @@
     font-family: Roboto-Light;
     src: url(roboto/Roboto-Light.ttf)
 }
-
 @font-face {
+    font-family: Roboto-Medium;
+    src: url(roboto/Roboto-Medium.ttf)
+}
+
+/* @font-face {
     font-family: Comfortaa;
     src: url(Comfortaa-Light.ttf)
-}
+} */
 
 body {
     font-family: Roboto-Light;
@@ -39,7 +43,7 @@ body {
 }
 
 #controls {
-    font-family: "Comfortaa";
+    /* font-family: "Comfortaa"; */
     display: block;
 }
 
@@ -49,18 +53,42 @@ body {
 }
 
 #solving-mode-number {
-    background: url("images/type-of-solving-number.jpg");
+    background: url("images/type-of-solving-number.jpg") no-repeat;
     
 }
 #solving-mode-central {
-    background: url("images/type-of-solving-central.jpg");
+    background: url("images/type-of-solving-central.jpg") no-repeat;
 }
 #solving-mode-corner {
-    background: url("images/type-of-solving-coner.jpg");
+    background: url("images/type-of-solving-coner.jpg") no-repeat;
+}
+#solving-mode-painting {
+    background: url("images/painting.jpg") no-repeat;
 }
 
-.writing-mode-elem, .select-mode-elem {
+.select-mode-elem {
     width: 30%;
+    background-size:contain !important;
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+}
+
+.writing-mode-elem{
+    width: 23%;
+    background-size:contain !important;
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+}
+
+#undo-button {
+    background: url("images/back-arrow.jpg") no-repeat;
+}
+#redo-button {
+    background: url("images/forward-arrow.jpg") no-repeat;
+}
+
+#undo-button, #redo-button{
+    width: 45%;
     background-size:contain !important;
     display: inline-block;
     aspect-ratio: 1 / 1;
@@ -99,7 +127,7 @@ body {
 }
 
 #num-zero {
-    background: url("images/trash.jpg");
+    background: url("images/trash.jpg") no-repeat;
     background-size: contain;
     display: inline-block;
     width: calc( 100% / 11);
@@ -107,7 +135,7 @@ body {
 }
 
 #num-all {
-    background: url("images/all-candidates.jpg");
+    background: url("images/all-candidates.jpg") no-repeat;
     background-size: contain;
     display: inline-block;
     width: calc( 100% / 11);
@@ -117,36 +145,45 @@ body {
     display: inline-block;
     width: calc( 100% - 4px );
     margin: 20px 0px;
+    white-space: nowrap;
 }
 
 #controls-row-2 {
     display: inline-block;
     text-align: left;
     width: calc( 100% - 4px );
+    white-space: nowrap;
 }
 
 #select-mode-one {
-    background: url("images/select-mode-one.jpg");
+    background: url("images/select-mode-one.jpg") no-repeat;
 }
 
 #select-mode-multi {
-    background: url("images/select-mode-multiple.jpg");
+    background: url("images/select-mode-multiple.jpg") no-repeat;
 }
 
 #select-mode-all {
-    background: url("images/select-mode-all.jpg");
+    background: url("images/select-mode-all.jpg") no-repeat;
 }
 
 #solving-mode-types {
     display: inline-block;
-    margin-right: 20px;
-    width: calc( 100% / 11 * 3);
+    margin-right: 15px;
+    width: calc( 100% / 8 * 3);
     white-space: nowrap;
 }
 
 #select-modes {
     display: inline-block;
     width: calc( 100% / 11 * 3);
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
+#undo-redo-panel {
+    display: inline-block;
+    width: calc( 100% / 11 * 2);
     white-space: nowrap;
 }
 

@@ -211,13 +211,13 @@ let matrix = {
                         if (String(value).length == 1) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 80
-                            //context.font = "80px Roboto-Light"
-                            context.font = "80px Roboto-Light"
+                            //context.font = "80px Roboto-Medium"
+                            context.font = "80px Roboto-Medium"
                         } else if (String(value).length == 2) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 88
-                            //context.font = "36px Roboto-Light"
-                            context.font = "36px Roboto-Light"
+                            //context.font = "36px Roboto-Medium"
+                            context.font = "36px Roboto-Medium"
                         }
 
                         context.fillStyle = matrix.color;
@@ -243,7 +243,7 @@ let matrix = {
                         let coords = getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + matrix.cellSize / 2
                         let yCoord = coords[1] + 80
-                        context.font = "80px Roboto-Light"
+                        context.font = "80px Roboto-Medium"
                         context.textAlign = 'center'
                         context.fillStyle = matrix.solvingColor
                         context.fillText(value, xCoord, yCoord)
@@ -265,7 +265,7 @@ let matrix = {
                                 let coords = getCoordsByIndexes(x, y)
                                 let xCoord = coords[0] + matrix.cellSize / 2
                                 let yCoord = coords[1] + yDelta
-                                context.font = `${fontSize}px Roboto-Light`
+                                context.font = `${fontSize}px Roboto-Medium`
                                 context.textAlign = 'center'
                                 context.fillStyle = matrix.solvingColor
                                 context.fillText(value, xCoord, yCoord)
@@ -287,7 +287,7 @@ let matrix = {
                                 let coords = getCoordsByIndexes(x, y)
                                 let xCoord = coords[0] + matrix.cellSize / 2 + xDelta
                                 let yCoord = coords[1] + matrix.cellSize / 2 + yDelta
-                                context.font = '30px Roboto-Light'
+                                context.font = '30px Roboto-Medium'
                                 context.textAlign = 'center'
                                 context.fillStyle = matrix.solvingColor
                                 context.fillText(value, xCoord, yCoord)
@@ -303,7 +303,7 @@ let matrix = {
                     } else if (String(value).length == 2) {
                         xCoord = coords[0] + 28
                         yCoord = coords[1] + 88
-                        context.font = "36px Roboto-Light"
+                        context.font = "36px Roboto-Medium"
                     } */
 
                     
@@ -315,7 +315,7 @@ let matrix = {
         let drawFakeText = function() {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
-            context.font = "80px Roboto-Light"
+            context.font = "80px Roboto-Medium"
             context.fillStyle = matrix.color;
             context.fillText("123jh1j2h31k2j3h", 10, 10)
             canvas.width = canvas.width
@@ -580,7 +580,7 @@ let matrix = {
             context.rect(x + 20, y + 5, 60, 20)
             context.fill()
             let fontSize = 20
-            context.font = `${fontSize}px Roboto-Light`
+            context.font = `${fontSize}px Roboto-Medium`
             context.textAlign = 'center'
             context.fillStyle = matrix.color
             context.fillText(text, x + 50, y + 20)
@@ -861,7 +861,7 @@ let numberClick = function(number) {
                 return
             }
             let candidatesArray = []
-            for (let i = 1; i <= matrix.data.rows && i < 9; i++) {
+            for (let i = 1; i <= matrix.data.rows && i <= 9; i++) {
                 candidatesArray.push(i)
             }
             matrix.data.solving[y][x][1] = candidatesArray
@@ -959,11 +959,13 @@ let numbersPanelActivate = function() {
         let solvingModeNumber = document.getElementById("solving-mode-number")
         let solvingModeCentral = document.getElementById("solving-mode-central")
         let solvingModeCorner = document.getElementById("solving-mode-corner")
+        let solvingModePainting = document.getElementById("solving-mode-painting")
 
         solvingModeNumber.onclick = function() {
             solvingModeCentral.classList.remove("writing-mode-elem-active")
             solvingModeCorner.classList.remove("writing-mode-elem-active")
             solvingModeNumber.classList.add("writing-mode-elem-active")
+            solvingModePainting.classList.remove("writing-mode-elem-active")
 
             controls.writing.solvingMode = "number"
         }
@@ -972,6 +974,7 @@ let numbersPanelActivate = function() {
             solvingModeCentral.classList.add("writing-mode-elem-active")
             solvingModeCorner.classList.remove("writing-mode-elem-active")
             solvingModeNumber.classList.remove("writing-mode-elem-active")
+            solvingModePainting.classList.remove("writing-mode-elem-active")
 
             controls.writing.solvingMode = "central"
         }
@@ -980,8 +983,18 @@ let numbersPanelActivate = function() {
             solvingModeCentral.classList.remove("writing-mode-elem-active")
             solvingModeCorner.classList.add("writing-mode-elem-active")
             solvingModeNumber.classList.remove("writing-mode-elem-active")
+            solvingModePainting.classList.remove("writing-mode-elem-active")
 
             controls.writing.solvingMode = "corner"
+        }
+
+        solvingModePainting.onclick = function() {
+            solvingModeCentral.classList.remove("writing-mode-elem-active")
+            solvingModePainting.classList.add("writing-mode-elem-active")
+            solvingModeCorner.classList.remove("writing-mode-elem-active")
+            solvingModeNumber.classList.remove("writing-mode-elem-active")
+
+            controls.writing.solvingMode = "painting"
         }
 
     }
@@ -1086,15 +1099,20 @@ let mouseEventsActivate = function() {
     }
 }
 
-matrix.init()
-matrix.draw()
-
-canvasActivate()
-numbersPanelActivate()
-selectModesActivate()
-keyboardEventsActivate()
-mouseEventsActivate()
-
-setTimeout(function() {
+let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)");
+            
+font.load().then(function () {
+    // Ready to use the font in a canvas context
+    matrix.init()
     matrix.draw()
-}, 200)
+
+    canvasActivate()
+    numbersPanelActivate()
+    selectModesActivate()
+    keyboardEventsActivate()
+    mouseEventsActivate()
+});
+
+/* setTimeout(function() {
+    matrix.draw()
+}, 200) */
