@@ -175,9 +175,11 @@ body {
 
 #painting-pad .num {
     /* background-color: white; */
-    outline: 1px solid black;
+    /* outline: 1px solid black; */
     margin: 0px 2px;
     width: calc( 100% / 10.8);
+    outline: 1px solid #969696;
+    outline-offset: -1px;
 }
 
 #pp-num1 {
@@ -218,6 +220,8 @@ body {
 
 #remove-color {
     background-color: white;
+    outline: 1px solid #969696;
+    outline-offset: -1px;
 }
 
 .num-text {

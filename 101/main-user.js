@@ -15,7 +15,57 @@ let matrix = {
         matrix.isCtrlPressed = false
 
         this.data = data
-        //matrix.draw()
+        this.solvingStack.step()
+    },
+    solvingStack: {
+        array: [],
+        maxLength: 50,
+        currentIndex: 0,
+        maxIndex: 0,
+        step() {
+            // when user inputs solving
+            this.removeTail()
+            this.pushSolving()
+            let lenght = this.array.length
+            if (lenght > this.maxLength) {
+                this.array.shift()
+            }
+            lenght = this.array.length
+            this.currentIndex = this.maxIndex = lenght - 1
+        },
+        back() {
+            // when user taps back arrow
+            if (this.currentIndex <= 0) {
+                return
+            }
+            //console.log(this)
+            this.currentIndex -= 1
+            this.useSolving()
+            matrix.draw()
+        },
+        forward() {
+            // when user taps forward arrow
+            if (this.currentIndex >= this.maxIndex) {
+                return
+            }
+            this.currentIndex += 1
+            this.useSolving()
+            matrix.draw()
+        },
+        removeTail() {
+            // it removes unwanted (old) solutions
+            this.array.splice(this.currentIndex + 1)
+        },
+        pushSolving() {
+            // push new solving state to array
+            let solvingState = JSON.parse(JSON.stringify(matrix.data.solving))
+            this.array.push(solvingState)
+        },
+        useSolving() {
+            // push solving state to matrix.data
+            let solvingState = JSON.parse(JSON.stringify(this.array[this.currentIndex]))
+            matrix.data.solving = solvingState
+        }
     },
     moveSelection(key) {
         let x = 0, y = 0
@@ -950,6 +1000,7 @@ let numbersPanelActivate = function() {
                 let num = +(numButton.getAttribute("key"))
                 numberClick(num)
                 matrix.draw()
+                matrix.solvingStack.step()
             }
         }
     }
@@ -1060,6 +1111,7 @@ let keyboardEventsActivate = function() {
         if (numbers.indexOf(key) != -1) {
             numberClick(+key)
             matrix.draw()
+            matrix.solvingStack.step()
         }
     }
 
@@ -1080,6 +1132,7 @@ let keyboardEventsActivate = function() {
         if (key == "Delete" || key == "Backspace") {
             numberClick(0)
             matrix.draw()
+            matrix.solvingStack.step()
         }
 
         if (key == "a") {
@@ -1164,6 +1217,20 @@ let headerActivate = function() {
     helpActivate()
 }
 
+let undoRedoActivate = function() {
+    let undoButton = document.getElementById("undo-button")
+    let redoButton = document.getElementById("redo-button")
+
+    undoButton.onclick = function() {
+        matrix.solvingStack.back()
+    }
+    
+    redoButton.onclick = function() {
+        matrix.solvingStack.forward()
+    }
+    
+}
+
 let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)");
             
 font.load().then(function () {
@@ -1175,10 +1242,7 @@ font.load().then(function () {
     canvasActivate()
     numbersPanelActivate()
     selectModesActivate()
+    undoRedoActivate()
     keyboardEventsActivate()
     mouseEventsActivate()
 });
-
-/* setTimeout(function() {
-    matrix.draw()
-}, 200) */
