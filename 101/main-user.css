@@ -27,6 +27,7 @@ body {
     max-height: 100%;
     max-width: 95%;
     aspect-ratio: 1 / 1.4;
+    position: relative;
     /* outline: 1px solid red; */
 }
 
@@ -38,7 +39,7 @@ body {
     text-align: left;
     width: calc( 100% - 4px );
     display: block;
-    white-space:nowrap;
+    white-space: nowrap;
 }
 
 #header * {
@@ -50,7 +51,8 @@ body {
 #menu-icon {
     background: url("images/menu.jpg") no-repeat;
     aspect-ratio: 1 / 1;
-    width: calc(100% / 12)
+    width: calc(100% / 12);
+    z-index: 2;
 }
 
 #logo {
@@ -61,11 +63,12 @@ body {
 }
 
 #puzzle-name {
-    font-size: 25px;
+    font-size: 35px;
     /* outline: 1px solid #2b6ca5; */
-    aspect-ratio: 9 / 1;
+    aspect-ratio: 7 / 1;
     overflow: hidden;
-    width: calc(100% / 2)
+    width: calc(100% / 1.8);
+    line-height: 100%;
 }
 
 #help-icon {
@@ -74,8 +77,6 @@ body {
     float: right;
     width: calc(100% / 12)
 }
-
-
 
 #board {
     display: inline-block;
@@ -93,6 +94,8 @@ body {
 #controls {
     /* font-family: "Comfortaa"; */
     display: block;
+    width: 100%;
+    /* outline: 1px solid red; */
 }
 
 .writing-mode-elem-active {
@@ -152,6 +155,11 @@ body {
     vertical-align: middle;
 }
 
+#painting-pad {
+    width: 100%;
+    display: none;
+}
+
 .num {
     display: inline-block;
     position: relative;
@@ -162,7 +170,54 @@ body {
     color: white;
     aspect-ratio: 1 / 1;
     line-height: 100%;
-    outline: 2px solid white
+    outline: 2px solid white;
+}
+
+#painting-pad .num {
+    /* background-color: white; */
+    outline: 1px solid black;
+    margin: 0px 2px;
+    width: calc( 100% / 10.8);
+}
+
+#pp-num1 {
+    background-color: #7fea83;
+}
+
+#pp-num2 {
+    background-color: #e56363;
+}
+
+#pp-num3 {
+    background-color: #8b81ff;
+}
+
+#pp-num4 {
+    background-color: #eef872;
+}
+
+#pp-num5 {
+    background-color: #f7a040;
+}
+
+#pp-num6 {
+    background-color: #ff60f7;
+}
+
+#pp-num7 {
+    background-color: #72f9c9;
+}
+
+#pp-num8 {
+    background-color: #c3b0a4;
+}
+
+#pp-num9 {
+    background-color: #afe66c;
+}
+
+#remove-color {
+    background-color: white;
 }
 
 .num-text {
@@ -196,6 +251,7 @@ body {
     width: calc( 100% - 4px );
     margin: 20px 0px;
     white-space: nowrap;
+    /* outline: 5px solid green; */
 }
 
 #controls-row-2 {
@@ -242,4 +298,71 @@ body {
 
 .select-mode-elem-active {
     outline: 3px solid #ff8d00;
+}
+
+#menu, #help {
+    display: none;
+    background: rgb(252 202 240 / 80%);
+    z-index: 1;
+    position: absolute;
+    height: 93%;
+    top: 6%;
+    width: 100%;
+    text-align: left;
+    font-size: 25px;
+}
+
+#help {
+    display: block;
+    background: rgb(153 241 199 / 80%);
+    text-align: center;
+}
+
+#site-menu {
+    display: inline-block;
+    width: 35%;
+    margin: 5%;
+    /* outline: 3px solid #ff8d00; */
+    vertical-align: top;
+}
+
+#puzzle-menu {
+    display: inline-block;
+    width: 35%;
+    margin: 5%;
+    /* outline: 3px solid #ff8d00; */
+}
+
+#site-menu > * > * {
+    display: block;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    margin: 0px 0px 10px;
+}
+
+#puzzle-menu > * > * {
+    display: block;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    margin: 0px 0px 10px;
+}
+
+#help-description {
+    background-color: black;
+    color: white;
+    width: 70%;
+    display: inline-block;
+    margin-top: 20px;
+    text-align: left;
+    padding: 10px;
+}
+
+#help-ok {
+    display: inline-block;
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    margin: 20px 0px;
 }

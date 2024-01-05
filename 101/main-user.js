@@ -956,12 +956,26 @@ let numbersPanelActivate = function() {
 
     let controlsActivate = function() {
 
+        let numPad = document.getElementById("numpad")
+        let paintingPad = document.getElementById("painting-pad")
+
+        let numbersMode = function() {
+            paintingPad.style.display = "none"
+            numPad.style.display = "table"
+        }
+
+        let paintingMode = function() {
+            numPad.style.display = "none"
+            paintingPad.style.display = "table"
+        }
+
         let solvingModeNumber = document.getElementById("solving-mode-number")
         let solvingModeCentral = document.getElementById("solving-mode-central")
         let solvingModeCorner = document.getElementById("solving-mode-corner")
         let solvingModePainting = document.getElementById("solving-mode-painting")
 
         solvingModeNumber.onclick = function() {
+            numbersMode()
             solvingModeCentral.classList.remove("writing-mode-elem-active")
             solvingModeCorner.classList.remove("writing-mode-elem-active")
             solvingModeNumber.classList.add("writing-mode-elem-active")
@@ -971,6 +985,7 @@ let numbersPanelActivate = function() {
         }
 
         solvingModeCentral.onclick = function() {
+            numbersMode()
             solvingModeCentral.classList.add("writing-mode-elem-active")
             solvingModeCorner.classList.remove("writing-mode-elem-active")
             solvingModeNumber.classList.remove("writing-mode-elem-active")
@@ -980,6 +995,7 @@ let numbersPanelActivate = function() {
         }
 
         solvingModeCorner.onclick = function() {
+            numbersMode()
             solvingModeCentral.classList.remove("writing-mode-elem-active")
             solvingModeCorner.classList.add("writing-mode-elem-active")
             solvingModeNumber.classList.remove("writing-mode-elem-active")
@@ -989,6 +1005,7 @@ let numbersPanelActivate = function() {
         }
 
         solvingModePainting.onclick = function() {
+            paintingMode()
             solvingModeCentral.classList.remove("writing-mode-elem-active")
             solvingModePainting.classList.add("writing-mode-elem-active")
             solvingModeCorner.classList.remove("writing-mode-elem-active")
@@ -1099,6 +1116,54 @@ let mouseEventsActivate = function() {
     }
 }
 
+let headerActivate = function() {
+
+    let menuIconElem = document.getElementById("menu-icon")
+    let menuElem = document.getElementById("menu")
+    let helpIconElem = document.getElementById("help-icon")
+    let helpElem = document.getElementById("help")
+    let helpOk = document.getElementById("help-ok")
+
+    let menuActivate = function() {
+        menuIconElem.onclick = function() {
+            
+            let menuVisibility = menuElem.style.display
+            
+            if (menuVisibility == "block") {
+                menuElem.style.display = "none"
+            } else {
+                helpElem.style.display = "none"
+                menuElem.style.display = "block"
+            }
+        }
+    } 
+
+    
+
+    let helpActivate = function() {
+        helpIconElem.onclick = helpOk.onclick = function() {
+            
+            let helpVisibility = helpElem.style.display
+            
+            if (helpVisibility == "none") {
+                helpElem.style.display = "block"
+                menuElem.style.display = "none"
+            } else {
+                helpElem.style.display = "none"
+            }
+        }
+    }
+
+    let nameActivate = function() {
+        let nameElem = document.getElementById("puzzle-name")
+        nameElem.innerHTML = `#${matrix.data.name}`
+    }
+    
+    menuActivate()
+    nameActivate()
+    helpActivate()
+}
+
 let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)");
             
 font.load().then(function () {
@@ -1106,6 +1171,7 @@ font.load().then(function () {
     matrix.init()
     matrix.draw()
 
+    headerActivate()
     canvasActivate()
     numbersPanelActivate()
     selectModesActivate()
