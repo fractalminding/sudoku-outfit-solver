@@ -2,6 +2,7 @@
     font-family: Roboto-Light;
     src: url(roboto/Roboto-Light.ttf)
 }
+
 @font-face {
     font-family: Roboto-Medium;
     src: url(roboto/Roboto-Medium.ttf)
@@ -11,7 +12,6 @@
     font-family: Comfortaa;
     src: url(Comfortaa-Light.ttf)
 } */
-
 body {
     font-family: Roboto-Light;
     margin: 0px;
@@ -26,8 +26,56 @@ body {
     display: inline-block;
     max-height: 100%;
     max-width: 95%;
-    aspect-ratio: 1 / 1.3;
+    aspect-ratio: 1 / 1.4;
+    /* outline: 1px solid red; */
 }
+
+#header {
+    /* outline: 1px solid orange; */
+    /* height: 35px; */
+    margin-bottom: 5px;
+    margin-left: 2px;
+    text-align: left;
+    width: calc( 100% - 4px );
+    display: block;
+    white-space:nowrap;
+}
+
+#header * {
+    /* height: 100%; */
+    display: inline-block;
+    background-size: contain !important;
+}
+
+#menu-icon {
+    background: url("images/menu.jpg") no-repeat;
+    aspect-ratio: 1 / 1;
+    width: calc(100% / 12)
+}
+
+#logo {
+    background: url("images/logo.jpg") no-repeat;
+    aspect-ratio: 2.8 / 1;
+    /* outline: 1px solid orange; */
+    width: calc(100% / 4.3)
+}
+
+#puzzle-name {
+    font-size: 25px;
+    /* outline: 1px solid #2b6ca5; */
+    aspect-ratio: 9 / 1;
+    overflow: hidden;
+    width: calc(100% / 2)
+}
+
+#help-icon {
+    background: url("images/help.jpg") no-repeat;
+    aspect-ratio: 1 / 1;
+    float: right;
+    width: calc(100% / 12)
+}
+
+
 
 #board {
     display: inline-block;
@@ -47,35 +95,36 @@ body {
     display: block;
 }
 
-
 .writing-mode-elem-active {
     outline: 3px solid #00ffd0;
 }
 
 #solving-mode-number {
     background: url("images/type-of-solving-number.jpg") no-repeat;
-    
 }
+
 #solving-mode-central {
     background: url("images/type-of-solving-central.jpg") no-repeat;
 }
+
 #solving-mode-corner {
     background: url("images/type-of-solving-coner.jpg") no-repeat;
 }
+
 #solving-mode-painting {
     background: url("images/painting.jpg") no-repeat;
 }
 
 .select-mode-elem {
     width: 30%;
-    background-size:contain !important;
+    background-size: contain !important;
     display: inline-block;
     aspect-ratio: 1 / 1;
 }
 
-.writing-mode-elem{
+.writing-mode-elem {
     width: 23%;
-    background-size:contain !important;
+    background-size: contain !important;
     display: inline-block;
     aspect-ratio: 1 / 1;
 }
@@ -83,15 +132,17 @@ body {
 #undo-button {
     background: url("images/back-arrow.jpg") no-repeat;
 }
+
 #redo-button {
     background: url("images/forward-arrow.jpg") no-repeat;
 }
 
-#undo-button, #redo-button{
+#undo-button, #redo-button {
     width: 45%;
-    background-size:contain !important;
+    background-size: contain !important;
     display: inline-block;
     aspect-ratio: 1 / 1;
+    /* margin: 0px -1px; */
 }
 
 #numpad {
@@ -106,12 +157,12 @@ body {
     position: relative;
     background-color: #5f613f;
     width: calc( 100% / 11);
-    vertical-align:middle;
+    vertical-align: middle;
     text-align: center;
     color: white;
     aspect-ratio: 1 / 1;
     line-height: 100%;
-    outline: 2px solid white 
+    outline: 2px solid white
 }
 
 .num-text {
@@ -131,7 +182,6 @@ body {
     background-size: contain;
     display: inline-block;
     width: calc( 100% / 11);
-    
 }
 
 #num-all {
@@ -184,7 +234,10 @@ body {
 #undo-redo-panel {
     display: inline-block;
     width: calc( 100% / 11 * 2);
+    text-align: right;
     white-space: nowrap;
+    float: right;
+    /* outline: 3px solid #ff8d00; */
 }
 
 .select-mode-elem-active {
