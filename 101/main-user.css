@@ -332,8 +332,8 @@ body {
 
 #puzzle-menu {
     display: inline-block;
-    width: 35%;
-    margin: 5%;
+    width: 45%;
+    margin: 5% 0%;
     /* outline: 3px solid #ff8d00; */
 }
 

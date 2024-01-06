@@ -15,7 +15,21 @@ let matrix = {
         matrix.isCtrlPressed = false
 
         this.data = data
+        this.data.painting = this.createPaintingArray(this.data.rows, this.data.columns)
+
         this.solvingStack.step()
+
+    },
+    createPaintingArray(rows, columns) {
+        let array = []
+        for (let y = 0; y < rows; y++) {
+            let rowArray = []
+            for (let x = 0; x < columns; x++) {
+                rowArray.push([])
+            }
+            array.push(rowArray)
+        }
+        return array
     },
     solvingStack: {
         array: [],
@@ -901,6 +915,7 @@ let numberClick = function(number) {
         if (number == 0) {
             //matrix.data.values[y][x] = 0
             matrix.data.solving[y][x] = [0, [], []]
+            matrix.data.painting[y][x] = []
             return
         }
 
@@ -971,10 +986,24 @@ let numberClick = function(number) {
                     let indexOfNumber = matrix.data.solving[y][x][2].indexOf(number)
                     if (indexOfNumber == -1) {
                         matrix.data.solving[y][x][2].push(number)
-                        /* let sortedArray = matrix.data.solving[y][x][1].sort((a, b) => a - b);
-                        matrix.data.solving[y][x][1] = sortedArray */
+                        let sortedArray = matrix.data.solving[y][x][2].sort((a, b) => a - b);
+                        matrix.data.solving[y][x][2] = sortedArray
                     } else {
                         matrix.data.solving[y][x][2].splice(indexOfNumber, 1)
+                    }
+                }
+            } else if (solvingType == "painting") {
+                let currentValue = matrix.data.solving[y][x]
+                if (currentValue.length == 0) {
+                    matrix.data.painting[y][x].push(number)
+                } else {
+                    let indexOfNumber = matrix.data.painting[y][x].indexOf(number)
+                    if (indexOfNumber == -1) {
+                        matrix.data.painting[y][x].push(number)
+                        let sortedArray = matrix.data.painting[y][x].sort((a, b) => a - b);
+                        matrix.data.painting[y][x] = sortedArray
+                    } else {
+                        matrix.data.painting[y][x].splice(indexOfNumber, 1)
                     }
                 }
             }
@@ -1001,6 +1030,19 @@ let numbersPanelActivate = function() {
                 numberClick(num)
                 matrix.draw()
                 matrix.solvingStack.step()
+            }
+        }
+    }
+
+    let colorButtonsActivate = function() {
+        let numButtons = document.querySelectorAll("#painting-pad .num")
+    
+        for (let numButton of numButtons) {
+            numButton.onclick = function() {
+                let num = +(numButton.getAttribute("key"))
+                numberClick(num)
+                matrix.draw()
+                // matrix.solvingStack.step()
             }
         }
     }
@@ -1068,6 +1110,7 @@ let numbersPanelActivate = function() {
     }
     
     numbersActivate()
+    colorButtonsActivate()
     controlsActivate()
 }
 
