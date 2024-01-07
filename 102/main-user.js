@@ -879,8 +879,9 @@ let numberClick = function(number) {
         return
     }
 
-    let press = function(number, x, y) {
-
+    let press = function(number, x, y, antiInvertMode) {
+        // if antiInvertMode is true, don't remove data from target
+        // already containing this data there
         let writeType = controls.writing.mode
         let insertType = controls.writing.insertMode
         let solvingType = controls.writing.solvingMode
@@ -934,7 +935,7 @@ let numberClick = function(number) {
             }
             //console.log('123')
             if (solvingType == "number") {
-                matrix.data.solving[y][x] = [number, [], []]
+                matrix.data.solving[y][x][0] = number
             } else if (solvingType == "central") {
                 let currentCentralValue = matrix.data.solving[y][x][1]
                 if (matrix.data.solving[y][x][0] != 0) {
@@ -949,7 +950,9 @@ let numberClick = function(number) {
                         let sortedArray = matrix.data.solving[y][x][1].sort((a, b) => a - b);
                         matrix.data.solving[y][x][1] = sortedArray
                     } else {
-                        matrix.data.solving[y][x][1].splice(indexOfNumber, 1)
+                        if (!antiInvertMode) {
+                            matrix.data.solving[y][x][1].splice(indexOfNumber, 1)
+                        }
                     }
                 }
             } else if (solvingType == "corner") {
@@ -966,7 +969,9 @@ let numberClick = function(number) {
                         let sortedArray = matrix.data.solving[y][x][2].sort((a, b) => a - b);
                         matrix.data.solving[y][x][2] = sortedArray
                     } else {
-                        matrix.data.solving[y][x][2].splice(indexOfNumber, 1)
+                        if (!antiInvertMode) {
+                            matrix.data.solving[y][x][2].splice(indexOfNumber, 1)
+                        }
                     }
                 }
             } else if (solvingType == "painting") {
@@ -980,17 +985,71 @@ let numberClick = function(number) {
                         let sortedArray = matrix.data.painting[y][x].sort((a, b) => a - b);
                         matrix.data.painting[y][x] = sortedArray
                     } else {
-                        matrix.data.painting[y][x].splice(indexOfNumber, 1)
+                        if (!antiInvertMode) {
+                            matrix.data.painting[y][x].splice(indexOfNumber, 1)
+                        }
                     }
                 }
             }
         }
     }
-    
+    let isNeedAntiInvertMode = function() {
+        // it checks that one of target (value of selected cells) contains
+        // imputing value but other one doesn't contain. And it returns
+        // true if that found and false if not.
+
+        let writeType = controls.writing.mode
+        let solvingType = controls.writing.solvingMode
+
+        if (writeType == "insert") {
+            return false
+            // anti invert mode its for solvers but not for creators
+        }
+        let anyContains = false
+        let anyDoesntContain = false
+
+        for (let y in matrix.data.selection) {
+            for (let x in matrix.data.selection[y]) {
+                if (matrix.data.selection[y][x] == true) {
+                    if (solvingType == "number") {
+                        if (matrix.data.solving[y][x][0] == number) {
+                            anyContains = true
+                        } else {
+                            anyDoesntContain = true
+                        }
+                    } else if (solvingType == "central") {
+                        if (matrix.data.solving[y][x][1].indexOf(number) != -1) {
+                            anyContains = true
+                        } else {
+                            anyDoesntContain = true
+                        }
+                    } else if (solvingType == "corner") {
+                        if (matrix.data.solving[y][x][2].indexOf(number) != -1) {
+                            anyContains = true
+                        } else {
+                            anyDoesntContain = true
+                        }
+                    } else if (solvingType == "painting") {
+                        if (matrix.data.painting[y][x].indexOf(number) != -1) {
+                            anyContains = true
+                        } else {
+                            anyDoesntContain = true
+                        }
+                    }
+
+                    if (anyContains && anyDoesntContain) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+    let antiInvertMode = isNeedAntiInvertMode()
     for (let y in matrix.data.selection) {
         for (let x in matrix.data.selection[y]) {
             if (matrix.data.selection[y][x] == true) {
-                press(number, x, y)
+                press(number, x, y, antiInvertMode)
             }
         }
     }
