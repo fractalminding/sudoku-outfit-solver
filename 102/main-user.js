@@ -887,8 +887,12 @@ let numberClick = function(number) {
 
         if (number == 0) {
             //matrix.data.values[y][x] = 0
-            matrix.data.solving[y][x] = [0, [], []]
-            matrix.data.painting[y][x] = []
+            if (solvingType == "painting") {
+                matrix.data.painting[y][x] = []
+            } else {
+                matrix.data.solving[y][x] = [0, [], []]
+            }
+            
             return
         }
 
@@ -925,7 +929,7 @@ let numberClick = function(number) {
             }
         } else if (writeType == "solving") {
             let value = matrix.data.values[y][x]
-            if (value != 0 && value.toString().length == 1) {
+            if (value != 0 && value.toString().length == 1 && solvingType != "painting") {
                 return
             }
             //console.log('123')
