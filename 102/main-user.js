@@ -376,14 +376,14 @@ let matrix = {
             }
         }
 
-        let drawFakeText = function() {
+        /* let drawFakeText = function() {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
             context.font = "80px Roboto-Medium"
             context.fillStyle = matrix.color;
             context.fillText("123jh1j2h31k2j3h", 10, 10)
             canvas.width = canvas.width
-        }
+        } */
 
         let drawTwins = function() {
             let canvas = matrix.elem
@@ -651,70 +651,6 @@ let matrix = {
             context.textAlign = 'left'
         }
 
-        let drawBlockOutlines2 = function() {
-            for (let obj of matrix.data.blockOutlines) {
-                let text = obj.text
-                let array = obj.array
-                //console.log(array)
-                let upLeft = array[0], 
-                    upRight = array[0], 
-                    downLeft = array[0], 
-                    downRight = array[0]
-                
-                for (let cell of array) {
-                    if (cell[0] <= upLeft[0] && cell[1] <= upLeft[1]) {
-                        upLeft = cell
-                    }
-                    if (cell[0] >= upRight[0] && cell[1] <= upRight[1]) {
-                        upRight = cell
-                    }
-                    if (cell[0] <= downLeft[0] && cell[1] >= downLeft[1]) {
-                        downLeft = cell
-                    }
-                    if (cell[0] >= downRight[0] && cell[1] >= downRight[1]) {
-                        downRight = cell
-                    }
-                }
-                let cellSize = matrix.cellSize
-                let margin = 90
-
-                let upLeftCoords = getCoordsByIndexes(upLeft[0], upLeft[1])
-                let upLeftTrueCoords = [
-                    upLeftCoords[0] + cellSize - margin,
-                    upLeftCoords[1] + cellSize - margin
-                ]
-
-                let upRightCoords = getCoordsByIndexes(upRight[0], upRight[1])
-                let upRigthTrueCoords = [
-                    upRightCoords[0] + margin,
-                    upRightCoords[1] + cellSize - margin
-                ]
-
-                let downLeftCoords = getCoordsByIndexes(downLeft[0], downLeft[1])
-                let downLeftTrueCoords = [
-                    downLeftCoords[0] + cellSize - margin,
-                    downLeftCoords[1] + margin
-                ]
-
-                let downRightCoords = getCoordsByIndexes(downRight[0], downRight[1])
-                let downRightTrueCoords = [
-                    downRightCoords[0] + margin,
-                    downRightCoords[1] + margin
-                ]
-
-                //console.log()
-
-                drawCrossLine(upLeftTrueCoords[0], upLeftTrueCoords[1], upRigthTrueCoords[0], upRigthTrueCoords[1], false)
-                drawCrossLine(upRigthTrueCoords[0], upRigthTrueCoords[1], downRightTrueCoords[0], downRightTrueCoords[1], false)
-                drawCrossLine(downRightTrueCoords[0], downRightTrueCoords[1], downLeftTrueCoords[0], downLeftTrueCoords[1], false)
-                drawCrossLine(downLeftTrueCoords[0], downLeftTrueCoords[1], upLeftTrueCoords[0], upLeftTrueCoords[1], false)
-
-                if (text != "") {
-                    drawBlockLable(upLeftCoords[0], upLeftCoords[1], text)
-                }
-            }
-        }
-
         let correctByPoint = function(step, point) {
             //console.log(point)
             let margin = 90
@@ -772,7 +708,44 @@ let matrix = {
             }
         }
 
-        drawFakeText()
+        let drawPainting = function() {
+            let canvas = matrix.elem
+            let context = canvas.getContext("2d")
+
+            for (let y in matrix.data.painting) {
+                for (let x in matrix.data.painting[y]) {
+
+                    let paintingArray = matrix.data.painting[y][x]
+                    let length = paintingArray.length
+                    if (paintingArray.lenght == 0) {
+                        return
+                    }
+
+                    let points = painting.getPoints(length)
+                    for (let row in points) {
+                        let color = painting.colors[paintingArray[row]]
+                        context.fillStyle = color;
+                        context.beginPath()
+                        for (let n in points[row]) {
+                            
+                            let point = points[row][n]
+                            let coords = getCoordsByIndexes(x, y)
+                            let canvasX = coords[0] + point[0] * matrix.cellSize
+                            let canvasY = coords[1] + point[1] * matrix.cellSize
+                            
+                            if (n = 0) {
+                                context.moveTo(canvasX, canvasY)
+                            } else {
+                                context.lineTo(canvasX, canvasY)
+                            }
+                        }
+                        context.fill()
+                    }
+                }
+            }
+        }
+
+        drawPainting()
         drawLines()
         drawCross()
         drawChains()
