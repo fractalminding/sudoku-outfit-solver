@@ -1055,32 +1055,74 @@ let numberClick = function(number) {
     }
 }
 
-let numbersPanelActivate = function() {
-    
-    let numbersActivate = function() {
-        let numButtons = document.querySelectorAll("#numpad .num")
-    
-        for (let numButton of numButtons) {
-            numButton.onclick = function() {
-                let num = +(numButton.getAttribute("key"))
-                numberClick(num)
-                matrix.draw()
-                matrix.solvingStack.step()
+let selectAllContainsNumber = function(num) {
+    let selectByValues = function() {
+        for (let y in matrix.data.values) {
+            for (let x in matrix.data.values[y]) {
+                if (matrix.data.values[y][x] == num) {
+                    matrix.data.selection[y][x] = true
+                }
+            }
+        }
+    }
+    let selectBySolving = function() {
+        for (let y in matrix.data.solving) {
+            for (let x in matrix.data.solving[y]) {
+                let solvingValue = matrix.data.solving[y][x]
+                let isNumberIsTarget = solvingValue[0] == num ? true : false
+                let isCentralContainsTarget = solvingValue[1].indexOf(num) != -1 ? true : false
+                let isCornerContainsTarget = solvingValue[2].indexOf(num) != -1 ? true : false
+                if (isNumberIsTarget || isCentralContainsTarget || isCornerContainsTarget) {
+                    matrix.data.selection[y][x] = true
+                }
             }
         }
     }
 
-    let colorButtonsActivate = function() {
-        let numButtons = document.querySelectorAll("#painting-pad .num")
+    selectByValues()
+    selectBySolving()
+    matrix.draw()
+}
+
+let longPress = function(num) {
+    // when user press number button long time.
+    matrix.deSelectAll()
+    selectAllContainsNumber(num)
+}
+let numberButtonsActivate = function(buttonsType) {
+    let numButtons
+    if (buttonsType == "color") {
+        numButtons = document.querySelectorAll("#painting-pad .num")
+    } else {
+        numButtons = document.querySelectorAll("#numpad .num")
+    }
     
-        for (let numButton of numButtons) {
-            numButton.onclick = function() {
-                let num = +(numButton.getAttribute("key"))
+    let startOfPress, finishOfPress
+    for (let numButton of numButtons) {
+        let num = +(numButton.getAttribute("key"))
+        numButton.onmouseup = function() {
+            finishOfPress = Date.now()
+            let longOfPress = finishOfPress - startOfPress
+            if (longOfPress > 1000 && buttonsType != "color") {
+                longPress(num)
+            } else {
                 numberClick(num)
                 matrix.draw()
-                // matrix.solvingStack.step()
+                if (buttonsType != "color") {
+                    matrix.solvingStack.step()
+                }
             }
         }
+        numButton.onmousedown = function() {
+            startOfPress = Date.now()
+        }
+    }
+}
+let numbersPanelActivate = function() {
+    
+    let numbersActivate = function() {
+        numberButtonsActivate()
+        numberButtonsActivate("color")
     }
 
     let controlsActivate = function() {
@@ -1146,7 +1188,6 @@ let numbersPanelActivate = function() {
     }
     
     numbersActivate()
-    colorButtonsActivate()
     controlsActivate()
 }
 
@@ -1232,8 +1273,9 @@ let keyboardEventsActivate = function() {
             }
             if (amountOfSelectionCells == 1) {
                 matrix.moveSelection(key)
+
+                // don't do classic actions sort of slide the page
                 event.preventDefault();
-                //return false
             }
         }
     }
