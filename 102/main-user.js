@@ -1097,15 +1097,14 @@ let numberButtonsActivate = function(buttonsType) {
         numButtons = document.querySelectorAll("#numpad .num")
     }
     
-    let startOfPress, finishOfPress
+    let longPressTimeOut
+    let isLongPress = false
+    let longPressHappened = false
     for (let numButton of numButtons) {
         let num = +(numButton.getAttribute("key"))
         numButton.onmouseup = function() {
-            finishOfPress = Date.now()
-            let longOfPress = finishOfPress - startOfPress
-            if (longOfPress > 1000 && buttonsType != "color") {
-                longPress(num)
-            } else {
+            isLongPress = false
+            if (!longPressHappened) {
                 numberClick(num)
                 matrix.draw()
                 if (buttonsType != "color") {
@@ -1114,7 +1113,14 @@ let numberButtonsActivate = function(buttonsType) {
             }
         }
         numButton.onmousedown = function() {
-            startOfPress = Date.now()
+            isLongPress = true
+            longPressHappened = false
+            longPressTimeOut = setTimeout(function() {
+                if (isLongPress ==  true && buttonsType != "color") {
+                    longPressHappened = true
+                    longPress(num)
+                }
+            }, 600)
         }
     }
 }
