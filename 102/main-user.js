@@ -249,26 +249,91 @@ let matrix = {
                 context.fillRect (canvasX, canvasY, matrix.cellSize, matrix.cellSize);
             }
             let drawFrame = function(x, y, context) {
-                let coords = matrix.getCoordsByIndexes(x, y)
-                let canvasX = coords[0]
-                let canvasY = coords[1]
-                context.globalAlpha = 0.4
-                context.strokeStyle = "rgb(108, 189, 244)"
-                context.lineWidth = 20
+                let drawSideLine = function(side, context, x, y) {
+                    let coords = matrix.getCoordsByIndexes(x, y)
+                    let canvasX = coords[0]
+                    let canvasY = coords[1]
+                    context.globalAlpha = 0.4
+                    context.strokeStyle = "rgb(108, 189, 244)"
+                    context.lineWidth = 20
 
-                context.moveTo(canvasX, canvasY)
-                context.lineTo(canvasX + matrix.cellSize, canvasY)
+                    let points = {
+                        // contains canvas coordinates of corners of cell
+                        "upLeft": [canvasX, canvasY],
+                        "upRight": [canvasX + matrix.cellSize, canvasY],
+                        "downLeft": [canvasX, canvasY + matrix.cellSize],
+                        "downRight": [canvasX + matrix.cellSize, canvasY + matrix.cellSize]
+                    }
+                    if (side == "up") {
+                        let start = points.upLeft
+                        let end = points.upRight
+                        context.moveTo(start[0], start[1])
+                        context.lineTo(end[0], end[1])
+                    }
+                    if (side == "down") {
+                        let start = points.downLeft
+                        let end = points.downRight
+                        context.moveTo(start[0], start[1])
+                        context.lineTo(end[0], end[1])
+                    }
+                    if (side == "left") {
+                        let start = points.upLeft
+                        let end = points.downLeft
+                        context.moveTo(start[0], start[1])
+                        context.lineTo(end[0], end[1])
+                    }
+                    if (side == "right") {
+                        let start = points.upRight
+                        let end = points.downRight
+                        context.moveTo(start[0], start[1])
+                        context.lineTo(end[0], end[1])
+                    }
+                }
+
+                let nextCellsSelected = function(x, y) {
+                    // returns object of 4 elems (up, down, left, right)
+                    // true means that next block in that side is selected
+                    let check = function(side, x, y) {
+                        if (side == "up") {
+                            if (y == 0) {
+                                return false
+                            }
+                            return matrix.data.selection[y - 1][x]
+                        }
+                        if (side == "down") {
+                            if (y == matrix.data.rows - 1) {
+                                return false
+                            }
+                            //console.log(x, y)
+                            return matrix.data.selection[y + 1][x]
+                        }
+                        if (side == "left") {
+                            if (x == 0) {
+                                return false
+                            }
+                            return matrix.data.selection[y][x - 1]
+                        }
+                        if (side == "right") {
+                            if (y == matrix.data.rows - 1) {
+                                return false
+                            }
+                            return matrix.data.selection[y][x + 1]
+                        }
+                    }
+                    return {
+                        "up": check("up", x, y), 
+                        "down": check("down", x, y),
+                        "left": check("left", x, y),
+                        "right": check("right", x, y)
+                    }
+                }
+
+                let falseSides = nextCellsSelected(x, y)
                 
-                context.moveTo(canvasX + matrix.cellSize, canvasY)
-                context.lineTo(canvasX + matrix.cellSize, canvasY + matrix.cellSize)
-                
-                context.moveTo(canvasX + matrix.cellSize, canvasY + matrix.cellSize)
-                context.lineTo(canvasX, canvasY + matrix.cellSize)
-
-                context.moveTo(canvasX, canvasY + matrix.cellSize)
-                context.lineTo(canvasX, canvasY)
-
-                context.lineCap = "round"
+                if (!falseSides.up) {drawSideLine("up", context, x, y)}
+                if (!falseSides.down) {drawSideLine("down", context, x, y)}
+                if (!falseSides.left) {drawSideLine("left", context, x, y)}
+                if (!falseSides.right) {drawSideLine("right", context, x, y)}
             }
             let drawRects = function() {
                 let selection = matrix.data.selection
@@ -289,10 +354,11 @@ let matrix = {
                 for (let y in selection) {
                     for (let x in selection[y]) {
                         if (selection[y][x] == true) {
-                            drawFrame(x, y, context)
+                            drawFrame(+x, +y, context)
                         }
                     }
                 }
+                context.lineCap = "round"
                 context.stroke()
             }
 
