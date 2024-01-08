@@ -154,6 +154,15 @@ let matrix = {
         }
         return selectedArray
     },
+    getCoordsByIndexes(x, y) {
+        let padding = matrix.padding
+        let cellSize = matrix.cellSize
+        let coords = [0, 0]
+        coords[0] = padding + x * cellSize
+        coords[1] = padding + y * cellSize
+
+        return coords
+    },
     draw() {
         let canvas = this.elem
         let cellSize = matrix.cellSize
@@ -163,15 +172,7 @@ let matrix = {
         canvas.width = this.data.columns * cellSize + padding * 2
         let context = canvas.getContext("2d")
 
-        let getCoordsByIndexes = function(x, y) {
-            let padding = matrix.padding
-            let cellSize = matrix.cellSize
-            let coords = [0, 0]
-            coords[0] = padding + x * cellSize
-            coords[1] = padding + y * cellSize
-
-            return coords
-        }
+        
 
         let drawLines = function () {
             context.lineCap = "round"
@@ -238,24 +239,65 @@ let matrix = {
         }
 
         let drawSelection = function() {
-
-            let drawCellSelection = function(x, y) {
+            let drawRect = function(x, y) {
                 let canvas = matrix.elem
                 let context = canvas.getContext("2d")
-                let coords = getCoordsByIndexes(x, y)
-
-                context.fillStyle = "rgba(255, 0, 234, 0.4)";
-                context.fillRect (coords[0], coords[1], matrix.cellSize, matrix.cellSize);
+                let coords = matrix.getCoordsByIndexes(x, y)
+                let canvasX = coords[0]
+                let canvasY = coords[1]
+                context.fillStyle = "rgba(108, 189, 244, 0.2)"; //(108 189 244 / 65%)
+                context.fillRect (canvasX, canvasY, matrix.cellSize, matrix.cellSize);
             }
+            let drawFrame = function(x, y, context) {
+                let coords = matrix.getCoordsByIndexes(x, y)
+                let canvasX = coords[0]
+                let canvasY = coords[1]
+                context.globalAlpha = 0.4
+                context.strokeStyle = "rgb(108, 189, 244)"
+                context.lineWidth = 20
 
-            let selection = matrix.data.selection
-            for (let y in selection) {
-                for (let x in selection[y]) {
-                    if (selection[y][x] == true) {
-                        drawCellSelection(x, y)
+                context.moveTo(canvasX, canvasY)
+                context.lineTo(canvasX + matrix.cellSize, canvasY)
+                
+                context.moveTo(canvasX + matrix.cellSize, canvasY)
+                context.lineTo(canvasX + matrix.cellSize, canvasY + matrix.cellSize)
+                
+                context.moveTo(canvasX + matrix.cellSize, canvasY + matrix.cellSize)
+                context.lineTo(canvasX, canvasY + matrix.cellSize)
+
+                context.moveTo(canvasX, canvasY + matrix.cellSize)
+                context.lineTo(canvasX, canvasY)
+
+                context.lineCap = "round"
+            }
+            let drawRects = function() {
+                let selection = matrix.data.selection
+                for (let y in selection) {
+                    for (let x in selection[y]) {
+                        if (selection[y][x] == true) {
+                            drawRect(x, y)
+                        }
                     }
                 }
             }
+            let drawFrames = function() {
+                let canvas = matrix.elem
+                let context = canvas.getContext("2d")
+                context.beginPath()
+
+                let selection = matrix.data.selection
+                for (let y in selection) {
+                    for (let x in selection[y]) {
+                        if (selection[y][x] == true) {
+                            drawFrame(x, y, context)
+                        }
+                    }
+                }
+                context.stroke()
+            }
+
+            drawRects()
+            drawFrames()
         }
 
         let drawValues = function() {
@@ -268,7 +310,7 @@ let matrix = {
                     if (matrix.data.values[y][x] == 0) {
                         continue
                     } else {
-                        let coords = getCoordsByIndexes(x, y)
+                        let coords = matrix.getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + 28
                         let yCoord = coords[1] + 80
                         let value = matrix.data.values[y][x]
@@ -304,7 +346,7 @@ let matrix = {
                     if (matrix.data.solving[y][x][0] != 0) {
                         // solving-type = number
                         let value = matrix.data.solving[y][x][0]
-                        let coords = getCoordsByIndexes(x, y)
+                        let coords = matrix.getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + matrix.cellSize / 2
                         let yCoord = coords[1] + 80
                         context.font = "80px Roboto-Medium"
@@ -326,7 +368,7 @@ let matrix = {
                                 if (value.length == 7) {fontSize = 23; yDelta = 59}
                                 if (value.length == 8) {fontSize = 21; yDelta = 57}
                                 if (value.length == 9) {fontSize = 20; yDelta = 56}
-                                let coords = getCoordsByIndexes(x, y)
+                                let coords = matrix.getCoordsByIndexes(x, y)
                                 let xCoord = coords[0] + matrix.cellSize / 2
                                 let yCoord = coords[1] + yDelta
                                 context.font = `${fontSize}px Roboto-Medium`
@@ -348,7 +390,7 @@ let matrix = {
                                 if (i == 3) {xDelta = 35; yDelta = 45}
                                 if (i == 4) {break}
 
-                                let coords = getCoordsByIndexes(x, y)
+                                let coords = matrix.getCoordsByIndexes(x, y)
                                 let xCoord = coords[0] + matrix.cellSize / 2 + xDelta
                                 let yCoord = coords[1] + matrix.cellSize / 2 + yDelta
                                 context.font = '30px Roboto-Medium'
@@ -403,7 +445,7 @@ let matrix = {
                 for (let x in matrix.data.twins[y]) {
                     x = +x, y = +y
                     let type = matrix.data.twins[y][x]
-                    let coords = getCoordsByIndexes(x + 1, y + 1)
+                    let coords = matrix.getCoordsByIndexes(x + 1, y + 1)
                     let delta = matrix.cellSize / 5
 
                     if (type == 0) {
@@ -465,7 +507,7 @@ let matrix = {
                 for (let x in matrix.data.inequals.horizontal[y]) {
                     x = +x, y = +y
                     let type = matrix.data.inequals.horizontal[y][x]
-                    let coords = getCoordsByIndexes(x + 1, y)
+                    let coords = matrix.getCoordsByIndexes(x + 1, y)
                     coords[1] = coords[1] + matrix.cellSize / 2
                     let deltaX = matrix.cellSize / 6
                     let deltaY = matrix.cellSize / 6
@@ -510,7 +552,7 @@ let matrix = {
                 for (let x in matrix.data.inequals.vertical[y]) {
                     x = +x, y = +y
                     let type = matrix.data.inequals.vertical[y][x]
-                    let coords = getCoordsByIndexes(x, y + 1)
+                    let coords = matrix.getCoordsByIndexes(x, y + 1)
                     coords[0] = coords[0] + matrix.cellSize / 2
                     let deltaX = matrix.cellSize / 6
                     let deltaY = matrix.cellSize / 6
@@ -621,8 +663,8 @@ let matrix = {
                     let finishX = chainArray[i + 1][0]
                     let finishY = chainArray[i + 1][1]
 
-                    let coords1 = getCoordsByIndexes(startX, startY)
-                    let coords2 = getCoordsByIndexes(finishX, finishY)
+                    let coords1 = matrix.getCoordsByIndexes(startX, startY)
+                    let coords2 = matrix.getCoordsByIndexes(finishX, finishY)
 
                     coords1[0] = coords1[0] + Math.round(matrix.cellSize / 2)
                     coords1[1] = coords1[1] + Math.round(matrix.cellSize / 2)
@@ -696,13 +738,13 @@ let matrix = {
                     let finishX = stepsArray[i + 1][0]
                     let finishY = stepsArray[i + 1][1]
 
-                    let coords1 = correctByPoint(getCoordsByIndexes(startX, startY), startPoint)
-                    let coords2 = correctByPoint(getCoordsByIndexes(finishX, finishY), finishPoint)
+                    let coords1 = correctByPoint(matrix.getCoordsByIndexes(startX, startY), startPoint)
+                    let coords2 = correctByPoint(matrix.getCoordsByIndexes(finishX, finishY), finishPoint)
 
                     drawCrossLine(coords1[0], coords1[1], coords2[0], coords2[1], isSelected)
                 }
                 if (text != "") {
-                    let coords = getCoordsByIndexes(stepsArray[0][0], stepsArray[0][1])
+                    let coords = matrix.getCoordsByIndexes(stepsArray[0][0], stepsArray[0][1])
                     drawBlockLable(coords[0], coords[1], text)
                 }
             }
@@ -729,7 +771,7 @@ let matrix = {
                         for (let n in points[row]) {
                             
                             let point = points[row][n]
-                            let coords = getCoordsByIndexes(x, y)
+                            let coords = matrix.getCoordsByIndexes(x, y)
                             let canvasX = coords[0] + point[0] * matrix.cellSize
                             let canvasY = coords[1] + point[1] * matrix.cellSize
                             
