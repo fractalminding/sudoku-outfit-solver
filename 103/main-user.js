@@ -11,7 +11,7 @@ let matrix = {
         canvas.width = 0
 
         matrix.thinLineThickness = 2
-        matrix.fatLineThickness = 4
+        matrix.fatLineThickness = 5
         matrix.isCtrlPressed = false
 
         this.data = data
@@ -1214,7 +1214,8 @@ let numberButtonsActivate = function(buttonsType) {
     let longPressHappened = false
     for (let numButton of numButtons) {
         let num = +(numButton.getAttribute("key"))
-        numButton.onmouseup = function() {
+        numButton.onmouseup = function(event) {
+            event.preventDefault();
             isLongPress = false
             if (!longPressHappened) {
                 numberClick(num)
@@ -1224,7 +1225,31 @@ let numberButtonsActivate = function(buttonsType) {
                 }
             }
         }
-        numButton.onmousedown = function() {
+        numButton.addEventListener("touchstart", function(event) {
+            event.preventDefault();
+            //document.body.style.backgroundColor = "black"
+            isLongPress = true
+            longPressHappened = false
+            longPressTimeOut = setTimeout(function() {
+                if (isLongPress ==  true && buttonsType != "color") {
+                    longPressHappened = true
+                    longPress(num)
+                }
+            }, 600)
+        })
+        numButton.addEventListener("touchend", function(event) {
+            isLongPress = false
+            if (!longPressHappened) {
+                numberClick(num)
+                matrix.draw()
+                if (buttonsType != "color") {
+                    matrix.solvingStack.step()
+                }
+            }
+        })
+        numButton.onmousedown = function(event) {
+            //document.body.style.backgroundColor = "black"
+            event.preventDefault();
             isLongPress = true
             longPressHappened = false
             longPressTimeOut = setTimeout(function() {
