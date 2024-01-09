@@ -947,29 +947,60 @@ let canvasActivate = function() {
         }
     }
 
-    let canvas = matrix.elem
-    canvas.style.display = "block"
+    let getCoordsOfPointOnCanvas = function(event, device) {
+        let canvas = matrix.elem
+        let xClient
+        let yClient
+        let x = 0, y = 0
+        if (device == "desktop") {
+            xClient = event.offsetX
+            yClient = event.offsetY
+            
+        } else {
 
-    canvas.onclick = function(event) {
-        let xClient = event.offsetX
-        let yClient = event.offsetY
+            //xClient = event.screenX - event.target.offsetLeft
+            //yClient = event.screenY - event.target.offsetTop
+            let r = canvas.getBoundingClientRect();
+            xClient = event.clientX - r.left;
+            yClient = event.clientY - r.top;
+            //console.log(event.target.offsetWidth)
+        }
         let clientWidth = canvas.clientWidth
         let clientHeight = canvas.clientHeight
-        let x = 0, y = 0
+        
         if (xClient != 0) {
             x = Math.round(canvas.width * xClient / clientWidth)
         }
         if (yClient != 0) {
-            
             y = Math.round(canvas.height * yClient / clientHeight)
-            //console.log(x)
         }
+        return [x, y]
+    }
+
+    let canvas = matrix.elem
+    canvas.style.display = "block"
+    let paintingSelection = {
+        setOfCells: {},
+        activity: false
+    }
+    paintingSelection.setOfCells = new Set
+
+    let canvasMouseDown = function(event, paintingSelection, device) {
         
+        //event.preventDefault()
+
+        paintingSelection.setOfCells.clear()
+        paintingSelection.activity = true
+
+        let canvasCoords = getCoordsOfPointOnCanvas(event, device)
+        let x = canvasCoords[0]
+        let y = canvasCoords[1]
 
         if (isCanvasEdge(x, y)) {
             return false
         }
         let indexes = getIndexesByCoords(x, y)
+        //console.log(indexes)
         let value = matrix.data.selection[indexes[1]][indexes[0]]
         //console.log(matrix.isCtrlPressed)
         if (matrix.isCtrlPressed == false && controls.selectMode == "one") {
@@ -979,6 +1010,51 @@ let canvasActivate = function() {
         matrix.data.selection[indexes[1]][indexes[0]] = !value
         matrix.draw()
     }
+    let canvasMouseMove = function(event, paintingSelection) {
+        
+        if (!paintingSelection.activity) {
+            return
+        }
+        let canvasCoords = getCoordsOfPointOnCanvas(event)
+        let x = canvasCoords[0]
+        let y = canvasCoords[1]
+        let indexes = getIndexesByCoords(x, y)
+
+        matrix.data.selection[indexes[1]][indexes[0]] = true
+        matrix.draw()
+    }
+    let canvasMouseUp = function(event, paintingSelection) {
+        paintingSelection.activity = false
+        
+        //console.log(event)
+    }
+
+    canvas.onmousedown = function(event) {
+        event.preventDefault()
+        canvasMouseDown(event, paintingSelection, "desktop")
+    }
+    canvas.addEventListener("touchstart", function(event) {
+        event.preventDefault()
+        canvasMouseDown(event.targetTouches[0], paintingSelection, "mobile")
+    })
+
+    canvas.onmouseup = canvas.onmouseleave = function(event) {
+        event.preventDefault()
+        canvasMouseUp(event, paintingSelection, "desktop")
+    }
+    canvas.addEventListener("touchend", function(event) {
+        event.preventDefault()
+        canvasMouseUp(event.changedTouches[0], paintingSelection, "mobile")
+    })
+
+    canvas.onmousemove = function(event) {
+        event.preventDefault()
+        canvasMouseMove(event, paintingSelection, "desktop")
+    }
+    canvas.addEventListener("touchmove", function(event) {
+        event.preventDefault()
+        canvasMouseMove(event.changedTouches[0], paintingSelection, "mobile")
+    })
 }
 
 let numberClick = function(number) {
@@ -1208,59 +1284,51 @@ let numberButtonsActivate = function(buttonsType) {
     } else {
         numButtons = document.querySelectorAll("#numpad .num")
     }
-    
-    let longPressTimeOut
-    let isLongPress = false
-    let longPressHappened = false
+    let longPressOptions = {
+        isLongPress: false,
+        longPressHappened: false
+    }
     for (let numButton of numButtons) {
         let num = +(numButton.getAttribute("key"))
-        numButton.onmouseup = function(event) {
-            event.preventDefault();
-            isLongPress = false
-            if (!longPressHappened) {
+
+        let numMouseDown = function(num, event, longPressOptions) {
+            event.preventDefault()
+            longPressOptions.isLongPress = true
+            longPressOptions.longPressHappened = false
+            setTimeout(function() {
+                if (longPressOptions.isLongPress ==  true && buttonsType != "color") {
+                    longPressOptions.longPressHappened = true
+                    longPress(num)
+                }
+            }, 600)
+        }
+        let numMouseUp = function(num, event, longPressOptions) {
+            event.preventDefault()
+            longPressOptions.isLongPress = false
+            if (!longPressOptions.longPressHappened) {
                 numberClick(num)
                 matrix.draw()
                 if (buttonsType != "color") {
                     matrix.solvingStack.step()
                 }
             }
+        }
+        numButton.onmousedown = function(event) {
+            numMouseDown(num, event, longPressOptions)
+        }
+        numButton.onmouseup = function(event) {
+            numMouseUp(num, event, longPressOptions)
         }
         numButton.addEventListener("touchstart", function(event) {
-            event.preventDefault();
-            //document.body.style.backgroundColor = "black"
-            isLongPress = true
-            longPressHappened = false
-            longPressTimeOut = setTimeout(function() {
-                if (isLongPress ==  true && buttonsType != "color") {
-                    longPressHappened = true
-                    longPress(num)
-                }
-            }, 600)
+            numMouseDown(num, event, longPressOptions)
         })
         numButton.addEventListener("touchend", function(event) {
-            isLongPress = false
-            if (!longPressHappened) {
-                numberClick(num)
-                matrix.draw()
-                if (buttonsType != "color") {
-                    matrix.solvingStack.step()
-                }
-            }
+            numMouseUp(num, event, longPressOptions)
         })
-        numButton.onmousedown = function(event) {
-            //document.body.style.backgroundColor = "black"
-            event.preventDefault();
-            isLongPress = true
-            longPressHappened = false
-            longPressTimeOut = setTimeout(function() {
-                if (isLongPress ==  true && buttonsType != "color") {
-                    longPressHappened = true
-                    longPress(num)
-                }
-            }, 600)
-        }
+        
     }
 }
+
 let numbersPanelActivate = function() {
     
     let numbersActivate = function() {
