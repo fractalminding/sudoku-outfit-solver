@@ -314,7 +314,7 @@ let matrix = {
                             return matrix.data.selection[y][x - 1]
                         }
                         if (side == "right") {
-                            if (y == matrix.data.rows - 1) {
+                            if (x == matrix.data.rows - 1) {
                                 return false
                             }
                             return matrix.data.selection[y][x + 1]
@@ -1118,6 +1118,10 @@ let numberClick = function(number) {
 
         for (let y in matrix.data.selection) {
             for (let x in matrix.data.selection[y]) {
+                
+                if (matrix.data.values[y][x] != 0) {
+                    continue
+                }
                 if (matrix.data.selection[y][x] == true) {
                     if (solvingType == "number") {
                         if (matrix.data.solving[y][x][0] == number) {
