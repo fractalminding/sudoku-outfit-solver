@@ -6,7 +6,7 @@ let matrix = {
         this.solvingColor = "#3369b1"
         let canvas = this.elem
         this.cellSize = 100
-        this.padding = 5
+        this.padding = 10
         canvas.height = 0
         canvas.width = 0
 
@@ -1019,6 +1019,9 @@ let canvasActivate = function() {
         let x = canvasCoords[0]
         let y = canvasCoords[1]
         let indexes = getIndexesByCoords(x, y)
+        if (isCanvasEdge(x, y)) {
+            return false
+        }
 
         matrix.data.selection[indexes[1]][indexes[0]] = true
         matrix.draw()
@@ -1030,31 +1033,31 @@ let canvasActivate = function() {
     }
 
     canvas.onmousedown = function(event) {
-        event.preventDefault()
+        //event.preventDefault()
         canvasMouseDown(event, paintingSelection, "desktop")
     }
     canvas.addEventListener("touchstart", function(event) {
-        event.preventDefault()
+        //event.preventDefault()
         canvasMouseDown(event.targetTouches[0], paintingSelection, "mobile")
-    })
+    }, {passive: true})
 
     canvas.onmouseup = canvas.onmouseleave = function(event) {
-        event.preventDefault()
+        //event.preventDefault()
         canvasMouseUp(event, paintingSelection, "desktop")
     }
     canvas.addEventListener("touchend", function(event) {
-        event.preventDefault()
+        //event.preventDefault()
         canvasMouseUp(event.changedTouches[0], paintingSelection, "mobile")
     })
 
     canvas.onmousemove = function(event) {
-        event.preventDefault()
+        //event.preventDefault()
         canvasMouseMove(event, paintingSelection, "desktop")
     }
     canvas.addEventListener("touchmove", function(event) {
-        event.preventDefault()
+        //event.preventDefault()
         canvasMouseMove(event.changedTouches[0], paintingSelection, "mobile")
-    })
+    }, {passive: true})
 }
 
 let numberClick = function(number) {
@@ -1292,7 +1295,7 @@ let numberButtonsActivate = function(buttonsType) {
         let num = +(numButton.getAttribute("key"))
 
         let numMouseDown = function(num, event, longPressOptions) {
-            event.preventDefault()
+            //event.preventDefault()
             longPressOptions.isLongPress = true
             longPressOptions.longPressHappened = false
             setTimeout(function() {
@@ -1303,7 +1306,7 @@ let numberButtonsActivate = function(buttonsType) {
             }, 600)
         }
         let numMouseUp = function(num, event, longPressOptions) {
-            event.preventDefault()
+            //event.preventDefault()
             longPressOptions.isLongPress = false
             if (!longPressOptions.longPressHappened) {
                 numberClick(num)
@@ -1321,7 +1324,7 @@ let numberButtonsActivate = function(buttonsType) {
         }
         numButton.addEventListener("touchstart", function(event) {
             numMouseDown(num, event, longPressOptions)
-        })
+        }, {passive: true})
         numButton.addEventListener("touchend", function(event) {
             numMouseUp(num, event, longPressOptions)
         })
@@ -1567,6 +1570,8 @@ let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)");
             
 font.load().then(function () {
     // Ready to use the font in a canvas context
+    performance.mark('start');
+    
     matrix.init()
     matrix.draw()
 
@@ -1577,4 +1582,7 @@ font.load().then(function () {
     undoRedoActivate()
     keyboardEventsActivate()
     mouseEventsActivate()
+
+    performance.mark('end');
+    console.log(performance.measure('time', 'start', 'end').duration)
 });
