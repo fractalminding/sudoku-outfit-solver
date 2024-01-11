@@ -442,25 +442,62 @@ let matrix = {
                     } else {
                         { 
                             // solving-type = central
-                            let value = matrix.data.solving[y][x][1].join('')
-                            if (value.length != 0) {
-                                let fontSize = 20, yDelta = 30
-                                if (value.length == 1) {fontSize = 80; yDelta = 80}
-                                if (value.length == 2) {fontSize = 70; yDelta = 75}
-                                if (value.length == 3) {fontSize = 57; yDelta = 70}
-                                if (value.length == 4) {fontSize = 42; yDelta = 67}
-                                if (value.length == 5) {fontSize = 32; yDelta = 62}
-                                if (value.length == 6) {fontSize = 27; yDelta = 60}
-                                if (value.length == 7) {fontSize = 23; yDelta = 59}
-                                if (value.length == 8) {fontSize = 21; yDelta = 57}
-                                if (value.length == 9) {fontSize = 20; yDelta = 56}
+
+                            let write = function(
+                                mode, context, matrix, value
+                            ) {
+                                let writeRow = function(
+                                    context, fontSize, color, 
+                                    value, xCoord, yCoord
+                                ) {
+                                    context.font = `${fontSize}px Roboto-Medium`
+                                    context.textAlign = 'center'
+                                    context.fillStyle = color
+                                    context.fillText(value, xCoord, yCoord)
+                                }
+                                
+                                let fontSize = 32
+                                let oneRowDelta = 62
+                                let twoRowsDelta1 = 45
+                                let twoRowsDelta2 = 75
                                 let coords = matrix.getCoordsByIndexes(x, y)
                                 let xCoord = coords[0] + matrix.cellSize / 2
-                                let yCoord = coords[1] + yDelta
-                                context.font = `${fontSize}px Roboto-Medium`
-                                context.textAlign = 'center'
-                                context.fillStyle = matrix.solvingColor
-                                context.fillText(value, xCoord, yCoord)
+                                
+                                if (mode == "one-row") {
+                                    let yCoord = coords[1] + oneRowDelta
+                                    writeRow(
+                                        context, fontSize, matrix.solvingColor, 
+                                        value, xCoord, yCoord
+                                    )
+                                } else {
+                                    let yCoord1 = coords[1] + twoRowsDelta1
+                                    let yCoord2 = coords[1] + twoRowsDelta2
+                                    let lengthOfString1 = Math.ceil(value.length / 2)
+                                    let string1 = value.split('').slice(0, lengthOfString1).join('')
+                                    let string2 = value.split('').slice(lengthOfString1).join('')
+                                    writeRow(
+                                        context, fontSize, matrix.solvingColor, 
+                                        string1, xCoord, yCoord1
+                                    )
+                                    writeRow(
+                                        context, fontSize, matrix.solvingColor, 
+                                        string2, xCoord, yCoord2
+                                    )
+                                }
+
+                                
+                            }
+                            let value = matrix.data.solving[y][x][1].join('')
+                            if (value.length != 0) {
+                                if (value.length <= 5) {
+                                    write(
+                                        "one-row", context, matrix, value
+                                    )
+                                } else {
+                                    write(
+                                        "two-rows", context, matrix, value
+                                    )
+                                }
                             }
                         }
                         {
@@ -486,20 +523,6 @@ let matrix = {
                             }
                         }
                     }
-                    
-                    /* let value = matrix.data.values[y][x]
-                    if (String(value).length == 1) {
-                        xCoord = coords[0] + 28
-                        yCoord = coords[1] + 80
-                        
-                    } else if (String(value).length == 2) {
-                        xCoord = coords[0] + 28
-                        yCoord = coords[1] + 88
-                        context.font = "36px Roboto-Medium"
-                    } */
-
-                    
-                    
                 }
             }
         }
@@ -1498,7 +1521,7 @@ let selectModesActivate = function(matrix,controls) {
 
 }
 
-let keyboardEventsActivate = function(matrix, numberClick) {
+let keyboardEventsActivate = function(matrix, numberClick, document) {
     let bodyKeyUp = function(event, matrix, numberClick) {
         let key = event.key
 
@@ -1513,24 +1536,24 @@ let keyboardEventsActivate = function(matrix, numberClick) {
             matrix.solvingStack.step()
         }
     }
-    let bodyKeyDown = function(event, matrix, numberClick) {
-        let key = event.key
-
-        //console.log(key)
+    let bodyKeyDown = function(key, preventDefault, event, matrix, deSelectAll, draw, numberClick) {
 
         if (key == "Escape") {
-            matrix.deSelectAll()
-            matrix.draw()
+            deSelectAll.call(matrix)
+            draw.call(matrix)
+            return
         }
 
         if (key == "Control") {
             matrix.isCtrlPressed = true
+            return
         }
 
         if (key == "Delete" || key == "Backspace") {
             numberClick(0)
             matrix.draw()
             matrix.solvingStack.step()
+            return
         }
 
         if (key == "a") {
@@ -1538,6 +1561,7 @@ let keyboardEventsActivate = function(matrix, numberClick) {
                 matrix.selectAll()
                 matrix.draw()
             }
+            return
         }
 
         if (key == "ArrowRight" || key == "ArrowLeft" || key == "ArrowUp" || key == "ArrowDown") {
@@ -1553,23 +1577,32 @@ let keyboardEventsActivate = function(matrix, numberClick) {
                 matrix.moveSelection(key)
 
                 // don't do classic actions sort of slide the page
-                event.preventDefault();
+                preventDefault.call(event);
             }
+            return
         }
     }
-
-    document.body.onkeydown = (event) => bodyKeyDown(event, matrix, numberClick)
+    
+    document.body.onkeydown = (event) => bodyKeyDown(
+        event.key, event.preventDefault, event, matrix, 
+        matrix.deSelectAll, matrix.draw, numberClick
+    )
+    
     document.body.onkeyup = (event) => bodyKeyUp(event, matrix, numberClick)
 }
 
-let bodyClickActivate = function(matrix) {
-    let bodyClick = function(event, matrix) {
-        if (event.target == document.body) {
-            matrix.deSelectAll()
-            matrix.draw()
+let bodyClickActivate = function(matrix, document) {
+    let bodyClick = function(target, body, deSelectAll, draw, matrix) {
+        // clear
+        if (target == body) {
+            deSelectAll.call(matrix)
+            draw.call(matrix)
         }
     }
-    document.body.onclick = (event) => bodyClick(event, matrix)
+    
+    document.body.onclick = (event) => bodyClick(
+        event.target, document.body, matrix.deSelectAll, matrix.draw, matrix
+    )
 }
 
 let headerActivate = function(matrix) {
@@ -1632,8 +1665,8 @@ let undoRedoActivate = function(matrix) {
 
 
 
-let start = function(matrix, numberClick, controls, longPress) {
-    let activateInterface = function(matrix, controls) {
+let start = function(matrix, numberClick, controls, longPress, document) {
+    let activateInterface = function(matrix, controls, document) {
         // Ready to use the font in a canvas context
         performance.mark('start');
 
@@ -1644,8 +1677,8 @@ let start = function(matrix, numberClick, controls, longPress) {
         numbersPanelActivate(longPress, matrix, numberClick, controls)
         selectModesActivate(matrix,controls)
         undoRedoActivate(matrix)
-        keyboardEventsActivate(matrix, numberClick)
-        bodyClickActivate(matrix)
+        keyboardEventsActivate(matrix, numberClick, document)
+        bodyClickActivate(matrix, document)
 
         performance.mark('end');
         console.log(
@@ -1654,12 +1687,9 @@ let start = function(matrix, numberClick, controls, longPress) {
             + ' мс'
         )
     }
-    let loadFont = function(activateInterface) {
-        let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)");
-        font.load().then(activateInterface)
-    }
 
-    loadFont( () => activateInterface(matrix, controls))
+    let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)")
+    font.load().then(() => activateInterface(matrix, controls, document))
 }
 
-window.onload = () => start(matrix, numberClick, controls, longPress)
+window.onload = () => start(matrix, numberClick, controls, longPress, document)
