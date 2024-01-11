@@ -65,9 +65,9 @@ let getBlockStepsArray = function(array) {
                 targetX = step[0] - 1
                 targetY = step[1]
             }
-            for (let y in matrix.data.selection) {
-                for (let x in matrix.data.selection[y]) {
-                    if (x == targetX && y == targetY && matrix.data.selection[y][x] == true) {
+            for (let y in matrix.selection) {
+                for (let x in matrix.selection[y]) {
+                    if (x == targetX && y == targetY && matrix.selection[y][x] == true) {
                         let point = step[2]
                         let newPoint = getNewPoint(point, direction)
                         return [targetX, targetY, newPoint]

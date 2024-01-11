@@ -1,5 +1,15 @@
-
+"use strict"
 let matrix = {
+    elem: {},
+    color: '',
+    solvingColor: '',
+    cellSize: 0,
+    padding: 0,
+    data: {},
+    selection: [],
+    isCtrlPressed: false,
+    thinLineThickness: 0,
+    fatLineThickness: 0,
     init() {
         this.elem = document.getElementById("board-canvas")
         this.color = "#50504e"
@@ -9,16 +19,26 @@ let matrix = {
         this.padding = 10
         canvas.height = 0
         canvas.width = 0
-
         matrix.thinLineThickness = 2
         matrix.fatLineThickness = 5
-        matrix.isCtrlPressed = false
 
-        this.data = data
+        this.data = JSON.parse(data)
+        matrix.selection = matrix.createMatrixSelectionArray(matrix.data.rows, matrix.data.columns)
         this.data.painting = this.createPaintingArray(this.data.rows, this.data.columns)
 
         this.solvingStack.step()
 
+    },
+    createMatrixSelectionArray(rows, columns) {
+        let array = []
+        for (let y = 0; y < rows; y++) {
+            let rowArray = []
+            for (let x = 0; x < columns; x++) {
+                rowArray.push(false)
+            }
+            array.push(rowArray)
+        }
+        return array
     },
     createPaintingArray(rows, columns) {
         let array = []
@@ -84,9 +104,9 @@ let matrix = {
     moveSelection(key) {
         let x = 0, y = 0
         let targetX = 0, targetY = 0
-        loop: for (y in matrix.data.selection) {
-            for (x in matrix.data.selection[y]) {
-                if (matrix.data.selection[y][x] == true) {
+        loop: for (y in matrix.selection) {
+            for (x in matrix.selection[y]) {
+                if (matrix.selection[y][x] == true) {
                     x = +x
                     y = +y
                     break loop
@@ -124,26 +144,26 @@ let matrix = {
             }
         }
 
-        matrix.data.selection[y][x] = false
-        matrix.data.selection[targetY][targetX] = true
+        matrix.selection[y][x] = false
+        matrix.selection[targetY][targetX] = true
         matrix.draw()
     },
     deSelectAll() {
-        for (let y in this.data.selection) {
-            for (let x in this.data.selection[y]) {
-                this.data.selection[y][x] = false
+        for (let y in this.selection) {
+            for (let x in this.selection[y]) {
+                this.selection[y][x] = false
             }
         }
     },
     selectAll() {
-        for (let y in this.data.selection) {
-            for (let x in this.data.selection[y]) {
-                this.data.selection[y][x] = true
+        for (let y in this.selection) {
+            for (let x in this.selection[y]) {
+                this.selection[y][x] = true
             }
         }
     },
     getSelected() {
-        let array = matrix.data.selection
+        let array = matrix.selection
         selectedArray = []
         for (let y = 0; y < array.length; y++) {
             for (let x = 0; x < array[y].length; x++) {
@@ -298,26 +318,26 @@ let matrix = {
                             if (y == 0) {
                                 return false
                             }
-                            return matrix.data.selection[y - 1][x]
+                            return matrix.selection[y - 1][x]
                         }
                         if (side == "down") {
                             if (y == matrix.data.rows - 1) {
                                 return false
                             }
                             //console.log(x, y)
-                            return matrix.data.selection[y + 1][x]
+                            return matrix.selection[y + 1][x]
                         }
                         if (side == "left") {
                             if (x == 0) {
                                 return false
                             }
-                            return matrix.data.selection[y][x - 1]
+                            return matrix.selection[y][x - 1]
                         }
                         if (side == "right") {
                             if (x == matrix.data.rows - 1) {
                                 return false
                             }
-                            return matrix.data.selection[y][x + 1]
+                            return matrix.selection[y][x + 1]
                         }
                     }
                     return {
@@ -336,7 +356,7 @@ let matrix = {
                 if (!falseSides.right) {drawSideLine("right", context, x, y)}
             }
             let drawRects = function() {
-                let selection = matrix.data.selection
+                let selection = matrix.selection
                 for (let y in selection) {
                     for (let x in selection[y]) {
                         if (selection[y][x] == true) {
@@ -350,7 +370,7 @@ let matrix = {
                 let context = canvas.getContext("2d")
                 context.beginPath()
 
-                let selection = matrix.data.selection
+                let selection = matrix.selection
                 for (let y in selection) {
                     for (let x in selection[y]) {
                         if (selection[y][x] == true) {
@@ -907,9 +927,9 @@ let solving = {
 }
 
 
-let canvasActivate = function() {
+let canvasActivate = function(matrix, controls) {
 
-    let getIndexesByCoords = function(x, y) {
+    let getIndexesByCoords = function(x, y, matrix) {
         let cellSize = matrix.cellSize
         let padding = matrix.padding
         let indexes = [0, 0]
@@ -931,8 +951,7 @@ let canvasActivate = function() {
         return indexes
     }
 
-    let isCanvasEdge = function(x, y) {
-        let cellSize = matrix.cellSize
+    let isCanvasEdge = function(x, y, matrix) {
         let padding = matrix.padding
         let canvas = matrix.elem
         if (
@@ -947,7 +966,7 @@ let canvasActivate = function() {
         }
     }
 
-    let getCoordsOfPointOnCanvas = function(event, device) {
+    let getCoordsOfPointOnCanvas = function(event, device, matrix) {
         let canvas = matrix.elem
         let xClient
         let yClient
@@ -957,13 +976,9 @@ let canvasActivate = function() {
             yClient = event.offsetY
             
         } else {
-
-            //xClient = event.screenX - event.target.offsetLeft
-            //yClient = event.screenY - event.target.offsetTop
             let r = canvas.getBoundingClientRect();
-            xClient = event.clientX - r.left;
-            yClient = event.clientY - r.top;
-            //console.log(event.target.offsetWidth)
+            xClient = event.targetTouches[0].clientX - r.left;
+            yClient = event.targetTouches[0].clientY - r.top;
         }
         let clientWidth = canvas.clientWidth
         let clientHeight = canvas.clientHeight
@@ -977,87 +992,98 @@ let canvasActivate = function() {
         return [x, y]
     }
 
-    let canvas = matrix.elem
-    canvas.style.display = "block"
+    let paintingSet = new Set
+
     let paintingSelection = {
-        setOfCells: {},
+        setOfCells: paintingSet,
         activity: false
     }
-    paintingSelection.setOfCells = new Set
+    
 
-    let canvasMouseDown = function(event, paintingSelection, device) {
-        
-        //event.preventDefault()
+    let canvasMouseDown = function(
+        event, paintingSelection, device, isCanvasEdge, matrix, 
+        getCoordsOfPointOnCanvas, getIndexesByCoords, controls
+    ) {
+        event.preventDefault()
 
         paintingSelection.setOfCells.clear()
         paintingSelection.activity = true
-
-        let canvasCoords = getCoordsOfPointOnCanvas(event, device)
+        
+        let canvasCoords = getCoordsOfPointOnCanvas(event, device, matrix)
+        
         let x = canvasCoords[0]
         let y = canvasCoords[1]
 
-        if (isCanvasEdge(x, y)) {
+        if (isCanvasEdge(x, y, matrix)) {
             return false
         }
-        let indexes = getIndexesByCoords(x, y)
-        //console.log(indexes)
-        let value = matrix.data.selection[indexes[1]][indexes[0]]
-        //console.log(matrix.isCtrlPressed)
+        let indexes = getIndexesByCoords(x, y, matrix)
+        let value = matrix.selection[indexes[1]][indexes[0]]
         if (matrix.isCtrlPressed == false && controls.selectMode == "one") {
             matrix.deSelectAll()
-            //console.log(matrix.data.selection)
+
         }
-        matrix.data.selection[indexes[1]][indexes[0]] = !value
+        matrix.selection[indexes[1]][indexes[0]] = !value
         matrix.draw()
     }
-    let canvasMouseMove = function(event, paintingSelection) {
-        
+    let canvasMouseMove = function(
+            event, paintingSelection, device, matrix, isCanvasEdge,
+            getCoordsOfPointOnCanvas, getIndexesByCoords
+    ) {
+        event.preventDefault()
+
         if (!paintingSelection.activity) {
             return
         }
-        let canvasCoords = getCoordsOfPointOnCanvas(event)
+        let canvasCoords = getCoordsOfPointOnCanvas(event, device, matrix)
         let x = canvasCoords[0]
         let y = canvasCoords[1]
-        let indexes = getIndexesByCoords(x, y)
-        if (isCanvasEdge(x, y)) {
+        let indexes = getIndexesByCoords(x, y, matrix)
+        if (isCanvasEdge(x, y, matrix)) {
             return false
         }
 
-        matrix.data.selection[indexes[1]][indexes[0]] = true
+        matrix.selection[indexes[1]][indexes[0]] = true
         matrix.draw()
     }
-    let canvasMouseUp = function(event, paintingSelection) {
+    let canvasMouseUp = function(paintingSelection) {
         paintingSelection.activity = false
+    }
+    let canvas = matrix.elem
+    let showCanvas = function(matrix) {
+        let canvas = matrix.elem
+        canvas.style.display = "block"
+    }
+    
+    canvas.onmousedown = (event) => canvasMouseDown(
+        event, paintingSelection, "desktop", isCanvasEdge, matrix, 
+        getCoordsOfPointOnCanvas, getIndexesByCoords, controls
+    )
         
-        //console.log(event)
-    }
+    canvas.addEventListener("touchstart", (event) => canvasMouseDown(
+        event, paintingSelection, "mobile", isCanvasEdge, matrix, 
+        getCoordsOfPointOnCanvas, getIndexesByCoords, controls
+    ), {passive: false})
+        
+    canvas.onmouseup = canvas.onmouseleave = () => canvasMouseUp(
+        paintingSelection
+    )
 
-    canvas.onmousedown = function(event) {
-        //event.preventDefault()
-        canvasMouseDown(event, paintingSelection, "desktop")
-    }
-    canvas.addEventListener("touchstart", function(event) {
-        //event.preventDefault()
-        canvasMouseDown(event.targetTouches[0], paintingSelection, "mobile")
-    }, {passive: true})
+    canvas.addEventListener("touchend", () =>
+        canvasMouseUp(paintingSelection)
+    )
 
-    canvas.onmouseup = canvas.onmouseleave = function(event) {
-        //event.preventDefault()
-        canvasMouseUp(event, paintingSelection, "desktop")
-    }
-    canvas.addEventListener("touchend", function(event) {
-        //event.preventDefault()
-        canvasMouseUp(event.changedTouches[0], paintingSelection, "mobile")
-    })
-
-    canvas.onmousemove = function(event) {
-        //event.preventDefault()
-        canvasMouseMove(event, paintingSelection, "desktop")
-    }
-    canvas.addEventListener("touchmove", function(event) {
-        //event.preventDefault()
-        canvasMouseMove(event.changedTouches[0], paintingSelection, "mobile")
-    }, {passive: true})
+    canvas.onmousemove = (event) => canvasMouseMove(
+        event, paintingSelection, "desktop", matrix, isCanvasEdge,
+        getCoordsOfPointOnCanvas, getIndexesByCoords
+    )
+    
+    canvas.addEventListener("touchmove", (event) => canvasMouseMove(
+        event, paintingSelection, "mobile", matrix, isCanvasEdge,
+        getCoordsOfPointOnCanvas, getIndexesByCoords
+    ), {passive: false})
+    
+    showCanvas(matrix)
 }
 
 let numberClick = function(number) {
@@ -1195,13 +1221,13 @@ let numberClick = function(number) {
         let anyContains = false
         let anyDoesntContain = false
 
-        for (let y in matrix.data.selection) {
-            for (let x in matrix.data.selection[y]) {
+        for (let y in matrix.selection) {
+            for (let x in matrix.selection[y]) {
                 
                 if (matrix.data.values[y][x] != 0) {
                     continue
                 }
-                if (matrix.data.selection[y][x] == true) {
+                if (matrix.selection[y][x] == true) {
                     if (solvingType == "number") {
                         if (matrix.data.solving[y][x][0] == number) {
                             anyContains = true
@@ -1237,9 +1263,9 @@ let numberClick = function(number) {
         return false
     }
     let antiInvertMode = isNeedAntiInvertMode()
-    for (let y in matrix.data.selection) {
-        for (let x in matrix.data.selection[y]) {
-            if (matrix.data.selection[y][x] == true) {
+    for (let y in matrix.selection) {
+        for (let x in matrix.selection[y]) {
+            if (matrix.selection[y][x] == true) {
                 press(number, x, y, antiInvertMode)
             }
         }
@@ -1251,7 +1277,7 @@ let selectAllContainsNumber = function(num) {
         for (let y in matrix.data.values) {
             for (let x in matrix.data.values[y]) {
                 if (matrix.data.values[y][x] == num) {
-                    matrix.data.selection[y][x] = true
+                    matrix.selection[y][x] = true
                 }
             }
         }
@@ -1264,7 +1290,7 @@ let selectAllContainsNumber = function(num) {
                 let isCentralContainsTarget = solvingValue[1].indexOf(num) != -1 ? true : false
                 let isCornerContainsTarget = solvingValue[2].indexOf(num) != -1 ? true : false
                 if (isNumberIsTarget || isCentralContainsTarget || isCornerContainsTarget) {
-                    matrix.data.selection[y][x] = true
+                    matrix.selection[y][x] = true
                 }
             }
         }
@@ -1280,63 +1306,66 @@ let longPress = function(num) {
     matrix.deSelectAll()
     selectAllContainsNumber(num)
 }
-let numberButtonsActivate = function(buttonsType) {
-    let numButtons
-    if (buttonsType == "color") {
-        numButtons = document.querySelectorAll("#painting-pad .num")
-    } else {
-        numButtons = document.querySelectorAll("#numpad .num")
-    }
-    let longPressOptions = {
-        isLongPress: false,
-        longPressHappened: false
-    }
-    for (let numButton of numButtons) {
-        let num = +(numButton.getAttribute("key"))
 
-        let numMouseDown = function(num, event, longPressOptions) {
-            //event.preventDefault()
-            longPressOptions.isLongPress = true
-            longPressOptions.longPressHappened = false
-            setTimeout(function() {
-                if (longPressOptions.isLongPress ==  true && buttonsType != "color") {
-                    longPressOptions.longPressHappened = true
-                    longPress(num)
-                }
-            }, 600)
+
+let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
+    let numberButtonsActivate = function(buttonsType, longPress, matrix, numberClick) {
+        let numButtons
+        if (buttonsType == "color") {
+            numButtons = document.querySelectorAll("#painting-pad .num")
+        } else {
+            numButtons = document.querySelectorAll("#numpad .num")
         }
-        let numMouseUp = function(num, event, longPressOptions) {
-            //event.preventDefault()
-            longPressOptions.isLongPress = false
-            if (!longPressOptions.longPressHappened) {
-                numberClick(num)
-                matrix.draw()
-                if (buttonsType != "color") {
-                    matrix.solvingStack.step()
+        let longPressOptions = {
+            isLongPress: false,
+            longPressHappened: false
+        }
+        for (let numButton of numButtons) {
+            let num = +(numButton.getAttribute("key"))
+    
+            let numMouseDown = function(num, event, longPressOptions, buttonsType, longPress) {
+                //event.preventDefault()
+                longPressOptions.isLongPress = true
+                longPressOptions.longPressHappened = false
+                setTimeout(function() {
+                    if (longPressOptions.isLongPress ==  true && buttonsType != "color") {
+                        longPressOptions.longPressHappened = true
+                        longPress(num)
+                    }
+                }, 600)
+            }
+            let numMouseUp = function(
+                matrix, numberClick, num, event, longPressOptions, buttonsType
+            ) {
+                longPressOptions.isLongPress = false
+                if (!longPressOptions.longPressHappened) {
+                    numberClick(num)
+                    matrix.draw()
+                    if (buttonsType != "color") {
+                        matrix.solvingStack.step()
+                    }
                 }
             }
-        }
-        numButton.onmousedown = function(event) {
-            numMouseDown(num, event, longPressOptions)
-        }
-        numButton.onmouseup = function(event) {
-            numMouseUp(num, event, longPressOptions)
-        }
-        numButton.addEventListener("touchstart", function(event) {
-            numMouseDown(num, event, longPressOptions)
-        }, {passive: true})
-        numButton.addEventListener("touchend", function(event) {
-            numMouseUp(num, event, longPressOptions)
-        })
-        
-    }
-}
+            let numTouchStart = function(event, numMouseDown, num, longPressOptions) {
+                event.preventDefault()
+                numMouseDown(num, event, longPressOptions)
+            }
 
-let numbersPanelActivate = function() {
-    
-    let numbersActivate = function() {
-        numberButtonsActivate()
-        numberButtonsActivate("color")
+            numButton.onmousedown = (event) =>
+                numMouseDown(num, event, longPressOptions, buttonsType, longPress)
+            numButton.onmouseup = (event) =>
+                numMouseUp(matrix, numberClick, num, event, longPressOptions, buttonsType)
+            numButton.addEventListener("touchstart", (event) => 
+                numTouchStart(event, numMouseDown, num, longPressOptions), 
+                {passive: false}
+            )
+            numButton.addEventListener("touchend", (event) => 
+                numMouseUp(matrix, numberClick, num, event, longPressOptions, buttonsType))
+        }
+    }
+    let numbersActivate = function(numberButtonsActivate, longPress, matrix, numberClick) {
+        numberButtonsActivate("numbers", longPress, matrix, numberClick)
+        numberButtonsActivate("color", longPress, matrix, numberClick)
     }
 
     let controlsActivate = function() {
@@ -1344,12 +1373,12 @@ let numbersPanelActivate = function() {
         let numPad = document.getElementById("numpad")
         let paintingPad = document.getElementById("painting-pad")
 
-        let numbersMode = function() {
+        let numbersMode = function(paintingPad, numPad) {
             paintingPad.style.display = "none"
             numPad.style.display = "table"
         }
 
-        let paintingMode = function() {
+        let paintingMode = function(paintingPad, numPad) {
             numPad.style.display = "none"
             paintingPad.style.display = "table"
         }
@@ -1359,8 +1388,12 @@ let numbersPanelActivate = function() {
         let solvingModeCorner = document.getElementById("solving-mode-corner")
         let solvingModePainting = document.getElementById("solving-mode-painting")
 
-        solvingModeNumber.onclick = function() {
-            numbersMode()
+        let solvingModeNumberClick = function(
+                numbersMode, paintingPad, numPad, solvingModeCentral,
+                solvingModeCorner, solvingModeNumber, solvingModePainting,
+                controls
+            ) {
+            numbersMode(paintingPad, numPad)
             solvingModeCentral.classList.remove("writing-mode-elem-active")
             solvingModeCorner.classList.remove("writing-mode-elem-active")
             solvingModeNumber.classList.add("writing-mode-elem-active")
@@ -1369,8 +1402,12 @@ let numbersPanelActivate = function() {
             controls.writing.solvingMode = "number"
         }
 
-        solvingModeCentral.onclick = function() {
-            numbersMode()
+        let solvingModeCentralClick = function(
+            numbersMode, paintingPad, numPad, solvingModeCentral,
+            solvingModeCorner, solvingModeNumber, solvingModePainting,
+            controls
+        ) {
+            numbersMode(paintingPad, numPad)
             solvingModeCentral.classList.add("writing-mode-elem-active")
             solvingModeCorner.classList.remove("writing-mode-elem-active")
             solvingModeNumber.classList.remove("writing-mode-elem-active")
@@ -1378,9 +1415,12 @@ let numbersPanelActivate = function() {
 
             controls.writing.solvingMode = "central"
         }
-
-        solvingModeCorner.onclick = function() {
-            numbersMode()
+        let solvingModeCornerClick = function(
+            numbersMode, paintingPad, numPad, solvingModeCentral,
+            solvingModeCorner, solvingModeNumber, solvingModePainting,
+            controls
+        ) {
+            numbersMode(paintingPad, numPad)
             solvingModeCentral.classList.remove("writing-mode-elem-active")
             solvingModeCorner.classList.add("writing-mode-elem-active")
             solvingModeNumber.classList.remove("writing-mode-elem-active")
@@ -1388,9 +1428,12 @@ let numbersPanelActivate = function() {
 
             controls.writing.solvingMode = "corner"
         }
-
-        solvingModePainting.onclick = function() {
-            paintingMode()
+        let solvingModePaintingClick = function(
+            paintingMode, paintingPad, numPad, solvingModeCentral,
+            solvingModeCorner, solvingModeNumber, solvingModePainting,
+            controls
+        ) {
+            paintingMode(paintingPad, numPad)
             solvingModeCentral.classList.remove("writing-mode-elem-active")
             solvingModePainting.classList.add("writing-mode-elem-active")
             solvingModeCorner.classList.remove("writing-mode-elem-active")
@@ -1399,42 +1442,64 @@ let numbersPanelActivate = function() {
             controls.writing.solvingMode = "painting"
         }
 
+        solvingModeNumber.onclick = () => solvingModeNumberClick(
+            numbersMode, paintingPad, numPad, solvingModeCentral,
+            solvingModeCorner, solvingModeNumber, solvingModePainting,
+            controls
+        )
+        solvingModeCentral.onclick = () => solvingModeCentralClick(
+            numbersMode, paintingPad, numPad, solvingModeCentral,
+            solvingModeCorner, solvingModeNumber, solvingModePainting,
+            controls
+        )
+        solvingModeCorner.onclick = () => solvingModeCornerClick(
+            numbersMode, paintingPad, numPad, solvingModeCentral,
+            solvingModeCorner, solvingModeNumber, solvingModePainting,
+            controls
+        )
+        solvingModePainting.onclick = () => solvingModePaintingClick(
+            paintingMode, paintingPad, numPad, solvingModeCentral,
+            solvingModeCorner, solvingModeNumber, solvingModePainting,
+            controls
+        )
     }
     
-    numbersActivate()
-    controlsActivate()
+    numbersActivate(numberButtonsActivate, longPress, matrix, numberClick)
+    controlsActivate(controls)
 }
 
-let selectModesActivate = function() {
+let selectModesActivate = function(matrix,controls) {
 
     let selectModeOne = document.getElementById("select-mode-one")
     let selectModeMulti = document.getElementById("select-mode-multi")
     let selectModeAll = document.getElementById("select-mode-all")
-
-    selectModeOne.onclick = function() {
+    
+    let selectOneClick = function(controls, selectModeOne, selectModeMulti) {
         selectModeMulti.classList.remove("select-mode-elem-active")
         selectModeOne.classList.add("select-mode-elem-active")
         
         controls.selectMode = "one"
-    }
-
-    selectModeMulti.onclick = function() {
+    } 
+    let selectMultyClick = function(controls, selectModeOne, selectModeMulti) {
         selectModeOne.classList.remove("select-mode-elem-active")
         selectModeMulti.classList.add("select-mode-elem-active")
 
         controls.selectMode = "multi"
     }
-
-    selectModeAll.onclick = function() {
+    let selectAllClick = function(matrix) {
         matrix.selectAll()
         matrix.draw()
     }
 
+    selectModeOne.onclick = () => 
+        selectOneClick(controls, selectModeOne, selectModeMulti)
+    selectModeMulti.onclick = () => selectMultyClick(controls, selectModeOne, selectModeMulti)
+    selectModeAll.onclick = () => selectAllClick(matrix)
+
 }
 
-let keyboardEventsActivate = function() {
-    document.body.onkeyup = function(event) {
-        
+let keyboardEventsActivate = function(matrix, numberClick) {
+    let bodyKeyUp = function(event, matrix, numberClick) {
         let key = event.key
 
         if (key == "Control") {
@@ -1448,8 +1513,7 @@ let keyboardEventsActivate = function() {
             matrix.solvingStack.step()
         }
     }
-
-    document.body.onkeydown = function(event) {
+    let bodyKeyDown = function(event, matrix, numberClick) {
         let key = event.key
 
         //console.log(key)
@@ -1478,9 +1542,9 @@ let keyboardEventsActivate = function() {
 
         if (key == "ArrowRight" || key == "ArrowLeft" || key == "ArrowUp" || key == "ArrowDown") {
             let amountOfSelectionCells = 0
-            for (let y in matrix.data.selection) {
-                for (let x in matrix.data.selection[y]) {
-                    if (matrix.data.selection[y][x] == true) {
+            for (let y in matrix.selection) {
+                for (let x in matrix.selection[y]) {
+                    if (matrix.selection[y][x] == true) {
                         amountOfSelectionCells++
                     }
                 }
@@ -1493,18 +1557,22 @@ let keyboardEventsActivate = function() {
             }
         }
     }
+
+    document.body.onkeydown = (event) => bodyKeyDown(event, matrix, numberClick)
+    document.body.onkeyup = (event) => bodyKeyUp(event, matrix, numberClick)
 }
 
-let mouseEventsActivate = function() {
-    document.body.onclick = function(event) {
+let bodyClickActivate = function(matrix) {
+    let bodyClick = function(event, matrix) {
         if (event.target == document.body) {
             matrix.deSelectAll()
             matrix.draw()
         }
     }
+    document.body.onclick = (event) => bodyClick(event, matrix)
 }
 
-let headerActivate = function() {
+let headerActivate = function(matrix) {
 
     let menuIconElem = document.getElementById("menu-icon")
     let menuElem = document.getElementById("menu")
@@ -1512,9 +1580,9 @@ let headerActivate = function() {
     let helpElem = document.getElementById("help")
     let helpOk = document.getElementById("help-ok")
 
-    let menuActivate = function() {
-        menuIconElem.onclick = function() {
-            
+    let menuActivate = function(helpElem, menuIconElem) {
+        helpElem.style.display = "none"
+        let menuIconElemClick = function(menuElem, helpElem) {
             let menuVisibility = menuElem.style.display
             
             if (menuVisibility == "block") {
@@ -1524,13 +1592,11 @@ let headerActivate = function() {
                 menuElem.style.display = "block"
             }
         }
+        menuIconElem.onclick = () => menuIconElemClick(menuElem, helpElem)
     } 
 
-    
-
-    let helpActivate = function() {
-        helpIconElem.onclick = helpOk.onclick = function() {
-            
+    let helpActivate = function(helpIconElem, helpOk, helpElem, menuElem) {
+        let helpIconElemClick = function(helpElem, menuElem) {
             let helpVisibility = helpElem.style.display
             
             if (helpVisibility == "none") {
@@ -1540,49 +1606,60 @@ let headerActivate = function() {
                 helpElem.style.display = "none"
             }
         }
+
+        helpIconElem.onclick = helpOk.onclick = () => helpIconElemClick(
+            helpElem, menuElem
+        )
     }
 
-    let nameActivate = function() {
+    let nameActivate = function(matrix) {
         let nameElem = document.getElementById("puzzle-name")
         nameElem.innerHTML = `#${matrix.data.name}`
     }
     
-    menuActivate()
-    nameActivate()
-    helpActivate()
+    menuActivate(helpElem, menuIconElem)
+    nameActivate(matrix)
+    helpActivate(helpIconElem, helpOk, helpElem, menuElem)
 }
 
-let undoRedoActivate = function() {
+let undoRedoActivate = function(matrix) {
     let undoButton = document.getElementById("undo-button")
     let redoButton = document.getElementById("redo-button")
 
-    undoButton.onclick = function() {
-        matrix.solvingStack.back()
-    }
-    
-    redoButton.onclick = function() {
-        matrix.solvingStack.forward()
-    }
-    
+    undoButton.onclick = () => matrix.solvingStack.back()
+    redoButton.onclick = () => matrix.solvingStack.forward()
 }
 
-let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)");
-            
-font.load().then(function () {
-    // Ready to use the font in a canvas context
-    performance.mark('start');
-    
-    matrix.init()
-    matrix.draw()
 
-    headerActivate()
-    canvasActivate()
-    numbersPanelActivate()
-    selectModesActivate()
-    undoRedoActivate()
-    keyboardEventsActivate()
-    mouseEventsActivate()
 
-    performance.mark('end');
-    console.log(performance.measure('time', 'start', 'end').duration)
-});
+let start = function(matrix, numberClick, controls, longPress) {
+    let activateInterface = function(matrix, controls) {
+        // Ready to use the font in a canvas context
+        performance.mark('start');
+
+        matrix.init()
+        matrix.draw()
+        headerActivate(matrix)
+        canvasActivate(matrix, controls)
+        numbersPanelActivate(longPress, matrix, numberClick, controls)
+        selectModesActivate(matrix,controls)
+        undoRedoActivate(matrix)
+        keyboardEventsActivate(matrix, numberClick)
+        bodyClickActivate(matrix)
+
+        performance.mark('end');
+        console.log(
+            'загрузка интерфейса: ' 
+            + performance.measure("time", 'start', 'end').duration 
+            + ' мс'
+        )
+    }
+    let loadFont = function(activateInterface) {
+        let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)");
+        font.load().then(activateInterface)
+    }
+
+    loadFont( () => activateInterface(matrix, controls))
+}
+
+window.onload = () => start(matrix, numberClick, controls, longPress)

@@ -1,5 +1,12 @@
 
 let matrix = {
+    elem: {},
+    color: '',
+    solvingColor: '',
+    cellSize: 0,
+    padding: 0,
+    data: {},
+
     init() {
         
         
@@ -12,16 +19,15 @@ let matrix = {
         canvas.height = 0
         canvas.width = 0
 
-        this.data = {}
         this.data.rows = 0
         this.data.columns = 0
     },
     moveSelection(key) {
         let x = 0, y = 0
         let targetX = 0, targetY = 0
-        loop: for (y in matrix.data.selection) {
-            for (x in matrix.data.selection[y]) {
-                if (matrix.data.selection[y][x] == true) {
+        loop: for (y in matrix.selection) {
+            for (x in matrix.selection[y]) {
+                if (matrix.selection[y][x] == true) {
                     x = +x
                     y = +y
                     break loop
@@ -59,26 +65,26 @@ let matrix = {
             }
         }
 
-        matrix.data.selection[y][x] = false
-        matrix.data.selection[targetY][targetX] = true
+        matrix.selection[y][x] = false
+        matrix.selection[targetY][targetX] = true
         matrix.draw()
     },
     deSelectAll() {
-        for (let y in this.data.selection) {
-            for (let x in this.data.selection[y]) {
-                this.data.selection[y][x] = false
+        for (let y in this.selection) {
+            for (let x in this.selection[y]) {
+                this.selection[y][x] = false
             }
         }
     },
     selectAll() {
-        for (let y in this.data.selection) {
-            for (let x in this.data.selection[y]) {
-                this.data.selection[y][x] = true
+        for (let y in this.selection) {
+            for (let x in this.selection[y]) {
+                this.selection[y][x] = true
             }
         }
     },
     getSelected() {
-        let array = matrix.data.selection
+        let array = matrix.selection
         selectedArray = []
         for (let y = 0; y < array.length; y++) {
             for (let x = 0; x < array[y].length; x++) {
@@ -183,7 +189,7 @@ let matrix = {
                 context.fillRect (coords[0], coords[1], matrix.cellSize, matrix.cellSize);
             }
 
-            let selection = matrix.data.selection
+            let selection = matrix.selection
             for (let y in selection) {
                 for (let x in selection[y]) {
                     if (selection[y][x] == true) {
@@ -933,7 +939,7 @@ let setMatrix = function(columns, rows) {
     matrix.data.rows = rows
     matrix.data.columns = columns
     matrix.data.borders = createMatrixBordersObject(rows, columns)
-    matrix.data.selection = createMatrixSelectionArray(rows, columns)
+    matrix.selection = createMatrixSelectionArray(rows, columns)
     matrix.data.values = createMatrixValuesArray(rows, columns)
     matrix.data.solving = createMatrixSolvingArray(rows, columns)
     //matrix.numberTypes = createMatrixNumberTypesArray(rows, columns)
@@ -1042,13 +1048,13 @@ let canvasActivate = function() {
             return false
         }
         let indexes = getIndexesByCoords(x, y)
-        let value = matrix.data.selection[indexes[1]][indexes[0]]
+        let value = matrix.selection[indexes[1]][indexes[0]]
         //console.log(matrix.isCtrlPressed)
         if (matrix.isCtrlPressed == false) {
             matrix.deSelectAll()
-            //console.log(matrix.data.selection)
+            //console.log(matrix.selection)
         }
-        matrix.data.selection[indexes[1]][indexes[0]] = !value
+        matrix.selection[indexes[1]][indexes[0]] = !value
         matrix.draw()
     }
 }
@@ -1093,9 +1099,9 @@ let bordersPanelActivate = function() {
             }
         }
 
-        for (let y in matrix.data.selection) {
-            for (let x in matrix.data.selection[y]) {
-                if (matrix.data.selection[y][x] == true) {
+        for (let y in matrix.selection) {
+            for (let x in matrix.selection[y]) {
+                if (matrix.selection[y][x] == true) {
                     applyBorderWeight(+x, +y)
                 }
             }
@@ -1193,9 +1199,9 @@ let numberClick = function(number) {
         }
     }
     
-    for (let y in matrix.data.selection) {
-        for (let x in matrix.data.selection[y]) {
-            if (matrix.data.selection[y][x] == true) {
+    for (let y in matrix.selection) {
+        for (let x in matrix.selection[y]) {
+            if (matrix.selection[y][x] == true) {
                 press(number, x, y)
             }
         }
@@ -1469,9 +1475,9 @@ let twinsPanelActivate = function() {
             }
         }
 
-        for (let y in matrix.data.selection) {
-            for (let x in matrix.data.selection[y]) {
-                if (matrix.data.selection[y][x] == true) {
+        for (let y in matrix.selection) {
+            for (let x in matrix.selection[y]) {
+                if (matrix.selection[y][x] == true) {
                     applyTwins(+x, +y)
                 }
             }
@@ -1594,9 +1600,9 @@ let keyboardEventsActivate = function() {
 
         if (key == "ArrowRight" || key == "ArrowLeft" || key == "ArrowUp" || key == "ArrowDown") {
             let amountOfSelectionCells = 0
-            for (let y in matrix.data.selection) {
-                for (let x in matrix.data.selection[y]) {
-                    if (matrix.data.selection[y][x] == true) {
+            for (let y in matrix.selection) {
+                for (let x in matrix.selection[y]) {
+                    if (matrix.selection[y][x] == true) {
                         amountOfSelectionCells++
                     }
                 }
@@ -1727,9 +1733,9 @@ let inequalityPanelActivate = function() {
             }
         }
 
-        for (let y in matrix.data.selection) {
-            for (let x in matrix.data.selection[y]) {
-                if (matrix.data.selection[y][x] == true) {
+        for (let y in matrix.selection) {
+            for (let x in matrix.selection[y]) {
+                if (matrix.selection[y][x] == true) {
                     applyInequality(+x, +y)
                 }
             }
@@ -1772,7 +1778,7 @@ let metaPanelActivate = function () {
         let dataName = upInfoNumber.value.split('')
         dataName.shift()
         matrix.data.name = dataName.join('')
-        writeFile("data.js", "let data = " + JSON.stringify(matrix.data));
+        writeFile("data.js", "let data = '" + JSON.stringify(matrix.data)+ "'");
     }
 }
 
