@@ -1,0 +1,407 @@
+@font-face {
+    font-family: Roboto-Light;
+    src: url(roboto/Roboto-Light.ttf)
+}
+
+@font-face {
+    font-family: Roboto-Medium-numbers-only;
+    src: url(roboto/Roboto-Medium-numbers-only.ttf)
+}
+
+body {
+    font-family: Roboto-Light;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    object-fit: contain;
+    text-align: center;
+}
+
+#loading {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 40px;
+    position: absolute;
+    top: 40%;
+    left: 0;
+    right: 0;
+}
+
+#container {
+    display: none;
+    max-height: 95%;
+    overflow: hidden;
+    max-width: 95%;
+    aspect-ratio: 1 / 1.36;
+    position: relative;
+    text-align: center;
+    /* outline: 1px solid red; */
+}
+
+#header {
+    /* outline: 1px solid orange; */
+    /* height: 35px; */
+    /* margin-bottom: 5px; */
+    /* margin-left: 2px; */
+    margin-top: 5px;
+    text-align: left;
+    width: calc( 100% - 10px );
+    display: inline-flex;
+    white-space: nowrap;
+    color: #50504e;
+    /* background-color: #f55252; */
+}
+
+#header * {
+    /* height: 100%; */
+    display: inline-block;
+    background-size: contain !important;
+    /* outline: 1px solid red; */
+}
+
+#menu-icon {
+    background: url("images/menu.webp") no-repeat;
+    aspect-ratio: 1 / 1;
+    width: calc(100% / 12);
+    z-index: 2;
+}
+
+#logo {
+    background: url("images/logo.webp") no-repeat;
+    aspect-ratio: 2.8 / 1;
+    /* outline: 1px solid orange; */
+    width: calc(100% / 4.3)
+}
+
+.empty {
+    flex-grow: 1;
+}
+
+#help-icon {
+    background: url("images/help.webp") no-repeat;
+    aspect-ratio: 1 / 1;
+    /* float: right; */
+    width: calc(100% / 12)
+}
+
+#board {
+    display: inline-block;
+    min-width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+#board-canvas {
+    height: 100%;
+    width: 100%;
+    display: none;
+    aspect-ratio: 1 / 1;
+}
+
+#controls {
+    /* font-family: "Comfortaa"; */
+    display: inline-block;
+    width: calc( 100% - 10px );
+    /* outline: 1px solid red; */
+    margin-top: 10px;
+    /* background-color: #d25151; */
+}
+
+#solving-mode-number {
+    background: url("images/type-of-solving-number.webp") no-repeat;
+}
+
+#solving-mode-central {
+    background: url("images/type-of-solving-central.webp") no-repeat;
+}
+
+#solving-mode-corner {
+    background: url("images/type-of-solving-coner.webp") no-repeat;
+}
+
+#solving-mode-painting {
+    background: url("images/painting.webp") no-repeat;
+}
+
+.select-mode-elem {
+    width: 30%;
+    background-size: cover !important;
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+}
+
+.select-mode-elem-active {
+    outline: 2px solid #ff8d00;
+}
+
+.writing-mode-elem {
+    width: 23%;
+    background-size: cover !important;
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+}
+
+.writing-mode-elem-active {
+    outline: 2px solid #00ffd0;
+}
+
+#undo-button {
+    background: url("images/back-arrow.webp") no-repeat;
+    /* outline: 1px solid #c94242; */
+}
+
+#redo-button {
+    background: url("images/forward-arrow.webp") no-repeat;
+    /* outline: 1px solid #cf2dc4; */
+}
+
+#undo-button, #redo-button {
+    width: 45%;
+    background-size: contain !important;
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+    /* margin: 0px -1px; */
+}
+
+#numpad {
+    text-align: left;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    vertical-align: middle;
+    /* outline: 2px solid #db2a2a; */
+}
+
+#num-1 {
+    background: url("images/numbers/1-number.webp") no-repeat;
+}
+#num-2 {
+    background: url("images/numbers/2-number.webp") no-repeat;
+}
+#num-3 {
+    background: url("images/numbers/3-number.webp") no-repeat;
+}
+#num-4 {
+    background: url("images/numbers/4-number.webp") no-repeat;
+}
+#num-5 {
+    background: url("images/numbers/5-number.webp") no-repeat;
+}
+#num-6 {
+    background: url("images/numbers/6-number.webp") no-repeat;
+}
+#num-7 {
+    background: url("images/numbers/7-number.webp") no-repeat;
+}
+#num-8 {
+    background: url("images/numbers/8-number.webp") no-repeat;
+}
+#num-9 {
+    background: url("images/numbers/9-number.webp") no-repeat;
+}
+
+#painting-pad {
+    width: 100%;
+    display: none;
+    justify-content: space-between;
+    /* outline: 2px solid #db2a2a; */
+}
+
+.num {
+    display: inline-block;
+    position: relative;
+    background-size: contain !important;
+    background-position: center !important;
+    width: calc( 100% / 17);
+    vertical-align: middle;
+    text-align: center;
+    color: white;
+    aspect-ratio: 1 / 1;
+    line-height: 100%;
+    /* outline: 2px solid #d30707; */
+}
+
+#painting-pad .num {
+    width: calc( 100% / 12);
+    /* outline: 1px solid #969696; */
+    outline-offset: -1px;
+}
+
+#pp-num1 {
+    background-color: #7fea83;
+}
+
+#pp-num2 {
+    background-color: #f58a8a;
+}
+
+#pp-num3 {
+    background-color: #91c1f4;
+}
+
+#pp-num4 {
+    background-color: #eef872;
+}
+
+#pp-num5 {
+    background-color: #f2ad61;
+}
+
+#pp-num6 {
+    background-color: #f780f1;
+}
+
+#pp-num7 {
+    background-color: #a2f2d6;
+}
+
+#pp-num8 {
+    background-color: #c3b0a4;
+}
+
+#pp-num9 {
+    background-color: #afe66c;
+}
+
+#remove-color {
+    background-color: white;
+    outline: 1px solid #969696;
+    outline-offset: -1px;
+}
+
+#num-zero {
+    background: url("images/trash.webp") no-repeat;
+    background-size: contain;
+    display: inline-block;
+    width: calc( 100% / 12);
+}
+
+#num-all {
+    background: url("images/all-candidates.webp") no-repeat;
+    background-size: contain;
+    display: inline-block;
+    width: calc( 100% / 12);
+}
+
+#controls-row-1 {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 20px;
+    white-space: nowrap;
+    /* outline: 3px solid green; */
+}
+
+#controls-row-2 {
+    display: inline-flex;
+    justify-content: space-between;
+    width: calc( 100% - 10px);
+    white-space: nowrap;
+    /* outline: 1px solid #4942c9; */
+}
+
+#select-mode-one {
+    background: url("images/select-mode-one.webp") no-repeat;
+}
+
+#select-mode-multi {
+    background: url("images/select-mode-multiple.webp") no-repeat;
+}
+
+#select-mode-all {
+    background: url("images/select-mode-all.webp") no-repeat;
+}
+
+#solving-mode-types {
+    display: inline-flex;
+    justify-content: space-between;
+    width: calc( 100% / 11 * 4);
+    white-space: nowrap;
+    /* border-bottom: 2px solid #78f7e0; */
+    outline: 1px solid #8f8f8c;
+    outline-offset: 5px;
+}
+
+#select-modes {
+    display: inline-flex;
+    justify-content: space-between;
+    width: calc( 100% / 11 * 3);
+    white-space: nowrap;
+    /* border-bottom: 2px solid #fcaf50; */
+    outline: 1px solid #8f8f8c;
+    outline-offset: 5px;
+}
+
+#undo-redo-panel {
+    display: inline-flex;
+    justify-content: space-between;
+    width: calc( 100% / 11 * 2);
+    /* text-align: right; */
+    white-space: nowrap;
+    /* outline: 1px solid #4942c9; */
+}
+
+#menu, #help {
+    display: none;
+    background: rgb(252 202 240 / 80%);
+    z-index: 1;
+    position: absolute;
+    height: 93%;
+    top: 6%;
+    width: 100%;
+    text-align: left;
+    font-size: 25px;
+}
+
+#help {
+    display: block;
+    background: rgb(153 241 199 / 80%);
+    text-align: center;
+}
+
+#site-menu {
+    display: inline-block;
+    width: 35%;
+    margin: 5%;
+    /* outline: 3px solid #ff8d00; */
+    vertical-align: top;
+}
+
+#puzzle-menu {
+    display: inline-block;
+    width: 45%;
+    margin: 5% 0%;
+    /* outline: 3px solid #ff8d00; */
+}
+
+#site-menu > * > * {
+    display: block;
+    background-color: #50504e;
+    color: white;
+    padding: 10px;
+    margin: 0px 0px 10px;
+}
+
+#puzzle-menu > * > * {
+    display: block;
+    background-color: #50504e;
+    color: white;
+    padding: 10px;
+    margin: 0px 0px 10px;
+}
+
+#help-description {
+    background-color: #50504e;
+    color: white;
+    width: 70%;
+    display: inline-block;
+    margin-top: 20px;
+    text-align: left;
+    padding: 10px;
+}
+
+#help-ok {
+    display: inline-block;
+    background-color: #50504e;
+    color: white;
+    padding: 10px 20px;
+    margin: 20px 0px;
+}

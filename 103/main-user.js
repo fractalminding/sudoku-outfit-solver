@@ -403,13 +403,13 @@ let matrix = {
                         if (String(value).length == 1) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 80
-                            //context.font = "80px Roboto-Medium"
-                            context.font = "80px Roboto-Medium"
+                            //context.font = "80px Roboto-Medium-numbers-only"
+                            context.font = "80px Roboto-Medium-numbers-only"
                         } else if (String(value).length == 2) {
                             xCoord = coords[0] + 28
                             yCoord = coords[1] + 88
-                            //context.font = "36px Roboto-Medium"
-                            context.font = "36px Roboto-Medium"
+                            //context.font = "36px Roboto-Medium-numbers-only"
+                            context.font = "36px Roboto-Medium-numbers-only"
                         }
 
                         context.fillStyle = matrix.color;
@@ -435,7 +435,7 @@ let matrix = {
                         let coords = matrix.getCoordsByIndexes(x, y)
                         let xCoord = coords[0] + matrix.cellSize / 2
                         let yCoord = coords[1] + 80
-                        context.font = "80px Roboto-Medium"
+                        context.font = "80px Roboto-Medium-numbers-only"
                         context.textAlign = 'center'
                         context.fillStyle = matrix.solvingColor
                         context.fillText(value, xCoord, yCoord)
@@ -450,13 +450,14 @@ let matrix = {
                                     context, fontSize, color, 
                                     value, xCoord, yCoord
                                 ) {
-                                    context.font = `${fontSize}px Roboto-Medium`
+                                    context.font = `${fontSize}px Roboto-Medium-numbers-only`
                                     context.textAlign = 'center'
                                     context.fillStyle = color
                                     context.fillText(value, xCoord, yCoord)
                                 }
                                 
                                 let fontSize = 32
+                                // delta is shift by y from top of cell
                                 let oneRowDelta = 62
                                 let twoRowsDelta1 = 45
                                 let twoRowsDelta2 = 75
@@ -516,7 +517,7 @@ let matrix = {
                                 let coords = matrix.getCoordsByIndexes(x, y)
                                 let xCoord = coords[0] + matrix.cellSize / 2 + xDelta
                                 let yCoord = coords[1] + matrix.cellSize / 2 + yDelta
-                                context.font = '30px Roboto-Medium'
+                                context.font = '30px Roboto-Medium-numbers-only'
                                 context.textAlign = 'center'
                                 context.fillStyle = matrix.solvingColor
                                 context.fillText(value, xCoord, yCoord)
@@ -530,7 +531,7 @@ let matrix = {
         /* let drawFakeText = function() {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
-            context.font = "80px Roboto-Medium"
+            context.font = "80px Roboto-Medium-numbers-only"
             context.fillStyle = matrix.color;
             context.fillText("123jh1j2h31k2j3h", 10, 10)
             canvas.width = canvas.width
@@ -795,7 +796,7 @@ let matrix = {
             context.rect(x + 20, y + 5, 60, 20)
             context.fill()
             let fontSize = 20
-            context.font = `${fontSize}px Roboto-Medium`
+            context.font = `${fontSize}px Roboto-Medium-numbers-only`
             context.textAlign = 'center'
             context.fillStyle = matrix.color
             context.fillText(text, x + 50, y + 20)
@@ -1327,6 +1328,9 @@ let selectAllContainsNumber = function(num) {
 let longPress = function(num) {
     // when user press number button long time.
     matrix.deSelectAll()
+    if (num == 999 || num == 0) {
+        return
+    }
     selectAllContainsNumber(num)
 }
 
@@ -1398,12 +1402,12 @@ let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
 
         let numbersMode = function(paintingPad, numPad) {
             paintingPad.style.display = "none"
-            numPad.style.display = "table"
+            numPad.style.display = "flex"
         }
 
         let paintingMode = function(paintingPad, numPad) {
             numPad.style.display = "none"
-            paintingPad.style.display = "table"
+            paintingPad.style.display = "inline-flex"
         }
 
         let solvingModeNumber = document.getElementById("solving-mode-number")
@@ -1651,7 +1655,7 @@ let headerActivate = function(matrix) {
     }
     
     menuActivate(helpElem, menuIconElem)
-    nameActivate(matrix)
+    // nameActivate(matrix)
     helpActivate(helpIconElem, helpOk, helpElem, menuElem)
 }
 
@@ -1663,7 +1667,15 @@ let undoRedoActivate = function(matrix) {
     redoButton.onclick = () => matrix.solvingStack.forward()
 }
 
+let showContainer = function(document) {
+    let container = document.getElementById("container")
+    container.style.display = "inline-block"
+}
 
+let hideLoading = function(document) {
+    let loading = document.getElementById("loading")
+    loading.style.display = "none"
+}
 
 let start = function(matrix, numberClick, controls, longPress, document) {
     let activateInterface = function(matrix, controls, document) {
@@ -1679,6 +1691,8 @@ let start = function(matrix, numberClick, controls, longPress, document) {
         undoRedoActivate(matrix)
         keyboardEventsActivate(matrix, numberClick, document)
         bodyClickActivate(matrix, document)
+        showContainer(document)
+        hideLoading(document)
 
         performance.mark('end');
         console.log(
@@ -1688,7 +1702,7 @@ let start = function(matrix, numberClick, controls, longPress, document) {
         )
     }
 
-    let font = new FontFace("Roboto-Medium", "url(roboto/Roboto-Medium.ttf)")
+    let font = new FontFace("Roboto-Medium-numbers-only-numbers-only", "url(roboto/Roboto-Medium-numbers-only.ttf)")
     font.load().then(() => activateInterface(matrix, controls, document))
 }
 
