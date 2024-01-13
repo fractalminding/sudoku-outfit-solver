@@ -1373,9 +1373,9 @@ let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
                     }
                 }
             }
-            let numTouchStart = function(event, numMouseDown, num, longPressOptions) {
+            let numTouchStart = function(event, numMouseDown, num, longPressOptions, buttonsType, longPress) {
                 event.preventDefault()
-                numMouseDown(num, event, longPressOptions)
+                numMouseDown(num, event, longPressOptions, buttonsType, longPress)
             }
 
             numButton.onmousedown = (event) =>
@@ -1383,7 +1383,7 @@ let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
             numButton.onmouseup = (event) =>
                 numMouseUp(matrix, numberClick, num, event, longPressOptions, buttonsType)
             numButton.addEventListener("touchstart", (event) => 
-                numTouchStart(event, numMouseDown, num, longPressOptions), 
+                numTouchStart(event, numMouseDown, num, longPressOptions, buttonsType, longPress), 
                 {passive: false}
             )
             numButton.addEventListener("touchend", (event) => 
@@ -1598,7 +1598,12 @@ let keyboardEventsActivate = function(matrix, numberClick, document) {
 let bodyClickActivate = function(matrix, document) {
     let bodyClick = function(target, body, deSelectAll, draw, matrix) {
         // clear
-        if (target == body) {
+        if (    
+            target == body 
+            || target.classList.contains("empty") 
+            || target.id == "container"
+            || target.id == "controls-row-2"
+        ) {
             deSelectAll.call(matrix)
             draw.call(matrix)
         }
