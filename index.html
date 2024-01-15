@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="ru">
     <head>
         <meta charset="utf-8">
         <meta 
@@ -7,262 +8,99 @@
                 width=device-width, 
                 initial-scale=1"
         >
-        <link rel="stylesheet" href="main.css">
-        <script src="ultra-gen.js"></script>
-        <script src="getBlockStepsArray.js"></script>
+        <title>123 magic | #103</title>
+        <link rel="icon" href="images/favicon.ico"><!-- 32×32 -->
+        <link rel="stylesheet" href="main-user3.css?4">
+        <script src="data.js"></script>
+        <script src="painting.js"></script>
+        <script src="main-user2.js?3"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2C3R8PKXS5"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-2C3R8PKXS5');
+        </script>
         
     </head>
     <body>
+        <div id="loading">Загрузка...</div>
         <div id="container">
+            <div id="menu">
+                <div id="site-menu">
+                    <div><div>Главная</div></div>
+                    <div><div>Пустое судоку</div></div>
+                    <div><div>Контакты</div></div>
+                </div>
+                <div id="puzzle-menu">
+                    <div><div>Скопировать ссылку</div></div>
+                    <div><div>Скопировать ссылку на текущее решение</div></div>
+                </div>
+            </div>
+            <div id="help">
+                <div id="help-description">
+                    Действуют правила классического судоку. Цифры в столбцах, строках и в квадратах 3х3 не должны повторяться
+                </div>
+                <div>
+                    <div id="help-ok">Ok</div>
+                </div>
+            </div>
+            <div id="header">
+                <div id="menu-icon"></div>
+                <div id="logo"></div>
+                <!--div id="puzzle-name"></div-->
+                <div class="empty"></div>
+                <div id="help-icon"></div>
+            </div>
             <div id="board">
-                <canvas id="up-info-canvas"></canvas>
                 <canvas id="board-canvas"></canvas>
-                <canvas id="down-info-canvas"></canvas>
             </div>
             <div id="controls">
-                <div id="num-panel" class="panel">
-                    <div id="num-container" class="inline-block">
-                        <div id="writing-mode">
-                            <div id="insert-writing-mode" class="writing-mode-active">Ввод</div>
-                            <div id="solving-writing-mode">Решение</div>
-                        </div>
-                        <div id="insert-mode-types">
-                            <div id="insert-mode-number" class="writing-mode-elem writing-mode-elem-active"></div>
-                            <div id="insert-mode-pair" class="writing-mode-elem"></div>
-                        </div>
-                        <div id="solving-mode-types">
-                            <div id="solving-mode-number" class="writing-mode-elem writing-mode-elem-active"></div>
-                            <div id="solving-mode-central" class="writing-mode-elem"></div>
-                            <div id="solving-mode-corner" class="writing-mode-elem"></div>
-                            <div id="solving-mode-buttons">
-                                <div>
-                                    <div id="show-hide-solving" class="button show-hide-solving-active">👁</div>
-                                    <div id="remove-solving" class="button">X</div>
-                                    <div id="apply-solving" class="button">V</div>
-                                </div>
-                            </div>
-                        </div>
+                <div id="controls-row-1">
+                    <div id="numpad">
+                        <div id="num-1" class="num" data-key="1"></div>
+                        <div id="num-2" class="num" data-key="2"></div>
+                        <div id="num-3" class="num" data-key="3"></div>
+                        <div id="num-4" class="num" data-key="4"></div>
+                        <div id="num-5" class="num" data-key="5"></div>
+                        <div id="num-6" class="num" data-key="6"></div>
+                        <div id="num-7" class="num" data-key="7"></div>
+                        <div id="num-8" class="num" data-key="8"></div>
+                        <div id="num-9" class="num" data-key="9"></div>
+                        <div id="num-all" class="num" data-key="999"></div>
+                        <div id="num-zero" class="num" data-key="0"></div>
                     </div>
-                    <div id="numpad" class="inline-block">
-                        <div>
-                            <div class="num" key="1">1</div>
-                            <div class="num" key="2">2</div>
-                            <div class="num" key="3">3</div>
-                        </div>
-                        <div>
-                            <div class="num" key="4">4</div>
-                            <div class="num" key="5">5</div>
-                            <div class="num" key="6">6</div>
-                        </div>
-                        <div>
-                            <div class="num" key="7">7</div>
-                            <div class="num" key="8">8</div>
-                            <div class="num" key="9">9</div>
-                        </div>
-                        <div>
-                            <div class="num" key="0">0</div>
-                        </div>
+                    <div id="painting-pad">
+                        <div id="pp-num1" class="num" data-key="1"></div><div 
+                            id="pp-num2" class="num" data-key="2"></div><div 
+                            id="pp-num3" class="num" data-key="3"></div><div 
+                            id="pp-num4" class="num" data-key="4"></div><div 
+                            id="pp-num5" class="num" data-key="5"></div><div 
+                            id="pp-num6" class="num" data-key="6"></div><div 
+                            id="pp-num7" class="num" data-key="7"></div><div
+                            id="pp-num8" class="num" data-key="8"></div><div 
+                            id="pp-num9" class="num" data-key="9"></div><div 
+                            id="remove-color" class="num" data-key="0"></div>
                     </div>
                 </div>
-                <div id="create-matrix-panel" class="panel">
-                    <div>
-                        Столбцов
-                        <input id="create-matrix-panel-columns-amount" type="text" value="5">
+                <div id="controls-row-2">
+                    <div id="solving-mode-types">
+                        <div id="solving-mode-number" class="writing-mode-elem writing-mode-elem-active"></div>
+                        <div id="solving-mode-central" class="writing-mode-elem"></div>
+                        <div id="solving-mode-corner" class="writing-mode-elem"></div>
+                        <div id="solving-mode-painting" class="writing-mode-elem"></div>
                     </div>
-                    <div>
-                        Строк
-                        <input id="create-matrix-panel-rows-amount" type="text" value="5">
+                    <div id="select-modes">
+                        <div id="select-mode-one" class="select-mode-elem select-mode-elem-active"></div>
+                        <div id="select-mode-multi" class="select-mode-elem"></div>
+                        <div id="select-mode-all" class="select-mode-elem"></div>
                     </div>
-                    <div>
-                        <div id="create-matrix-panel-button" class="button"> Создать </div>
+                    <div id="undo-redo-panel">
+                        <div id="undo-button"></div>
+                        <div id="redo-button"></div>
                     </div>
-                    <div>
-                        <div id="create-matrix-panel-button-classic" class="button"> 9 X 9 classic </div>
-                    </div>
-                </div>
-                <div id="selection-panel" class="panel">
-                    <div>
-                        <div id="select-all" class="button">Выбрать всё</div>
-                    </div>
-                    <div>
-                        <div id="deselect-all" class="button">Снять выделение</div>
-                    </div>
-                </div>
-                <div id="borders-panel" class="panel">
-                    <div class="inline-block align-left">
-                        <div>
-                            <input type="radio" id="border-type-1" checked name="border-type" value="up" />
-                            <label for="border-type-1">Сверху</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="border-type-2" name="border-type" value="down" />
-                            <label for="border-type-2">Снизу</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="border-type-3" name="border-type" value="left" />
-                            <label for="border-type-3">Слева</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="border-type-4" name="border-type" value="right" />
-                            <label for="border-type-4">Справа</label>
-                        </div>
-                    </div>
-                    <div class="inline-block">
-                        <div>
-                            <div id="set-borders-hidden" class="button">Без рамки</div>
-                        </div>
-                        <div>
-                            <div id="set-borders-thin" class="button">Тонкие рамки</div>
-                        </div>
-                        <div>
-                            <div id="set-borders-fat" class="button">Толстые рамки</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="up-info-panel" class="panel">
-                    <input id="up-info-number" type="text" value="#10">
-                    <div id="up-info-button" class="button">ок</div>
-                </div>
-                <div id="down-info-panel" class="panel">
-                    <div>
-                        <input id="down-info-price" type="text" value="5 ₽">
-                    </div>
-                    <div>
-                        <input id="down-info-link" type="text" value="vk.com/puzzles123magic">
-                    </div>
-                    <div>
-                        <div id="down-info-button" class="button">ок</div>
-                    </div>
-                </div>
-                <div id="design-panel" class="panel">
-                    <div>
-                        <div>
-                            Тонкая
-                            <input id="thin-line-thickness" type="number" value="2">
-                            px
-                        </div>
-                        <div>
-                            Толстая
-                            <input id="fat-line-thickness" type="number" value="4">
-                            px
-                        </div>
-                        <div>
-                            <div id="apply-thickness-settings" class="button">ok</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div id="random-design-button" class="button">Случайный цвет</div>
-                    </div>
-                </div>
-            </div>
-            <div id="controls-2">
-                <div id="chain-panel" class="panel">
-                    <input id="chain-text" type="text" value="00-01-11-22-31">
-                    <div id="chain-button" class="button">Цепь</div>
-                </div>
-                <div id="block-outline-panel" class="panel">
-                    <input id="block-outline-text" type="text" value="">
-                    <div id="block-outline-button" class="button">Блок</div>
-                    <div id="block-outline-list"></div>
-                </div>
-                <div id="twins-panel" class="panel">
-                    <div class="inline-block align-left">
-                        <div>
-                            <input type="radio" id="twins-position-1" checked name="twins-position" value="up-left" />
-                            <label for="twins-position-1">Сверху слева</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="twins-position-2" name="twins-position" value="up-right" />
-                            <label for="twins-position-2">Сверху справа</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="twins-position-3" name="twins-position" value="down-left" />
-                            <label for="twins-position-3">Снизу слева</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="twins-position-4" name="twins-position" value="down-right" />
-                            <label for="twins-position-4">Снизу справа</label>
-                        </div>
-                    </div>
-                    <div class="inline-block">
-                        <div>
-                            <div id="twins-hidden" class="button">Нет</div>
-                        </div>
-                        <div>
-                            <div id="twins-slash" class="button">/</div>
-                        </div>
-                        <div>
-                            <div id="twins-underslash" class="button">\</div>
-                        </div>
-                        <div>
-                            <div id="twins-x" class="button">X</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="inequality-panel" class="panel">
-                    <div class="inline-block align-left">
-                        <div>
-                            <input type="radio" id="inequality-position-1" checked name="inequality-position" value="up" />
-                            <label for="border-type-1">Сверху</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="inequality-position-2" name="inequality-position" value="down" />
-                            <label for="border-type-2">Снизу</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="inequality-position-3" name="inequality-position" value="left" />
-                            <label for="border-type-3">Слева</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="inequality-position-4" name="inequality-position" value="right" />
-                            <label for="border-type-4">Справа</label>
-                        </div>
-                    </div>
-                    <div>
-                        <div id="set-inequality-hidden" class="button">O</div>
-                        <div id="set-inequality-left" class="button">&lt;</div>
-                        <div id="set-inequality-right" class="button">&gt;</div>
-                        <div id="set-inequality-up" class="button">Л</div>
-                        <div id="set-inequality-down" class="button">V</div>
-                    </div>
-                </div>
-                <div id="cross-panel" class="panel">
-                    <div id="cross-hidden" class="button">O</div>
-                    <div id="cross-slash" class="button">/</div>
-                    <div id="cross-backslash" class="button">\</div>
-                    <div id="cross-double" class="button">X</div>
-                </div>
-                <div id="generation-panel" class="panel">
-                    <div class="inline-block">
-                        <div>
-                            <input type="radio" id="generation-type-1" checked name="generation-type" value="from-zero" />
-                            <label for="generation-type-1">С нуля</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="generation-type-2" name="generation-type" value="from-pattern" />
-                            <label for="generation-type-2">С образца</label>
-                        </div>
-                        <div>
-                            <div id="generation-button" class="button">Генерировать</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="solvings-panel" class="panel">
-                    <div>
-                        <div id="solvings-info" class="button solvings-info-gray">?</div>
-                    </div>
-                    <div>
-                        <div id="check-solvings-amount" class="button">Проверить</div>
-                    </div>
-                </div>
-                <div id="meta-panel" class="panel">
-                    <div>
-                        <div id="download-json" class="button">скачать data.js</div>
-                    </div>
-                </div>
-                
+                </div>      
             </div>
         </div>
-        <script src="main.js"></script>
     </body>
 </html>
