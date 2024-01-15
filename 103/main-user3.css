@@ -37,6 +37,7 @@ body {
     position: relative;
     text-align: center;
     /* outline: 1px solid red; */
+    outline-offset: -5px;
 }
 
 #header {
@@ -107,68 +108,24 @@ body {
     /* background-color: #d25151; */
 }
 
-#solving-mode-number {
-    background: url("images/type-of-solving-number.webp") no-repeat;
+#controls * {
+    /* outline: 1px solid red; */
 }
 
-#solving-mode-central {
-    background: url("images/type-of-solving-central.webp") no-repeat;
-}
-
-#solving-mode-corner {
-    background: url("images/type-of-solving-coner.webp") no-repeat;
-}
-
-#solving-mode-painting {
-    background: url("images/painting.webp") no-repeat;
-}
-
-.select-mode-elem {
-    width: 30%;
-    background-size: cover !important;
-    display: inline-block;
-    aspect-ratio: 1 / 1;
-}
-
-.select-mode-elem-active {
-    outline: 2px solid #ff8d00;
-}
-
-.writing-mode-elem {
-    width: 23%;
-    background-size: cover !important;
-    display: inline-block;
-    aspect-ratio: 1 / 1;
-}
-
-.writing-mode-elem-active {
-    outline: 2px solid #00ffd0;
-}
-
-#undo-button {
-    background: url("images/back-arrow.webp") no-repeat;
-    /* outline: 1px solid #c94242; */
-}
-
-#redo-button {
-    background: url("images/forward-arrow.webp") no-repeat;
-    /* outline: 1px solid #cf2dc4; */
-}
-
-#undo-button, #redo-button {
-    width: 45%;
-    background-size: contain !important;
-    display: inline-block;
-    aspect-ratio: 1 / 1;
-    /* margin: 0px -1px; */
-}
 
 #numpad {
     text-align: left;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    vertical-align: middle;
+    /* vertical-align: middle; */
+    /* outline: 2px solid #db2a2a; */
+}
+
+#painting-pad {
+    width: 100%;
+    display: none;
+    justify-content: space-between;
     /* outline: 2px solid #db2a2a; */
 }
 
@@ -200,12 +157,7 @@ body {
     background: url("images/numbers/9-number.webp") no-repeat;
 }
 
-#painting-pad {
-    width: 100%;
-    display: none;
-    justify-content: space-between;
-    /* outline: 2px solid #db2a2a; */
-}
+
 
 .num {
     display: inline-block;
@@ -217,14 +169,14 @@ body {
     text-align: center;
     color: white;
     aspect-ratio: 1 / 1;
-    line-height: 100%;
+    /* line-height: 100%; */
     /* outline: 2px solid #d30707; */
 }
 
 #painting-pad .num {
     width: calc( 100% / 12);
     /* outline: 1px solid #969696; */
-    outline-offset: -1px;
+    /* outline-offset: -1px; */
 }
 
 #pp-num1 {
@@ -300,6 +252,65 @@ body {
     /* outline: 1px solid #4942c9; */
 }
 
+#solving-mode-number {
+    background: url("images/type-of-solving-number.webp") no-repeat;
+}
+
+#solving-mode-central {
+    background: url("images/type-of-solving-central.webp") no-repeat;
+}
+
+#solving-mode-corner {
+    background: url("images/type-of-solving-coner.webp") no-repeat;
+}
+
+#solving-mode-painting {
+    background: url("images/painting.webp") no-repeat;
+}
+
+.select-mode-elem {
+    width: 30%;
+    background-size: cover !important;
+    display: inline-block;
+    aspect-ratio: 1 / 1 !important;
+}
+
+.select-mode-elem-active {
+    outline: 3px solid #ff8d00;
+    z-index: 1;
+}
+
+.writing-mode-elem {
+    width: 23%;
+    background-size: cover !important;
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+}
+
+.writing-mode-elem-active {
+    outline: 3px solid #00ffd0;
+    z-index: 1;
+}
+
+#undo-button {
+    background: url("images/back-arrow.webp") no-repeat;
+    /* outline: 1px solid #c94242; */
+}
+
+#redo-button {
+    background: url("images/forward-arrow.webp") no-repeat;
+    /* outline: 1px solid #cf2dc4; */
+}
+
+#undo-button, #redo-button {
+    width: 45%;
+    background-size: contain !important;
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+    /* margin: 0px -1px; */
+}
+
+
 #select-mode-one {
     background: url("images/select-mode-one.webp") no-repeat;
 }
@@ -315,7 +326,7 @@ body {
 #solving-mode-types {
     display: inline-flex;
     justify-content: space-between;
-    width: calc( 100% / 11 * 4);
+    width: calc( 100% / 11 * 3.4);
     white-space: nowrap;
     /* border-bottom: 2px solid #78f7e0; */
     outline: 1px solid #8f8f8c;
@@ -325,7 +336,7 @@ body {
 #select-modes {
     display: inline-flex;
     justify-content: space-between;
-    width: calc( 100% / 11 * 3);
+    width: calc( 100% / 11 * 2.5);
     white-space: nowrap;
     /* border-bottom: 2px solid #fcaf50; */
     outline: 1px solid #8f8f8c;
@@ -335,7 +346,7 @@ body {
 #undo-redo-panel {
     display: inline-flex;
     justify-content: space-between;
-    width: calc( 100% / 11 * 2);
+    width: calc( 100% / 11 * 1.6);
     /* text-align: right; */
     white-space: nowrap;
     /* outline: 1px solid #4942c9; */

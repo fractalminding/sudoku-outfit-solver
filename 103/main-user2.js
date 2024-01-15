@@ -1348,7 +1348,7 @@ let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
             longPressHappened: false
         }
         for (let numButton of numButtons) {
-            let num = +(numButton.getAttribute("key"))
+            let num = +(numButton.getAttribute("data-key"))
     
             let numMouseDown = function(num, event, longPressOptions, buttonsType, longPress) {
                 //event.preventDefault()
@@ -1407,7 +1407,7 @@ let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
 
         let paintingMode = function(paintingPad, numPad) {
             numPad.style.display = "none"
-            paintingPad.style.display = "inline-flex"
+            paintingPad.style.display = "flex"
         }
 
         let solvingModeNumber = document.getElementById("solving-mode-number")
