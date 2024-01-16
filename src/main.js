@@ -1,4 +1,7 @@
-"use strict"
+import {data} from './data.js' 
+import {painting} from './painting.js'
+import './main.css'
+
 let matrix = {
     elem: {},
     color: '',
@@ -1707,7 +1710,7 @@ let start = function(matrix, numberClick, controls, longPress, document) {
         )
     }
 
-    let font = new FontFace("Roboto-Medium-numbers-only-numbers-only", "url(roboto/Roboto-Medium-numbers-only.ttf)")
+    let font = new FontFace("Roboto-Medium-numbers-only-numbers-only", "url(assets/Roboto-Medium-numbers-only.ttf)")
     font.load().then(() => activateInterface(matrix, controls, document))
 }
 

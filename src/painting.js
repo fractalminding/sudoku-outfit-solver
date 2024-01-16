@@ -1,4 +1,4 @@
-let painting = {
+export let painting = {
     getPoints(arrayLength) {
         return this.pointsByAmount[arrayLength]
     },

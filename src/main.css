@@ -1,11 +1,11 @@
 @font-face {
     font-family: Roboto-Light;
-    src: url(roboto/Roboto-Light.ttf)
+    src: url(assets/Roboto-Light.ttf)
 }
 
 @font-face {
     font-family: Roboto-Medium-numbers-only;
-    src: url(roboto/Roboto-Medium-numbers-only.ttf)
+    src: url(assets/Roboto-Medium-numbers-only.ttf)
 }
 
 body {
@@ -62,14 +62,14 @@ body {
 }
 
 #menu-icon {
-    background: url("images/menu.webp") no-repeat;
+    background: url("assets/menu.webp") no-repeat;
     aspect-ratio: 1 / 1;
     width: calc(100% / 12);
     z-index: 2;
 }
 
 #logo {
-    background: url("images/logo.webp") no-repeat;
+    background: url("assets/logo.webp") no-repeat;
     aspect-ratio: 2.8 / 1;
     /* outline: 1px solid orange; */
     width: calc(100% / 4.3)
@@ -80,7 +80,7 @@ body {
 }
 
 #help-icon {
-    background: url("images/help.webp") no-repeat;
+    background: url("assets/help.webp") no-repeat;
     aspect-ratio: 1 / 1;
     /* float: right; */
     width: calc(100% / 12)
@@ -130,31 +130,31 @@ body {
 }
 
 #num-1 {
-    background: url("images/numbers/1-number.webp") no-repeat;
+    background: url("assets/1-number.webp") no-repeat;
 }
 #num-2 {
-    background: url("images/numbers/2-number.webp") no-repeat;
+    background: url("assets/2-number.webp") no-repeat;
 }
 #num-3 {
-    background: url("images/numbers/3-number.webp") no-repeat;
+    background: url("assets/3-number.webp") no-repeat;
 }
 #num-4 {
-    background: url("images/numbers/4-number.webp") no-repeat;
+    background: url("assets/4-number.webp") no-repeat;
 }
 #num-5 {
-    background: url("images/numbers/5-number.webp") no-repeat;
+    background: url("assets/5-number.webp") no-repeat;
 }
 #num-6 {
-    background: url("images/numbers/6-number.webp") no-repeat;
+    background: url("assets/6-number.webp") no-repeat;
 }
 #num-7 {
-    background: url("images/numbers/7-number.webp") no-repeat;
+    background: url("assets/7-number.webp") no-repeat;
 }
 #num-8 {
-    background: url("images/numbers/8-number.webp") no-repeat;
+    background: url("assets/8-number.webp") no-repeat;
 }
 #num-9 {
-    background: url("images/numbers/9-number.webp") no-repeat;
+    background: url("assets/9-number.webp") no-repeat;
 }
 
 
@@ -222,14 +222,14 @@ body {
 }
 
 #num-zero {
-    background: url("images/trash.webp") no-repeat;
+    background: url("assets/trash.webp") no-repeat;
     background-size: contain;
     display: inline-block;
     width: calc( 100% / 12);
 }
 
 #num-all {
-    background: url("images/all-candidates.webp") no-repeat;
+    background: url("assets/all-candidates.webp") no-repeat;
     background-size: contain;
     display: inline-block;
     width: calc( 100% / 12);
@@ -253,19 +253,19 @@ body {
 }
 
 #solving-mode-number {
-    background: url("images/type-of-solving-number.webp") no-repeat;
+    background: url("assets/type-of-solving-number.webp") no-repeat;
 }
 
 #solving-mode-central {
-    background: url("images/type-of-solving-central.webp") no-repeat;
+    background: url("assets/type-of-solving-central.webp") no-repeat;
 }
 
 #solving-mode-corner {
-    background: url("images/type-of-solving-coner.webp") no-repeat;
+    background: url("assets/type-of-solving-coner.webp") no-repeat;
 }
 
 #solving-mode-painting {
-    background: url("images/painting.webp") no-repeat;
+    background: url("assets/painting.webp") no-repeat;
 }
 
 .select-mode-elem {
@@ -293,12 +293,12 @@ body {
 }
 
 #undo-button {
-    background: url("images/back-arrow.webp") no-repeat;
+    background: url("assets/back-arrow.webp") no-repeat;
     /* outline: 1px solid #c94242; */
 }
 
 #redo-button {
-    background: url("images/forward-arrow.webp") no-repeat;
+    background: url("assets/forward-arrow.webp") no-repeat;
     /* outline: 1px solid #cf2dc4; */
 }
 
@@ -312,15 +312,15 @@ body {
 
 
 #select-mode-one {
-    background: url("images/select-mode-one.webp") no-repeat;
+    background: url("assets/select-mode-one.webp") no-repeat;
 }
 
 #select-mode-multi {
-    background: url("images/select-mode-multiple.webp") no-repeat;
+    background: url("assets/select-mode-multiple.webp") no-repeat;
 }
 
 #select-mode-all {
-    background: url("images/select-mode-all.webp") no-repeat;
+    background: url("assets/select-mode-all.webp") no-repeat;
 }
 
 #solving-mode-types {
