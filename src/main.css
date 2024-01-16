@@ -1,13 +1,3 @@
-@font-face {
-    font-family: Roboto-Light;
-    src: url(assets/Roboto-Light.ttf)
-}
-
-@font-face {
-    font-family: Roboto-Medium-numbers-only;
-    src: url(assets/Roboto-Medium-numbers-only.ttf)
-}
-
 body {
     font-family: Roboto-Light;
     margin: 0px;
@@ -62,14 +52,12 @@ body {
 }
 
 #menu-icon {
-    background: url("assets/menu.webp") no-repeat;
     aspect-ratio: 1 / 1;
     width: calc(100% / 12);
     z-index: 2;
 }
 
 #logo {
-    background: url("assets/logo.webp") no-repeat;
     aspect-ratio: 2.8 / 1;
     /* outline: 1px solid orange; */
     width: calc(100% / 4.3)
@@ -80,7 +68,6 @@ body {
 }
 
 #help-icon {
-    background: url("assets/help.webp") no-repeat;
     aspect-ratio: 1 / 1;
     /* float: right; */
     width: calc(100% / 12)
@@ -108,11 +95,6 @@ body {
     /* background-color: #d25151; */
 }
 
-#controls * {
-    /* outline: 1px solid red; */
-}
-
-
 #numpad {
     text-align: left;
     width: 100%;
@@ -129,33 +111,7 @@ body {
     /* outline: 2px solid #db2a2a; */
 }
 
-#num-1 {
-    background: url("assets/1-number.webp") no-repeat;
-}
-#num-2 {
-    background: url("assets/2-number.webp") no-repeat;
-}
-#num-3 {
-    background: url("assets/3-number.webp") no-repeat;
-}
-#num-4 {
-    background: url("assets/4-number.webp") no-repeat;
-}
-#num-5 {
-    background: url("assets/5-number.webp") no-repeat;
-}
-#num-6 {
-    background: url("assets/6-number.webp") no-repeat;
-}
-#num-7 {
-    background: url("assets/7-number.webp") no-repeat;
-}
-#num-8 {
-    background: url("assets/8-number.webp") no-repeat;
-}
-#num-9 {
-    background: url("assets/9-number.webp") no-repeat;
-}
+
 
 
 
@@ -222,14 +178,12 @@ body {
 }
 
 #num-zero {
-    background: url("assets/trash.webp") no-repeat;
     background-size: contain;
     display: inline-block;
     width: calc( 100% / 12);
 }
 
 #num-all {
-    background: url("assets/all-candidates.webp") no-repeat;
     background-size: contain;
     display: inline-block;
     width: calc( 100% / 12);
@@ -250,22 +204,6 @@ body {
     white-space: nowrap;
     margin-bottom: 10px;
     /* outline: 1px solid #4942c9; */
-}
-
-#solving-mode-number {
-    background: url("assets/type-of-solving-number.webp") no-repeat;
-}
-
-#solving-mode-central {
-    background: url("assets/type-of-solving-central.webp") no-repeat;
-}
-
-#solving-mode-corner {
-    background: url("assets/type-of-solving-coner.webp") no-repeat;
-}
-
-#solving-mode-painting {
-    background: url("assets/painting.webp") no-repeat;
 }
 
 .select-mode-elem {
@@ -292,35 +230,12 @@ body {
     z-index: 1;
 }
 
-#undo-button {
-    background: url("assets/back-arrow.webp") no-repeat;
-    /* outline: 1px solid #c94242; */
-}
-
-#redo-button {
-    background: url("assets/forward-arrow.webp") no-repeat;
-    /* outline: 1px solid #cf2dc4; */
-}
-
 #undo-button, #redo-button {
     width: 45%;
     background-size: contain !important;
     display: inline-block;
     aspect-ratio: 1 / 1;
     /* margin: 0px -1px; */
-}
-
-
-#select-mode-one {
-    background: url("assets/select-mode-one.webp") no-repeat;
-}
-
-#select-mode-multi {
-    background: url("assets/select-mode-multiple.webp") no-repeat;
-}
-
-#select-mode-all {
-    background: url("assets/select-mode-all.webp") no-repeat;
 }
 
 #solving-mode-types {

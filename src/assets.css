@@ -1,0 +1,93 @@
+@font-face {
+    font-family: Roboto-Light;
+    src: url(assets/Roboto-Light.ttf)
+}
+
+@font-face {
+    font-family: Roboto-Medium-numbers-only;
+    src: url(assets/Roboto-Medium-numbers-only.ttf)
+}
+
+#menu-icon {
+    background: url("assets/menu.webp") no-repeat;
+}
+
+#logo {
+    background: url("assets/logo.webp") no-repeat;
+}
+
+#help-icon {
+    background: url("assets/help.webp") no-repeat;
+}
+
+#num-1 {
+    background: url("assets/1-number.webp") no-repeat;
+}
+#num-2 {
+    background: url("assets/2-number.webp") no-repeat;
+}
+#num-3 {
+    background: url("assets/3-number.webp") no-repeat;
+}
+#num-4 {
+    background: url("assets/4-number.webp") no-repeat;
+}
+#num-5 {
+    background: url("assets/5-number.webp") no-repeat;
+}
+#num-6 {
+    background: url("assets/6-number.webp") no-repeat;
+}
+#num-7 {
+    background: url("assets/7-number.webp") no-repeat;
+}
+#num-8 {
+    background: url("assets/8-number.webp") no-repeat;
+}
+#num-9 {
+    background: url("assets/9-number.webp") no-repeat;
+}
+
+#num-zero {
+    background: url("assets/trash.webp") no-repeat;
+}
+
+#num-all {
+    background: url("assets/all-candidates.webp") no-repeat;
+}
+
+#solving-mode-number {
+    background: url("assets/type-of-solving-number.webp") no-repeat;
+}
+
+#solving-mode-central {
+    background: url("assets/type-of-solving-central.webp") no-repeat;
+}
+
+#solving-mode-corner {
+    background: url("assets/type-of-solving-coner.webp") no-repeat;
+}
+
+#solving-mode-painting {
+    background: url("assets/painting.webp") no-repeat;
+}
+
+#undo-button {
+    background: url("assets/back-arrow.webp") no-repeat;
+}
+
+#redo-button {
+    background: url("assets/forward-arrow.webp") no-repeat;
+}
+
+#select-mode-one {
+    background: url("assets/select-mode-one.webp") no-repeat;
+}
+
+#select-mode-multi {
+    background: url("assets/select-mode-multiple.webp") no-repeat;
+}
+
+#select-mode-all {
+    background: url("assets/select-mode-all.webp") no-repeat;
+}

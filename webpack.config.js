@@ -2,7 +2,7 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const isProduction = process.env.NODE_ENV == 'production';
 
 
@@ -17,33 +17,41 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/index.html',
+            template: 'src/index.html'
         }),
-
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: path.resolve(__dirname, 'src/assets'),
+                    to: path.resolve(__dirname, 'dist/assets')
+                },
+                {
+                    from: path.resolve(__dirname, 'src/assets.css'),
+                    to: path.resolve(__dirname, 'dist/assets.assets')
+                }
+            ],
+          }),
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
     ],
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/i,
+                test: /\.js$/i,
                 loader: 'babel-loader',
             },
             {
-                test: /\.css$/i,
+                test: /\main.css$/i,
                 use: [stylesHandler, 'css-loader', 'postcss-loader'],
-            },
-            {
-                test: /\.(ico,webp,eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
-                type: 'asset',
-                generator : {
-                    filename : './assets/[name][ext][query]',
-                }
-            },
-
-            // Add your rules for custom modules here
-            // Learn more about loaders from https://webpack.js.org/loaders/
+            }
         ],
+    },
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'src'),
+        },
+        compress: false,
+        port: 9000,
     },
 };
 
