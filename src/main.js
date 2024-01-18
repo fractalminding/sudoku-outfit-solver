@@ -1,6 +1,7 @@
 import {data} from './data.js' 
 import {painting} from './painting.js'
-import './main.css'
+import {getHashSum} from './getHashSum.js'
+//import './main.css'
 
 let matrix = {
     elem: {},
@@ -53,6 +54,25 @@ let matrix = {
             array.push(rowArray)
         }
         return array
+    },
+    checkSolving(getHashSum) {
+        let finalArray = JSON.parse(JSON.stringify(this.data.values))
+        for (let y = 0; y < this.data.rows; y++) {
+            for (let x = 0; x < this.data.rows; x++) {
+                let value = this.data.values[y][x]
+                let solvingValue = this.data.solving[y][x][0]
+                finalArray[y][x] = value || solvingValue
+                if (value == 0 && solvingValue == 0) {
+                    console.log("return")
+                    return
+                }
+            }
+        }
+        
+        if ( getHashSum(finalArray) == this.data.solvingHashSum) {
+            let finalScreen = document.getElementById("final-screen")
+            finalScreen.style.display = "block"
+        }
     },
     solvingStack: {
         array: [],
@@ -1113,7 +1133,7 @@ let canvasActivate = function(matrix, controls) {
     showCanvas(matrix)
 }
 
-let numberClick = function(number) {
+let numberClick = function(number, getHashSum) {
     let focusElem = document.querySelector("*:focus")
     if (focusElem != undefined && focusElem.tagName == "INPUT") {
         return
@@ -1297,6 +1317,12 @@ let numberClick = function(number) {
             }
         }
     }
+    let writingMode = controls.writing.mode
+    let solvingMode = controls.writing.solvingMode
+
+    if (writingMode == "solving" && solvingMode == "number") {
+        matrix.checkSolving(getHashSum)
+    }
 }
 
 let selectAllContainsNumber = function(num) {
@@ -1338,8 +1364,8 @@ let longPress = function(num) {
 }
 
 
-let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
-    let numberButtonsActivate = function(buttonsType, longPress, matrix, numberClick) {
+let numbersPanelActivate = function(longPress, matrix, numberClick, controls, getHashSum) {
+    let numberButtonsActivate = function(buttonsType, longPress, matrix, numberClick, getHashSum) {
         let numButtons
         if (buttonsType == "color") {
             numButtons = document.querySelectorAll("#painting-pad .num")
@@ -1369,7 +1395,7 @@ let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
             ) {
                 longPressOptions.isLongPress = false
                 if (!longPressOptions.longPressHappened) {
-                    numberClick(num)
+                    numberClick(num, getHashSum)
                     matrix.draw()
                     if (buttonsType != "color") {
                         matrix.solvingStack.step()
@@ -1393,9 +1419,9 @@ let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
                 numMouseUp(matrix, numberClick, num, event, longPressOptions, buttonsType))
         }
     }
-    let numbersActivate = function(numberButtonsActivate, longPress, matrix, numberClick) {
-        numberButtonsActivate("numbers", longPress, matrix, numberClick)
-        numberButtonsActivate("color", longPress, matrix, numberClick)
+    let numbersActivate = function(numberButtonsActivate, longPress, matrix, numberClick, getHashSum) {
+        numberButtonsActivate("numbers", longPress, matrix, numberClick, getHashSum)
+        numberButtonsActivate("color", longPress, matrix, numberClick, getHashSum)
     }
 
     let controlsActivate = function() {
@@ -1494,7 +1520,7 @@ let numbersPanelActivate = function(longPress, matrix, numberClick, controls) {
         )
     }
     
-    numbersActivate(numberButtonsActivate, longPress, matrix, numberClick)
+    numbersActivate(numberButtonsActivate, longPress, matrix, numberClick, getHashSum)
     controlsActivate(controls)
 }
 
@@ -1528,8 +1554,8 @@ let selectModesActivate = function(matrix,controls) {
 
 }
 
-let keyboardEventsActivate = function(matrix, numberClick, document) {
-    let bodyKeyUp = function(event, matrix, numberClick) {
+let keyboardEventsActivate = function(matrix, numberClick, document, getHashSum) {
+    let bodyKeyUp = function(event, matrix, numberClick, getHashSum) {
         let key = event.key
 
         if (key == "Control") {
@@ -1538,7 +1564,7 @@ let keyboardEventsActivate = function(matrix, numberClick, document) {
 
         let numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
         if (numbers.indexOf(key) != -1) {
-            numberClick(+key)
+            numberClick(+key, getHashSum)
             matrix.draw()
             matrix.solvingStack.step()
         }
@@ -1557,7 +1583,7 @@ let keyboardEventsActivate = function(matrix, numberClick, document) {
         }
 
         if (key == "Delete" || key == "Backspace") {
-            numberClick(0)
+            numberClick(0, getHashSum)
             matrix.draw()
             matrix.solvingStack.step()
             return
@@ -1595,7 +1621,7 @@ let keyboardEventsActivate = function(matrix, numberClick, document) {
         matrix.deSelectAll, matrix.draw, numberClick
     )
     
-    document.body.onkeyup = (event) => bodyKeyUp(event, matrix, numberClick)
+    document.body.onkeyup = (event) => bodyKeyUp(event, matrix, numberClick, getHashSum)
 }
 
 let bodyClickActivate = function(matrix, document) {
@@ -1617,54 +1643,63 @@ let bodyClickActivate = function(matrix, document) {
     )
 }
 
-let headerActivate = function(matrix) {
+let otherWindowsActivate = function(matrix) {
 
     let menuIconElem = document.getElementById("menu-icon")
     let menuElem = document.getElementById("menu")
+    let finalElem = document.getElementById("final-screen")
     let helpIconElem = document.getElementById("help-icon")
     let helpElem = document.getElementById("help")
     let helpOk = document.getElementById("help-ok")
+    let finalOk = document.getElementById("final-ok")
 
-    let menuActivate = function(helpElem, menuIconElem) {
-        helpElem.style.display = "none"
-        let menuIconElemClick = function(menuElem, helpElem) {
+    let menuActivate = function(helpElem, menuIconElem, finalElem) {
+        // helpElem.style.display = "none"
+        let menuIconElemClick = function(menuElem, helpElem, finalElem) {
             let menuVisibility = menuElem.style.display
             
             if (menuVisibility == "block") {
                 menuElem.style.display = "none"
             } else {
                 helpElem.style.display = "none"
+                finalElem.style.display = "none"
                 menuElem.style.display = "block"
             }
         }
-        menuIconElem.onclick = () => menuIconElemClick(menuElem, helpElem)
+        menuIconElem.onclick = () => menuIconElemClick(menuElem, helpElem, finalElem)
     } 
 
-    let helpActivate = function(helpIconElem, helpOk, helpElem, menuElem) {
-        let helpIconElemClick = function(helpElem, menuElem) {
+    let helpActivate = function(
+        helpIconElem, helpOk, helpElem, menuElem, finalElem
+    ) {
+        let helpIconElemClick = function(helpElem, menuElem, finalElem) {
             let helpVisibility = helpElem.style.display
             
             if (helpVisibility == "none") {
                 helpElem.style.display = "block"
                 menuElem.style.display = "none"
+                finalElem.style.display = "none"
             } else {
                 helpElem.style.display = "none"
             }
         }
 
         helpIconElem.onclick = helpOk.onclick = () => helpIconElemClick(
-            helpElem, menuElem
+            helpElem, menuElem, finalElem
         )
     }
 
-    let nameActivate = function(matrix) {
-        let nameElem = document.getElementById("puzzle-name")
-        nameElem.innerHTML = `#${matrix.data.name}`
+    let finalScreenActivate = function(finalOk, finalScreen) {
+        let finalOkClick = function(finalScreen) {
+            finalScreen.style.display = "none"
+        }
+
+        finalOk.onclick = () => finalOkClick(finalScreen)
     }
     
-    menuActivate(helpElem, menuIconElem)
-    // nameActivate(matrix)
-    helpActivate(helpIconElem, helpOk, helpElem, menuElem)
+    menuActivate(helpElem, menuIconElem, finalElem)
+    helpActivate(helpIconElem, helpOk, helpElem, menuElem, finalElem)
+    finalScreenActivate(finalOk, finalElem)
 }
 
 let undoRedoActivate = function(matrix) {
@@ -1685,19 +1720,19 @@ let hideLoading = function(document) {
     loading.style.display = "none"
 }
 
-let start = function(matrix, numberClick, controls, longPress, document) {
-    let activateInterface = function(matrix, controls, document) {
+let start = function(matrix, numberClick, controls, longPress, document, getHashSum) {
+    let activateInterface = function(matrix, controls, document, getHashSum) {
         // Ready to use the font in a canvas context
         performance.mark('start');
 
         matrix.init()
         matrix.draw()
-        headerActivate(matrix)
+        otherWindowsActivate(matrix)
         canvasActivate(matrix, controls)
-        numbersPanelActivate(longPress, matrix, numberClick, controls)
+        numbersPanelActivate(longPress, matrix, numberClick, controls, getHashSum)
         selectModesActivate(matrix,controls)
         undoRedoActivate(matrix)
-        keyboardEventsActivate(matrix, numberClick, document)
+        keyboardEventsActivate(matrix, numberClick, document, getHashSum)
         bodyClickActivate(matrix, document)
         showContainer(document)
         hideLoading(document)
@@ -1711,7 +1746,7 @@ let start = function(matrix, numberClick, controls, longPress, document) {
     }
 
     let font = new FontFace("Roboto-Medium-numbers-only-numbers-only", "url(assets/Roboto-Medium-numbers-only.ttf)")
-    font.load().then(() => activateInterface(matrix, controls, document))
+    font.load().then(() => activateInterface(matrix, controls, document, getHashSum))
 }
 
-window.onload = () => start(matrix, numberClick, controls, longPress, document)
+window.onload = () => start(matrix, numberClick, controls, longPress, document, getHashSum)

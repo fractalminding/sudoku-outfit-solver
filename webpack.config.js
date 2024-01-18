@@ -6,6 +6,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const isProduction = process.env.NODE_ENV == 'production';
 const stylesHandler = 'style-loader';
 
+let cssMinifier = function(content) {
+    return Buffer.from(
+        content.toString().replace(/\s/g, "")
+        //content.toString().replace(/\s/g, "").replaceAll("-", " - ").replaceAll("+", " + ")
+        , 'utf8'
+    );
+}
 
 const config = {
     entry: './src/main.js',
@@ -25,11 +32,7 @@ const config = {
                 {
                     from: path.resolve(__dirname, 'src/assets.css'),
                     to: path.resolve(__dirname, 'dist/assets.css'),
-                    transform: function(content) {
-                        return Buffer.from(
-                            content.toString().replace(/\s/g, ""), 'utf8'
-                        );
-                    }
+                    transform: cssMinifier
                 }
             ],
           }),
@@ -42,10 +45,10 @@ const config = {
                 test: /\.js$/i,
                 loader: 'babel-loader',
             },
-            {
+            /* {
                 test: /\main.css$/i,
                 use: [stylesHandler, 'css-loader', 'postcss-loader'],
-            }
+            } */
         ],
     },
     devServer: {
