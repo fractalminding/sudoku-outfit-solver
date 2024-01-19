@@ -14,6 +14,7 @@ let matrix = {
     isCtrlPressed: false,
     thinLineThickness: 0,
     fatLineThickness: 0,
+    problemNumbers: [],
     init() {
         this.elem = document.getElementById("board-canvas")
         this.color = "#50504e"
@@ -27,18 +28,19 @@ let matrix = {
         matrix.fatLineThickness = 5
 
         this.data = JSON.parse(data)
-        matrix.selection = matrix.createMatrixSelectionArray(matrix.data.rows, matrix.data.columns)
+        
+        matrix.selection = matrix.createSimpleArray(this.data.rows, this.data.columns, false)
         this.data.painting = this.createPaintingArray(this.data.rows, this.data.columns)
-
+        this.setClearProblemNumbers()
         this.solvingStack.step()
 
     },
-    createMatrixSelectionArray(rows, columns) {
+    createSimpleArray(rows, columns, value) {
         let array = []
         for (let y = 0; y < rows; y++) {
             let rowArray = []
             for (let x = 0; x < columns; x++) {
-                rowArray.push(false)
+                rowArray.push(value)
             }
             array.push(rowArray)
         }
@@ -55,6 +57,135 @@ let matrix = {
         }
         return array
     },
+    updateProblemNumbers(matrix) {
+
+        let createFinalArray = function(matrix) {
+            let finalArray = JSON.parse(JSON.stringify(matrix.data.values))
+            for (let y = 0; y < matrix.data.rows; y++) {
+                for (let x = 0; x < matrix.data.rows; x++) {
+                    let value = matrix.data.values[y][x]
+                    let solvingValue = matrix.data.solving[y][x][0]
+                    finalArray[y][x] = value || solvingValue
+                }
+            }
+            return finalArray
+        }
+
+        let checkBlock = function(block) {
+            // returns indexes of block where numbers are repetitive
+            let amountArray = block.reduce((acc, el) => {
+                acc[el] = (acc[el] || 0) + 1;
+                return acc;
+            }, [0, 0, 0, 0, 0, 0, 0, 0, 0])
+            let problemNumbers = []
+            amountArray.forEach((elem, i) => {
+                if (elem > 1) problemNumbers.push(i)
+            })
+            let problemNumberIndexes = []
+            block.forEach((elem, i) => {
+                if (problemNumbers.indexOf(elem) != -1) {
+                    problemNumberIndexes.push(i)
+                }
+            })
+            return problemNumberIndexes
+        }
+
+        let checkRows = function(array, checkBlock) {
+            array.forEach((row, y) => {
+                checkBlock(row).forEach((x, i) => {
+                    matrix.problemNumbers[y][x] = true
+                })
+            })
+        }
+
+        let checkColumns = function(array, checkBlock) {
+            for (let x = 0; x < array.length; x++) {
+                let column = []
+                for (let y = 0; y < array.length; y++) {
+                    column.push(array[y][x])
+                }
+                checkBlock(column).forEach((y, i) => {
+                    matrix.problemNumbers[y][x] = true
+                })
+            }
+            // array.forEach((row, x) => {
+            //     checkBlock(row).forEach((y, i) => {
+            //         matrix.problemNumbers[y][x] = true
+            //     })
+            // })
+        }
+
+        let checkSquares = function(array, checkBlock) {
+            let squaresList = [[],[],[],[],[],[],[],[],[]];
+            let getMatrixCoords = function(squareIndex, index) {
+                let squareStartCoordsList = {
+                    1: [0, 0],
+                    2: [3, 0],
+                    3: [6, 0],
+                    4: [0, 3],
+                    5: [3, 3],
+                    6: [6, 3],
+                    7: [0, 6],
+                    8: [3, 6],
+                    9: [6, 6]
+                }
+                let additionalCoordsList = {
+                    1: [0, 0],
+                    2: [1, 0],
+                    3: [2, 0],
+                    4: [0, 1],
+                    5: [1, 1],
+                    6: [2, 1],
+                    7: [0, 2],
+                    8: [1, 2],
+                    9: [2, 2]
+                }
+                let startCoords = squareStartCoordsList[squareIndex + 1];
+                let additionalCoords = additionalCoordsList[index + 1];
+                return [
+                    startCoords[0] + additionalCoords[0],
+                    startCoords[1] + additionalCoords[1]
+                ]
+            }
+            let getSquareIndex = function(x, y) {
+                if (x < 3 && y < 3) return 1
+                if (x >= 3 && x < 6 && y < 3) return 2
+                if (x >= 6 && y < 3) return 3
+                if (x < 3 && y >= 3 && y < 6) return 4
+                if (x >= 3 && x < 6 && y >= 3 && y < 6) return 5
+                if (x >=6 && y >= 3 && y < 6) return 6
+                if (x < 3 && y >= 6) return 7
+                if (x >= 3 && x < 6 && y >= 6) return 8
+                if (x >= 6 && y >= 6) return 9
+            }
+            for (let y = 0; y < array.length; y++) {
+                for (let x = 0; x < array.length; x++) {
+                    let squareIndex = getSquareIndex(x, y)
+                    squaresList[squareIndex - 1].push(array[y][x])
+                }
+            }
+            // for (let square of squaresList) {
+            //     checkBlock(square)
+            // }
+            squaresList.forEach((square, squareIndex) => {
+                checkBlock(square).forEach((index, i) => {
+                    let matrixCoords = getMatrixCoords(squareIndex, index)
+                    let x = matrixCoords[0];
+                    let y = matrixCoords[1];
+                    matrix.problemNumbers[y][x] = true
+                })
+            })
+        }
+        matrix.setClearProblemNumbers()
+        let array = createFinalArray(matrix)
+        checkRows(array, checkBlock, matrix)
+        checkColumns(array, checkBlock, matrix)
+        checkSquares(array, checkBlock, matrix)
+        //console.log(matrix.problemNumbers)
+    },
+    setClearProblemNumbers() {
+        this.problemNumbers = this.createSimpleArray(this.data.rows, this.data.columns, false)
+    },
     checkSolving(getHashSum) {
         let finalArray = JSON.parse(JSON.stringify(this.data.values))
         for (let y = 0; y < this.data.rows; y++) {
@@ -63,7 +194,7 @@ let matrix = {
                 let solvingValue = this.data.solving[y][x][0]
                 finalArray[y][x] = value || solvingValue
                 if (value == 0 && solvingValue == 0) {
-                    console.log("return")
+                    // console.log("return")
                     return
                 }
             }
@@ -83,12 +214,12 @@ let matrix = {
             // when user inputs solving
             this.removeTail()
             this.pushSolving()
-            let lenght = this.array.length
-            if (lenght > this.maxLength) {
+            let length = this.array.length
+            if (length > this.maxLength) {
                 this.array.shift()
             }
-            lenght = this.array.length
-            this.currentIndex = this.maxIndex = lenght - 1
+            length = this.array.length
+            this.currentIndex = this.maxIndex = length - 1
         },
         back() {
             // when user taps back arrow
@@ -892,7 +1023,7 @@ let matrix = {
 
                     let paintingArray = matrix.data.painting[y][x]
                     let length = paintingArray.length
-                    if (paintingArray.lenght == 0) {
+                    if (paintingArray.length == 0) {
                         return
                     }
 
@@ -1179,12 +1310,12 @@ let numberClick = function(number, getHashSum) {
                 matrix.data.solving[y][x] = [0, [], []]
             } else if (insertType == "pair") {
                 let currentValue = matrix.data.values[y][x]
-                let currentValueLenght = String(currentValue).length
-                if (currentValueLenght == 0) {
+                let currentValuelength = String(currentValue).length
+                if (currentValuelength == 0) {
                     matrix.data.values[y][x] = String(number)
-                } else if (currentValueLenght == 1){
+                } else if (currentValuelength == 1){
                     matrix.data.values[y][x] = currentValue + '' + String(number)
-                } else if (currentValueLenght == 2) {
+                } else if (currentValuelength == 2) {
                     matrix.data.values[y][x] = String(currentValue)[1] + String(number)
                 }
             }
@@ -1322,6 +1453,7 @@ let numberClick = function(number, getHashSum) {
 
     if (writingMode == "solving" && solvingMode == "number") {
         matrix.checkSolving(getHashSum)
+        matrix.updateProblemNumbers(matrix)
     }
 }
 
