@@ -1,4 +1,0 @@
-terser src/main-user.js -o src/main-user555.js  --compress ecma=2015
-terser src/main-user.js -o src/main-user555.js --mangle  --compress ecma=2015
-
-color anti-invert mode bug. where one of cells has start value
