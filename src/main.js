@@ -79,7 +79,7 @@ let matrix = {
             }, [0, 0, 0, 0, 0, 0, 0, 0, 0])
             let problemNumbers = []
             amountArray.forEach((elem, i) => {
-                if (elem > 1) problemNumbers.push(i)
+                if (elem > 1 && i > 0) problemNumbers.push(i)
             })
             let problemNumberIndexes = []
             block.forEach((elem, i) => {
@@ -1042,15 +1042,15 @@ let matrix = {
 
             for (let y in matrix.data.painting) {
                 for (let x in matrix.data.painting[y]) {
-
                     let paintingArray = matrix.data.painting[y][x]
                     let length = paintingArray.length
                     if (paintingArray.length == 0) {
-                        return
+                        continue
                     }
 
                     let points = painting.getPoints(length)
                     for (let row in points) {
+                        
                         let color = painting.colors[paintingArray[row]]
                         context.fillStyle = color;
                         context.beginPath()
@@ -1072,7 +1072,7 @@ let matrix = {
                 }
             }
         }
-
+        //console.log(matrix.data.painting[0])
         drawPainting()
         drawLines()
         drawCross()
@@ -1471,13 +1471,14 @@ let numberClick = function(number, getHashSum) {
             }
         }
     }
+
     let writingMode = controls.writing.mode
     let solvingMode = controls.writing.solvingMode
 
     if (writingMode == "solving" && solvingMode == "number") {
         matrix.checkSolving(getHashSum)
-        matrix.updateProblemNumbers(matrix)
     }
+    matrix.updateProblemNumbers(matrix)
 }
 
 let selectAllContainsNumber = function(num) {
