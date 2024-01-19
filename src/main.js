@@ -1014,6 +1014,28 @@ let matrix = {
             }
         }
 
+        let drawProblemNumbers = function() {
+            let drawProblemMark = function(x, y) {
+                let canvas = matrix.elem
+                let context = canvas.getContext("2d")
+                let coords = matrix.getCoordsByIndexes(x, y)
+                let cellSize = matrix.cellSize
+                context.beginPath();
+                context.strokeStyle = "rgba(238, 81, 121, 0.5)"
+                context.lineWidth = matrix.fatLineThickness
+                context.arc(
+                    coords[0] + cellSize / 2, coords[1] + cellSize / 2, cellSize * 0.4, 0, 2 * Math.PI
+                );
+                context.stroke();
+            }
+
+            matrix.problemNumbers.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) drawProblemMark(x, y)
+                })
+            })
+        }
+
         let drawPainting = function() {
             let canvas = matrix.elem
             let context = canvas.getContext("2d")
@@ -1059,6 +1081,7 @@ let matrix = {
         drawTwins()
         drawInequals()
         drawValues()
+        drawProblemNumbers()
         drawSolving()
         drawSelection()
     }
