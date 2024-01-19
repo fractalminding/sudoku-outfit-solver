@@ -17,6 +17,7 @@ let cssMinifier = function(content) {
 const config = {
     entry: './src/main.js',
     output: {
+        filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [

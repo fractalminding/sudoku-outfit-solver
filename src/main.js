@@ -229,6 +229,7 @@ let matrix = {
             //console.log(this)
             this.currentIndex -= 1
             this.useSolving()
+            matrix.updateProblemNumbers(matrix)
             matrix.draw()
         },
         forward() {
@@ -238,6 +239,7 @@ let matrix = {
             }
             this.currentIndex += 1
             this.useSolving()
+            matrix.updateProblemNumbers(matrix)
             matrix.draw()
         },
         removeTail() {
@@ -1023,6 +1025,7 @@ let matrix = {
                 context.beginPath();
                 context.strokeStyle = "rgba(238, 81, 121, 0.5)"
                 context.lineWidth = matrix.fatLineThickness
+                context.setLineDash([0, 1])
                 context.arc(
                     coords[0] + cellSize / 2, coords[1] + cellSize / 2, cellSize * 0.4, 0, 2 * Math.PI
                 );
@@ -1425,7 +1428,7 @@ let numberClick = function(number, getHashSum) {
         for (let y in matrix.selection) {
             for (let x in matrix.selection[y]) {
                 
-                if (matrix.data.values[y][x] != 0) {
+                if (matrix.data.values[y][x] != 0 && solvingType != "painting") {
                     continue
                 }
                 if (matrix.selection[y][x] == true) {
@@ -1864,6 +1867,7 @@ let undoRedoActivate = function(matrix) {
 
     undoButton.onclick = () => matrix.solvingStack.back()
     redoButton.onclick = () => matrix.solvingStack.forward()
+    
 }
 
 let showContainer = function(document) {
