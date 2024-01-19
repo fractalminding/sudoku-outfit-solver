@@ -45,10 +45,10 @@ const config = {
                 test: /\.js$/i,
                 loader: 'babel-loader',
             },
-            /* {
+            {
                 test: /\main.css$/i,
                 use: [stylesHandler, 'css-loader', 'postcss-loader'],
-            } */
+            }
         ],
     },
     devServer: {

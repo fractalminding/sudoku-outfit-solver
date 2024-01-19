@@ -1,7 +1,7 @@
 import {data} from './data.js' 
 import {painting} from './painting.js'
 import {getHashSum} from './getHashSum.js'
-//import './main.css'
+import './main.css'
 
 let matrix = {
     elem: {},
